@@ -1,6 +1,8 @@
 #include "styleText.h"
 #include <stdio.h>
 #include <windows.h>
+#include <conio.h>
+
 void inputPin(int *pin) {
     char pinChar[7];  // Maksimal 6 digit PIN, 1 untuk null-terminator
     int i = 0;

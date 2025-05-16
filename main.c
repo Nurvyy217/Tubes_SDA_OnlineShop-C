@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <windows.h>
+#include "styleText.h"
+#include "login.h"
 
 int main(){
     char choice1, choice2;
@@ -7,8 +9,11 @@ int main(){
     Sleep(3000);
     system("cls");
     printf("LOGIN / REGISTRASI\n");
+    printf("\t\t\t\t\t<=====================================>\n");
+    printf("\n\n\n\nPilihan: ");scanf(" %c", &choice1);
+	system("cls");
     if (choice1 == '1') {
-    	printTopCenter("1.ADMIN / 2. USER");
+    	printf("1.ADMIN / 2. USER");
     	printf("\t\t\t\t\t<=====================================>\n");
     	printf("\n\n\n\nPilihan: ");scanf(" %c",&choice2);
     	system("cls");

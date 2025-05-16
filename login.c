@@ -4,15 +4,66 @@
 #include <string.h>
 #include <stdio.h>
 #include "styleText.h"
+#include <windows.h>
+
+void menuAdmin(){
+    system("cls");
+    printf("implement me");
+}
+void menuUser(){
+    system("cls");
+    printf("implement me");
+}
+void setUsername(User *n, const char *username) {
+    strcpy(n->username, username);
+}
+void setPin(User *n, int pin) {
+    n->pin = pin;
+}
+
+void setSaldo(User *n, int saldo) {
+    n->saldo = saldo;
+}
+
+char* getUsername(User *n) {
+    return n->username;
+}
+int getPin(User *n) {
+    return n->pin;
+}
+
+int getSaldo(User *n) {
+    return n->saldo;
+}
+
+// Fungsi untuk menyimpan data nasabah ke file
+void simpanUser(FILE *file, User *n) {
+    fprintf(file, "Username: %s\n", n->username);
+    fprintf(file, "PIN: %d\n", n->pin);
+    fprintf(file, "Saldo: %d\n", n->saldo);
+}
+
+// Fungsi untuk membaca data User dari file
+int bacaUser(FILE *file, User *n) {
+    return fscanf(file, "Username: %s\n", n->username) != EOF &&
+           fscanf(file, "PIN: %d\n", &n->pin) &&
+           fscanf(file, "Saldo: %d\n\n", &n->saldo);
+}
+
+
+
+
+
+
 
 void registrasi(){
-    User nasabahBaru;
+    User userBaru;
     char username[50];
     int pin, konfirmasiPin;
     long noRek;
 
 	retry:
-    printTopCenter("BUAT AKUN");
+    printf("BUAT AKUN");
     printf("\t\t\t\t\t<=====================================>\n");
     printf("\n\nMasukkan username: ");
     scanf("%s", username);
@@ -28,14 +79,11 @@ void registrasi(){
     inputPin(&konfirmasiPin);
 
     if (pin == konfirmasiPin) {
-        // Membuat nomor rekening secara random
-        srand(time(NULL));
-        noRek = 1000000000 + rand() % 9000000000;
 
-        // Set data nasabah
-        setUsername(&nasabahBaru, username);
-        setPin(&nasabahBaru, pin);
-        setSaldo(&nasabahBaru, 0);
+        // Set data user
+        setUsername(&userBaru, username);
+        setPin(&userBaru, pin);
+        setSaldo(&userBaru, 0);
 
         // Simpan data ke file
         FILE *file = fopen("dataUser.txt", "a");
@@ -43,11 +91,10 @@ void registrasi(){
             printf("Gagal membuka file untuk menyimpan data.\n");
             return;
         }
-        simpanNasabah(file, &nasabahBaru);
+        simpanUser(file, &userBaru);
         fclose(file);
 
         printf("Selamat! Anda berhasil membuat akun.\n");
-        printf("Nomor rekening Anda adalah: %ld\n", nasabahBaru.noRek);
     } else {
         printf("PIN tidak cocok! Silakan coba lagi.\n");
     }
@@ -64,7 +111,7 @@ void loginAdmin(){
     strcpy(adminUsername, "admin");
     adminPassword=1234;
 	system("cls");
-    printTopCenter("LOGIN ADMIN");
+    printf("LOGIN ADMIN");
     printf("\t\t\t\t\t<=====================================>\n");
     printf("\n\nMasukkan Username Admin: ");
     scanf("%s", inputUsername);
@@ -91,9 +138,9 @@ int cekUsernameSudahAda(const char *username) {
         return 0; // Jika file tidak ada, dianggap username belum ada
     }
 
-    User nasabah;
-    while (bacaNasabah(file, &nasabah)) {
-        if (strcmp(username, nasabah.username) == 0) {
+    User user;
+    while (bacaUser(file, &user)) {
+        if (strcmp(username, user.username) == 0) {
             fclose(file);
             return 1; // Username sudah ada
         }
@@ -103,53 +150,39 @@ int cekUsernameSudahAda(const char *username) {
     return 0; // Username belum ada
 }
 
-// Fungsi untuk login nasabah
+// Fungsi untuk login user
 void loginUser() {
     char inputUsername[50];
-    int pinlogin, salahPinCount = 0;
-    User nasabah;
+    int pinlogin;
+    User user;
     int found = 0;
 
-    printTopCenter("LOGIN NASABAH");
+    printf("LOGIN USER");
     printf("\t\t\t\t\t<=====================================>\n");
     printf("\n\nMasukkan username: ");
     scanf("%s", inputUsername);
 
-    // Buka file untuk membaca data nasabah
+    // Buka file untuk membaca data user
     FILE *file = fopen("dataUser.txt", "r+"); // Gunakan mode "r+" untuk dapat menulis kembali
     if (file == NULL) {
         printf("Gagal membuka file! Pastikan file dataUser.txt ada.\n");
         return;
     }
 
-    // Cek data nasabah di file
-    while (bacaNasabah(file, &nasabah)) {
-        if (strcmp(inputUsername, getUsername(&nasabah)) == 0) {
-            if (nasabah.isBlocked==1) {
-                printf("Akun Anda diblokir! Silakan hubungi admin.\n");
-                found = 1;
-                break;
-            }
-
+    // Cek data user di file
+    while (bacaUser(file, &user)) {
+        if (strcmp(inputUsername, getUsername(&user)) == 0) {
             // Memulai proses verifikasi PIN
-            while (salahPinCount < 3) {
+            while (pinlogin != getPin(&user)) {
                 inputPin(&pinlogin);
-                if (pinlogin == getPin(&nasabah)) {
-                    printf("Login berhasil! Selamat datang, %s.\n", getUsername(&nasabah));
-                    tarikSaldo(&nasabah);
+                if (pinlogin == getPin(&user)) {
+                    printf("Login berhasil! Selamat datang, %s.\n", getUsername(&user));
+                    menuUser();
                     found = 1;
                     break;
                 } else {
-                    salahPinCount++;
-                    printf("PIN salah! Coba lagi (%d/3)\n", salahPinCount);
+                    printf("PIN salah! Coba lagi");
                 }
-            }
-
-            // Jika tiga kali salah PIN, blokir akun
-            if (salahPinCount == 3) {
-            	found=1;
-            	printf("\nAkun Anda Terblokir silahkan hubungi admin!");
-                blokir(&nasabah,1);
             }
 
             break;
