@@ -32,5 +32,26 @@ int main(){
     //     printf("Pilihan tidak valid. Silakan jalankan ulang program.\n");
     // }
 
+
+    // test modul katalog 
+    // AKTIFKAN JIKA ANDA PENASARAN HEHE
+    // List katalog;
+    // katalog.First = Nil;
+
+    // // Tambah jenis barang
+    // addJenis(&katalog, "Elektronik");
+    // addJenis(&katalog, "Pakaian");
+
+    // // Tambah produk ke jenis Elektronik
+    // addProduk(&katalog, 2000000, 10, "Laptop", "Elektronik");
+    // addProduk(&katalog, 500000, 20, "Smartphone", "Elektronik");
+
+    // // Tambah produk ke jenis Pakaian
+    // addProduk(&katalog, 150000, 30, "Kaos", "Pakaian");
+    // addProduk(&katalog, 250000, 15, "Jaket", "Pakaian");
+
+    // // Tampilkan katalog
+    // printKatalog(katalog);
+
     return 0;
 }

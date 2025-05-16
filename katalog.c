@@ -90,7 +90,7 @@ void addJenis(List *P, char* Jenis){
             if(head->next_jenis == Nil){
                 head->next_jenis = X;
             }else if(strcmp(head->Jenis, Jenis) == 0){
-                print("Sudah ada jenis barang yang sama....");
+                printf("Sudah ada jenis barang yang sama....");
                 free(X);
                 return;
             }
@@ -144,7 +144,6 @@ void delProduk(List *P, char* produk, char* jenis){
                         return;
                     }
                 }
-
             }else{
                 printf("tidak ada produk %s di dalam jenis %s ", produk, jenis );
                 return;
@@ -156,3 +155,75 @@ void delProduk(List *P, char* produk, char* jenis){
     }
 }
 
+void delJenis(List* P, char* jenis){
+    // local variabel
+    addressJenis head = (*P).First;
+    addressProduk tempProduk;
+    addressJenis temp;
+    addressJenis prev = Nil;
+    // begin
+    if((*P).First != Nil){
+        while(head != Nil && strcmp(head->Jenis, jenis) != 0){
+            prev = head;
+            head = head->next_jenis;
+        }
+        if(head == Nil){
+            printf("tidak ada jenis %s yang sesuai di list..", jenis);
+            return;
+        }
+        if(strcmp(head->Jenis, jenis) == 0){
+            if(head->produkJenis != Nil){
+                while(head->produkJenis != Nil){
+                    tempProduk = head->produkJenis;
+                    head->produkJenis = head->produkJenis->next;
+                    free(tempProduk);
+                }
+            }
+            temp = head;
+            head = head->next_jenis;
+            if(prev == Nil){
+                (*P).First = head;
+            }else{
+                prev->next_jenis = head;
+            }
+            free(temp);
+            printf("Jenis %s dan semua produknya sudah dihapus...", jenis);
+            return;
+        }
+    }else{
+        printf("tidak ada list....");
+        return;
+    }
+}
+
+void printKatalog(List P){
+    addressJenis head = P.First;
+    addressProduk produk = Nil;
+    int i;
+    if(head != Nil){
+        while(head != Nil){
+            i = 1;
+            printf("\n=======================");
+            printf("\nJenis : %s ", head->Jenis);
+            printf("\n=======================");
+            produk = head->produkJenis;
+            if(produk != Nil){
+                while(produk != Nil){
+                    printf("\nBarang %d : ", i);
+                    printf("%s ", produk->barang);
+                    printf("\nStok : %d ", produk->jumlah);
+                    printf("\nHarga : %d ", produk->harga);
+                    printf("\n");
+                    i++;
+                    produk = produk->next;
+                }
+            }else{
+                printf("mohon maaf barang jenis %s belum re stock", head->Jenis);
+            }
+            head = head->next_jenis;
+        }
+    }else{
+        printf("mohon maaf tidak barang di toko....");
+        return;
+    }
+}
