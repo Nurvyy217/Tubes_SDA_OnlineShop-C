@@ -1,11 +1,22 @@
 #ifndef LOGIN_H
 #define LOGIN_H
+#include <stdio.h>
 typedef struct {
     char username[50];
     int pin;
     int saldo;
 } User;
-
+void topUp(User *user);
+void menuAdmin();
+void menuUser(User *user);
+void setUsername(User *n, const char *username);
+void setPin(User *n, int pin);
+void setSaldo(User *n, int saldo);
+int getPin(User *n);
+char *getUsername(User *n);
+int getSaldo(User *n);
+void simpanUser(FILE *file, User *n);
+int bacaUser(FILE *file, User *n);
 void registrasi();
 void loginAdmin();
 int cekUsernameSudahAda(const char *username);

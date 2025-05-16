@@ -5,15 +5,15 @@
 
 int main(){
     char choice1, choice2;
-    printf("Welcome to online shop\n");
+    printf("\n\n\n\n\t\t\t\t\t\tWelcome to online shop\n");
     Sleep(3000);
     system("cls");
-    printf("LOGIN / REGISTRASI\n");
-    printf("\t\t\t\t\t<=====================================>\n");
+    printTopCenter("LOGIN / REGISTRASI\n");
+    printf("\t\t\t\t\t\t\t<=====================================>\n");
     printf("\n\n\n\nPilihan: ");scanf(" %c", &choice1);
 	system("cls");
     if (choice1 == '1') {
-    	printf("1.ADMIN / 2. USER");
+    	printf("\t\t\t\t\t\t   1.ADMIN / 2. USER\n");
     	printf("\t\t\t\t\t<=====================================>\n");
     	printf("\n\n\n\nPilihan: ");scanf(" %c",&choice2);
     	system("cls");
