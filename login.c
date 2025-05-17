@@ -1,18 +1,66 @@
-#include "login.h"
-#include <time.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "styleText.h"
 #include <windows.h>
+#include "sqlite3.h"
+#include "styleText.h"
+#include "login.h"
 
-void viewProduct()
-{
-    system("cls");
-    printf("Implement me");
+
+sqlite3 *db;
+
+void initDatabase() {
+    char *errMsg = 0;
+    if (sqlite3_open("userDB.db", &db)) {
+        fprintf(stderr, "Tidak bisa membuka database: %s\n", sqlite3_errmsg(db));
+        exit(1);
+    }
+
+    const char *createTable =
+        "CREATE TABLE IF NOT EXISTS user ("
+        "username TEXT PRIMARY KEY,"
+        "pin INTEGER,"
+        "saldo INTEGER);";
+
+    if (sqlite3_exec(db, createTable, 0, 0, &errMsg) != SQLITE_OK) {
+        fprintf(stderr, "SQL error: %s\n", errMsg);
+        sqlite3_free(errMsg);
+        exit(1);
+    }
 }
 
-void topUp(User *user)
-{
+void simpanUser(User *u) {
+    char sql[256];
+    snprintf(sql, sizeof(sql),
+             "INSERT INTO user (username, pin, saldo) VALUES ('%s', %d, %d);",
+             u->username, u->pin, u->saldo);
+
+    char *errMsg;
+    if (sqlite3_exec(db, sql, 0, 0, &errMsg) != SQLITE_OK) {
+        fprintf(stderr, "Gagal simpan user: %s\n", errMsg);
+        sqlite3_free(errMsg);
+    }
+}
+
+int getUserByUsername(const char *username, User *u) {
+    sqlite3_stmt *stmt;
+    const char *sql = "SELECT username, pin, saldo FROM user WHERE username = ?;";
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, 0) != SQLITE_OK) return 0;
+
+    sqlite3_bind_text(stmt, 1, username, -1, SQLITE_STATIC);
+
+    int found = 0;
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        strcpy(u->username, (const char *)sqlite3_column_text(stmt, 0));
+        u->pin = sqlite3_column_int(stmt, 1);
+        u->saldo = sqlite3_column_int(stmt, 2);
+        found = 1;
+    }
+    sqlite3_finalize(stmt);
+    return found;
+}
+
+void topUp(User *user) {
     int jumlahIsiSaldo;
     system("cls");
     printTopCenter("TOP UP SALDO\n");
@@ -20,58 +68,97 @@ void topUp(User *user)
     printf("\n\nMasukkan jumlah saldo yang ingin diisi: ");
     scanf(" %d", &jumlahIsiSaldo);
 
-    if (jumlahIsiSaldo > 0)
-    {
-        // Perbarui saldo user
+    if (jumlahIsiSaldo > 0) {
         user->saldo += jumlahIsiSaldo;
+        char sql[256];
+        snprintf(sql, sizeof(sql),
+                 "UPDATE user SET saldo = %d WHERE username = '%s';",
+                 user->saldo, user->username);
 
-        // Baca semua data user dari file
-        FILE *file = fopen("dataUser.txt", "r");
-        if (file == NULL)
-        {
-            printf("Gagal membuka file untuk membaca data user.\n");
+        char *errMsg;
+        if (sqlite3_exec(db, sql, 0, 0, &errMsg) != SQLITE_OK) {
+            fprintf(stderr, "SQL error: %s\n", errMsg);
+            sqlite3_free(errMsg);
             return;
         }
 
-        // Simpan data ke buffer
-        User bufferUser[100];
-        int count = 0;
-        while (bacaUser(file, &bufferUser[count]))
-        {
-            count++;
-        }
-        fclose(file);
-
-        // Perbarui data user yang sesuai
-        int i;
-        for (i = 0; i < count; i++)
-        {
-            if (strcmp(user->username, bufferUser[i].username) == 0)
-            {
-                bufferUser[i].saldo = user->saldo;
-                break;
-            }
-        }
-
-        // Tulis kembali semua data user ke file
-        file = fopen("dataUser.txt", "w");
-        if (file == NULL)
-        {
-            printf("Gagal membuka file untuk menyimpan data user.\n");
-            return;
-        }
-        for (i = 0; i < count; i++)
-        {
-            simpanUser(file, &bufferUser[i]);
-        }
-        fclose(file);
         printf("Saldo berhasil diisi. Saldo Anda: %d\n", user->saldo);
-    }
-    else
-    {
+    } else {
         printf("Jumlah saldo yang diisi harus lebih dari 0.\n");
     }
 }
+
+void registrasi() {
+    User userBaru;
+    char username[50];
+    int pin, konfirmasiPin;
+
+retry:
+    system("cls");
+    printf("\t\t\t\t\t\t\tBUAT AKUN\n");
+    printf("\t\t\t\t\t<=====================================>\n");
+    printf("\n\nMasukkan username: ");
+    scanf("%s", username);
+    if (cekUsernameSudahAda(username)) {
+        printf("Username sudah digunakan.\n");
+        Sleep(2000);
+        goto retry;
+    }
+
+    inputPin(&pin);
+    printf("Konfirmasi PIN: ");
+    inputPin(&konfirmasiPin);
+
+    if (pin == konfirmasiPin) {
+        setUsername(&userBaru, username);
+        setPin(&userBaru, pin);
+        setSaldo(&userBaru, 0);
+        simpanUser(&userBaru);
+        printf("Akun berhasil dibuat.\n");
+    } else {
+        printf("PIN tidak cocok.\n");
+    }
+}
+
+void loginUser() {
+    char inputUsername[50];
+    int pinlogin;
+    User user;
+
+    printf("\t\t\t\t\t\t\tLOGIN USER\n");
+    printf("\t\t\t\t\t<=====================================>\n");
+    printf("\n\nMasukkan username: ");
+    scanf("%s", inputUsername);
+
+    if (!getUserByUsername(inputUsername, &user)) {
+        printf("Username tidak ditemukan.\n");
+        return;
+    }
+
+    while (1) {
+        inputPin(&pinlogin);
+        if (pinlogin == user.pin) {
+            printf("Login berhasil! Selamat datang, %s.\n", user.username);
+            menuUser(&user);
+            break;
+        } else {
+            printf("PIN salah! Coba lagi.\n");
+        }
+    }
+}
+
+int cekUsernameSudahAda(const char *username) {
+    User temp;
+    return getUserByUsername(username, &temp);
+}
+
+void viewProduct()
+{
+    system("cls");
+    printf("Implement me");
+}
+
+
 
 void menuAdmin()
 {
@@ -138,71 +225,6 @@ int getSaldo(User *n)
     return n->saldo;
 }
 
-// Fungsi untuk menyimpan data user ke file
-void simpanUser(FILE *file, User *n)
-{
-    fprintf(file, "Username: %s\n", n->username);
-    fprintf(file, "PIN: %d\n", n->pin);
-    fprintf(file, "Saldo: %d\n", n->saldo);
-}
-
-// Fungsi untuk membaca data User dari file
-int bacaUser(FILE *file, User *n)
-{
-    return fscanf(file, "Username: %s\n", n->username) != EOF &&
-           fscanf(file, "PIN: %d\n", &n->pin) &&
-           fscanf(file, "Saldo: %d\n\n", &n->saldo);
-}
-
-void registrasi()
-{
-    User userBaru;
-    char username[50];
-    int pin, konfirmasiPin;
-    long noRek;
-
-retry:
-    printf("\t\t\t\t\t\t\tBUAT AKUN\n");
-    printf("\t\t\t\t\t<=====================================>\n");
-    printf("\n\nMasukkan username: ");
-    scanf("%s", username);
-    if (cekUsernameSudahAda(username))
-    {
-        printf("Username sudah digunakan. Silakan pilih username lain.\n");
-        Sleep(2000);
-        system("cls");
-        goto retry;
-        return;
-    }
-    inputPin(&pin);
-    printf("Konfirmasi PIN: ");
-    inputPin(&konfirmasiPin);
-
-    if (pin == konfirmasiPin)
-    {
-
-        // Set data user
-        setUsername(&userBaru, username);
-        setPin(&userBaru, pin);
-        setSaldo(&userBaru, 0);
-
-        // Simpan data ke file
-        FILE *file = fopen("dataUser.txt", "a");
-        if (file == NULL)
-        {
-            printf("Gagal membuka file untuk menyimpan data.\n");
-            return;
-        }
-        simpanUser(file, &userBaru);
-        fclose(file);
-
-        printf("Selamat! Anda berhasil membuat akun.\n");
-    }
-    else
-    {
-        printf("PIN tidak cocok! Silakan coba lagi.\n");
-    }
-}
 
 void loginAdmin()
 {
@@ -239,80 +261,4 @@ void loginAdmin()
     }
 }
 
-int cekUsernameSudahAda(const char *username)
-{
-    FILE *file = fopen("dataUser.txt", "r");
-    if (file == NULL)
-    {
-        printf("Gagal membuka file untuk memeriksa username.\n");
-        return 0; // Jika file tidak ada, dianggap username belum ada
-    }
 
-    User user;
-    while (bacaUser(file, &user))
-    {
-        if (strcmp(username, user.username) == 0)
-        {
-            fclose(file);
-            return 1; // Username sudah ada
-        }
-    }
-
-    fclose(file);
-    return 0; // Username belum ada
-}
-
-// Fungsi untuk login user
-void loginUser()
-{
-    char inputUsername[50];
-    int pinlogin;
-    User user;
-    int found = 0;
-
-    printf("\t\t\t\t\t\t\tLOGIN USER\n");
-    printf("\t\t\t\t\t<=====================================>\n");
-    printf("\n\nMasukkan username: ");
-    scanf("%s", inputUsername);
-
-    // Buka file untuk membaca data user
-    FILE *file = fopen("dataUser.txt", "r+"); // Gunakan mode "r+" untuk dapat menulis kembali
-    if (file == NULL)
-    {
-        printf("Gagal membuka file! Pastikan file dataUser.txt ada.\n");
-        return;
-    }
-
-    // Cek data user di file
-    while (bacaUser(file, &user))
-    {
-        if (strcmp(inputUsername, getUsername(&user)) == 0)
-        {
-            // Memulai proses verifikasi PIN
-            while (pinlogin != getPin(&user))
-            {
-                inputPin(&pinlogin);
-                if (pinlogin == getPin(&user))
-                {
-                    printf("Login berhasil! Selamat datang, %s.\n", getUsername(&user));
-                    menuUser(&user);
-                    found = 1;
-                    break;
-                }
-                else
-                {
-                    printf("PIN salah! Coba lagi");
-                }
-            }
-
-            break;
-        }
-    }
-
-    fclose(file);
-
-    if (!found)
-    {
-        printf("Login gagal! Username tidak ditemukan atau PIN salah.\n");
-    }
-}

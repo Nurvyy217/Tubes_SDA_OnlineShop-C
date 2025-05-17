@@ -4,6 +4,7 @@
 #include "login.h"
 
 int main(){
+    initDatabase();
     char choice1, choice2;
     printf("\n\n\n\n\t\t\t\t\t\tWelcome to online shop\n");
     Sleep(3000);

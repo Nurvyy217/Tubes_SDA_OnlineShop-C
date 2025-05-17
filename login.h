@@ -7,6 +7,7 @@ typedef struct {
     int saldo;
 } User;
 void topUp(User *user);
+void initDatabase();
 void menuAdmin();
 void menuUser(User *user);
 void setUsername(User *n, const char *username);
@@ -15,8 +16,7 @@ void setSaldo(User *n, int saldo);
 int getPin(User *n);
 char *getUsername(User *n);
 int getSaldo(User *n);
-void simpanUser(FILE *file, User *n);
-int bacaUser(FILE *file, User *n);
+void simpanUser(User *u);
 void registrasi();
 void loginAdmin();
 int cekUsernameSudahAda(const char *username);
