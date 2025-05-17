@@ -196,6 +196,45 @@ void delJenis(List* P, char* jenis){
     }
 }
 
+void addStokProduk(List *P, int stok, char* produk){
+    addressProduk barang;
+    barang = searchProduk(P, produk);
+    if(barang != Nil){
+        barang->stok = barang->stok + stok;
+        printf("stok sudah ditambahkan");
+    }else{
+        printf("tidak ada barang di list...");
+    }
+}
+
+void minusStokProduk(List *P, int stok, char* produk){
+    addressProduk barang;
+    barang = searchProduk(P, produk);
+    if(barang != Nil){
+        if(barang->stok == 0){
+            printf("tidak ada stok barang");
+        }else if(barang->stok < stok){
+            printf("Stok tidak mencukupi! Stok saat ini: %d, permintaan: %d\n", barang->stok, stok);
+        }else{
+            barang->stok = barang->stok - stok;
+        }
+    }else{
+        printf("tidak ada barang di list");
+    }
+}
+
+void updateHargaProduk(List *P, int harga, char* produk){
+    addressProduk barang;
+    barang = searchProduk(P, produk);
+    if(barang != Nil){
+        barang->harga = harga;
+    }else{
+        printf("Tidak ada barang di list....");
+    }
+}  
+
+
+
 // MODUL NON CONTROL
 void printKatalog(List P){
     addressJenis head = P.First;
@@ -251,39 +290,14 @@ addressProduk searchProduk(List *P, char* barang){
     }
 }
 
-void addStokProduk(List *P, int stok, char* produk){
-    addressProduk barang;
-    barang = searchProduk(P, produk);
-    if(barang != Nil){
-        barang->stok = barang->stok + stok;
-        printf("stok sudah ditambahkan");
+int getHargaProduk(List *P, char* barang){
+    addressProduk tempProduk;
+    tempProduk = searchProduk(P,barang);
+    if(tempProduk != Nil){
+        return tempProduk->harga;
     }else{
         printf("tidak ada barang di list...");
+        return -1;
     }
 }
 
-void minusStokProduk(List *P, int stok, char* produk){
-    addressProduk barang;
-    barang = searchProduk(P, produk);
-    if(barang != Nil){
-        if(barang->stok == 0){
-            printf("tidak ada stok barang");
-        }else if(barang->stok < stok){
-            printf("Stok tidak mencukupi! Stok saat ini: %d, permintaan: %d\n", barang->stok, stok);
-        }else{
-            barang->stok = barang->stok - stok;
-        }
-    }else{
-        printf("tidak ada barang di list");
-    }
-}
-
-void updateHargaProduk(List *P, int harga, char* produk){
-    addressProduk barang;
-    barang = searchProduk(P, produk);
-    if(barang != Nil){
-        barang->harga = harga;
-    }else{
-        printf("Tidak ada barang di list....");
-    }
-}  

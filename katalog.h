@@ -30,7 +30,7 @@ typedef struct {
 }List;
 
 // MODUL KATALOG
-void Katalog(); 
+void adminKatalog(); 
 // IS : admin tidak dapat mengontrol katalog
 // FS : admin dapat mengontrol penuh katalog 
 
@@ -55,9 +55,6 @@ void delProduk(List *P, char* produk, char* jenis);
 void delJenis(List *P, char* jenis);
 // IS : list Jenis ada 
 // FS : salah satu node jenis telah dihapus dari list dan semua produk dalam jenis tersebut pun ikut terhapus
-addressProduk searchProduk(List *P, char* barang);
-// IS : terdapat pointer yang menunjuk ke arah sembarang
-// FS : mengembalikan pointer yang menunjuk ke arah node barang yang dituju
 void addStokProduk(List *P, int stok, char* produk);
 // IS : data stok produk ada dan belum bertambah
 // FS : data stok produk bertambah nilainya
@@ -72,6 +69,12 @@ void updateHargaProduk(List *P, int harga, char* produk);
 void printKatalog(List P);
 // IS : list belum di print ke terminal
 // FS : list sudah di print ke terminal
+addressProduk searchProduk(List *P, char* barang);
+// IS : terdapat pointer yang menunjuk ke arah sembarang
+// FS : mengembalikan pointer yang menunjuk ke arah node barang yang dituju
+int getHargaProduk(List *P, char* barang);
+// IS : node memiliki data harga
+// FS : mengembalikan nilai dari data harga yang dicari
 
 // FILE OPERATION OF KATALOG
 
