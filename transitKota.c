@@ -3,24 +3,14 @@
 #include <string.h>
 #include <stdlib.h>
 
-// Node *nodes[100];
-// int node_count = 0;
-
 void InitTree(sqlite3 *db, TreeManager *tm) {
-    int rc = sqlite3_open("nbtree.db", &db);
-    if (rc) {
-        fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
-        return;
-    }
+    // Initialize the TreeManager
+    tm->node_count = 0;
 
     create_table_if_not_exists(db);
     insert_default_tree(db);
     load_tree(tm, db);
-
-    sqlite3_close(db);
 }
-
-
 
 void PrintRuteKota(TreeManager *tm, const char *tujuan) {
     Node *target = find_node_by_name(tm, (char *)tujuan);
@@ -85,8 +75,9 @@ void insert_default_tree(sqlite3 *db) {
             sqlite3_bind_null(stmt, 3);
         else
             sqlite3_bind_int(stmt, 3, entries[i].parent_id);
-            sqlite3_step(stmt);
-            sqlite3_reset(stmt);
+            
+        sqlite3_step(stmt);
+        sqlite3_reset(stmt);
     }
 
     sqlite3_finalize(stmt);
@@ -158,27 +149,3 @@ void print_route(Node *target) {
     }
     printf("\n");
 }
-
-// int main() {
-//     sqlite3 *db;
-//     int rc = sqlite3_open("nbtree.db", &db);
-//     if (rc) {
-//         fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
-//         return 1;
-//     }
-
-//     create_table_if_not_exists(db);
-//     insert_default_tree(db);
-//     load_tree(db);
-
-//     char tujuan[100];
-//     printf("Masukkan kota tujuan: ");
-//     scanf("%s", tujuan);
-
-//     Node *target = find_node_by_name(tujuan);
-//     print_route(target);
-
-//     sqlite3_close(db);
-//     return 0;
-// }
-

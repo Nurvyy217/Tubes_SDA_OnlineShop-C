@@ -1,5 +1,6 @@
-#ifndef TRANSITKOTA_H
-#define TRANSITKOTA_H
+#ifndef TRANSIT_KOTA_H
+#define TRANSIT_KOTA_H
+
 #include "sqlite3.h"
 
 typedef struct Node {
@@ -17,11 +18,11 @@ typedef struct {
 } TreeManager;
 
 void InitTree(sqlite3 *db, TreeManager *tm);
-void PrintRuteKota(TreeManager *tm, const char *tujuan);
-Node* find_node_by_name(TreeManager *tm, char *name);
 void create_table_if_not_exists(sqlite3 *db);
 void insert_default_tree(sqlite3 *db);
 void load_tree(TreeManager *tm, sqlite3 *db);
+Node* find_node_by_name(TreeManager *tm, char *name);
 void print_route(Node *target);
+void PrintRuteKota(TreeManager *tm, const char *tujuan);
 
 #endif

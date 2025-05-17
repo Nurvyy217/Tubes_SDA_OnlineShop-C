@@ -6,13 +6,12 @@
 #include "styleText.h"
 #include "login.h"
 
+// Remove global db variable
 
-sqlite3 *db;
-
-void initDatabase() {
+void initDatabase(sqlite3 **db) {
     char *errMsg = 0;
-    if (sqlite3_open("userDB.db", &db)) {
-        fprintf(stderr, "Tidak bisa membuka database: %s\n", sqlite3_errmsg(db));
+    if (sqlite3_open("userDB.db", db)) {
+        fprintf(stderr, "Tidak bisa membuka database: %s\n", sqlite3_errmsg(*db));
         exit(1);
     }
 
@@ -22,14 +21,20 @@ void initDatabase() {
         "pin INTEGER,"
         "saldo INTEGER);";
 
-    if (sqlite3_exec(db, createTable, 0, 0, &errMsg) != SQLITE_OK) {
+    if (sqlite3_exec(*db, createTable, 0, 0, &errMsg) != SQLITE_OK) {
         fprintf(stderr, "SQL error: %s\n", errMsg);
         sqlite3_free(errMsg);
         exit(1);
     }
 }
 
-void simpanUser(User *u) {
+void closeDatabase(sqlite3 *db) {
+    if (db) {
+        sqlite3_close(db);
+    }
+}
+
+void simpanUser(User *u, sqlite3 *db) {
     char sql[256];
     snprintf(sql, sizeof(sql),
              "INSERT INTO user (username, pin, saldo) VALUES ('%s', %d, %d);",
@@ -42,7 +47,7 @@ void simpanUser(User *u) {
     }
 }
 
-int getUserByUsername(const char *username, User *u) {
+int getUserByUsername(const char *username, User *u, sqlite3 *db) {
     sqlite3_stmt *stmt;
     const char *sql = "SELECT username, pin, saldo FROM user WHERE username = ?;";
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, 0) != SQLITE_OK) return 0;
@@ -60,7 +65,7 @@ int getUserByUsername(const char *username, User *u) {
     return found;
 }
 
-void topUp(User *user) {
+void topUp(User *user, sqlite3 *db) {
     int jumlahIsiSaldo;
     system("cls");
     printTopCenter("TOP UP SALDO\n");
@@ -88,7 +93,8 @@ void topUp(User *user) {
     }
 }
 
-void registrasi() {
+
+void registrasi(sqlite3 *db) {
     User userBaru;
     char username[50];
     int pin, konfirmasiPin;
@@ -99,7 +105,7 @@ retry:
     printf("\t\t\t\t\t<=====================================>\n");
     printf("\n\nMasukkan username: ");
     scanf("%s", username);
-    if (cekUsernameSudahAda(username)) {
+    if (cekUsernameSudahAda(username, db)) {
         printf("Username sudah digunakan.\n");
         Sleep(2000);
         goto retry;
@@ -113,14 +119,14 @@ retry:
         setUsername(&userBaru, username);
         setPin(&userBaru, pin);
         setSaldo(&userBaru, 0);
-        simpanUser(&userBaru);
+        simpanUser(&userBaru, db);
         printf("Akun berhasil dibuat.\n");
     } else {
         printf("PIN tidak cocok.\n");
     }
 }
 
-void loginUser(TreeManager *tm) {
+void loginUser(TreeManager *tm, sqlite3 *db) {
     char inputUsername[50];
     int pinlogin;
     User user;
@@ -130,7 +136,7 @@ void loginUser(TreeManager *tm) {
     printf("\n\nMasukkan username: ");
     scanf("%s", inputUsername);
 
-    if (!getUserByUsername(inputUsername, &user)) {
+    if (!getUserByUsername(inputUsername, &user, db)) {
         printf("Username tidak ditemukan.\n");
         return;
     }
@@ -139,7 +145,7 @@ void loginUser(TreeManager *tm) {
         inputPin(&pinlogin);
         if (pinlogin == user.pin) {
             printf("Login berhasil! Selamat datang, %s.\n", user.username);
-            menuUser(&user, tm);
+            menuUser(&user, tm, db);
             break;
         } else {
             printf("PIN salah! Coba lagi.\n");
@@ -147,27 +153,22 @@ void loginUser(TreeManager *tm) {
     }
 }
 
-int cekUsernameSudahAda(const char *username) {
+int cekUsernameSudahAda(const char *username, sqlite3 *db) {
     User temp;
-    return getUserByUsername(username, &temp);
+    return getUserByUsername(username, &temp, db);
 }
 
-void viewProduct()
-{
+void viewProduct() {
     system("cls");
     printf("Implement me");
 }
 
-
-
-void menuAdmin()
-{
+void menuAdmin() {
     system("cls");
     printf("1. ");
 }
 
-void infoPemesanan(User *user)
-{
+void infoPemesanan(User *user) {
     system("cls");
     printf("\t\t\t\t\t\t\tINFO PEMESANAN\n");
     printf("\t\t\t\t\t<=====================================>\n\n");
@@ -192,11 +193,9 @@ void beliProduk(TreeManager *tm) {
     print_route(target);
 }
 
-void menuUser(User *user, TreeManager *tm)
-{
+void menuUser(User *user, TreeManager *tm, sqlite3 *db) {
     int choice;
-    do
-    {
+    do {
         system("cls");
         printf("\t\t\t\t\t\t\tMENU USER\n");
         printf("\t\t\t\t\t<=====================================>\n\n\n");
@@ -207,10 +206,9 @@ void menuUser(User *user, TreeManager *tm)
         printf("5. Keluar\n");
         printf("Masukkan pilihan: ");
         scanf("%d", &choice);
-        switch (choice)
-        {
+        switch (choice) {
         case 1:
-            topUp(user);
+            topUp(user, db);
             system("pause");
             break;
         case 2:
@@ -234,37 +232,31 @@ void menuUser(User *user, TreeManager *tm)
     } while (choice != 5);
 }
 
-void setUsername(User *n, const char *username)
-{
+void setUsername(User *n, const char *username) {
     strcpy(n->username, username);
 }
-void setPin(User *n, int pin)
-{
+
+void setPin(User *n, int pin) {
     n->pin = pin;
 }
 
-void setSaldo(User *n, int saldo)
-{
+void setSaldo(User *n, int saldo) {
     n->saldo = saldo;
 }
 
-char *getUsername(User *n)
-{
+char *getUsername(User *n) {
     return n->username;
 }
-int getPin(User *n)
-{
+
+int getPin(User *n) {
     return n->pin;
 }
 
-int getSaldo(User *n)
-{
+int getSaldo(User *n) {
     return n->saldo;
 }
 
-
-void loginAdmin()
-{
+void loginAdmin() {
     char adminUsername[50];
     char inputUsername[50];
     int adminPassword;
@@ -281,21 +273,15 @@ void loginAdmin()
     scanf("%s", inputUsername);
     inputPin(&inputPassword);
 
-    if (strcmp(inputUsername, adminUsername) == 0 && inputPassword == adminPassword)
-    {
+    if (strcmp(inputUsername, adminUsername) == 0 && inputPassword == adminPassword) {
         isAdminValid = 1;
     }
 
-    if (isAdminValid)
-    {
+    if (isAdminValid) {
         printf("\n\n\nLogin Admin berhasil. Selamat datang, Admin.\n");
         Sleep(2000);
         menuAdmin();
-    }
-    else
-    {
+    } else {
         printf("\nLogin Admin gagal! Username atau Password salah.\n");
     }
 }
-
-
