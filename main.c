@@ -35,23 +35,48 @@ int main(){
 
     // test modul katalog 
     // AKTIFKAN JIKA ANDA PENASARAN HEHE
-    // List katalog;
-    // katalog.First = Nil;
+    List katalog;
+    katalog.First = Nil;
 
-    // // Tambah jenis barang
-    // addJenis(&katalog, "Elektronik");
-    // addJenis(&katalog, "Pakaian");
+    // Tambah jenis barang
+    addJenis(&katalog, "Elektronik");
+    addJenis(&katalog, "Pakaian");
+    addJenis(&katalog, "Makanan");
 
-    // // Tambah produk ke jenis Elektronik
-    // addProduk(&katalog, 2000000, 10, "Laptop", "Elektronik");
-    // addProduk(&katalog, 500000, 20, "Smartphone", "Elektronik");
+    // Tambah produk ke jenis Elektronik
+    addProduk(&katalog, 2000000, 10, "Laptop", "Elektronik");
+    addProduk(&katalog, 500000, 20, "Smartphone", "Elektronik");
 
-    // // Tambah produk ke jenis Pakaian
-    // addProduk(&katalog, 150000, 30, "Kaos", "Pakaian");
-    // addProduk(&katalog, 250000, 15, "Jaket", "Pakaian");
+    // Tambah produk ke jenis Pakaian
+    addProduk(&katalog, 150000, 30, "Kaos", "Pakaian");
+    addProduk(&katalog, 250000, 15, "Jaket", "Pakaian");
 
-    // // Tampilkan katalog
-    // printKatalog(katalog);
+    // Tambah produk ke jenis Makanan
+    addProduk(&katalog, 10000, 50, "Roti", "Makanan");
+
+    printf("\n=== Katalog Awal ===\n");
+    printKatalog(katalog);
+
+    // Tambah stok produk
+    printf("\n\nTambah stok Kaos +10 ");
+    addStokProduk(&katalog, 10, "Kaos");
+
+    // Kurangi stok produk
+    printf("\nKurangi stok Laptop -5");
+    minusStokProduk(&katalog, 5, "Laptop");
+    printf("\nupdate harga Labtop");
+    updateHargaProduk(&katalog, 3000000, "Laptop");
+
+    // Hapus produk
+    printf("\nHapus produk Smartphone dari Elektronik");
+    delProduk(&katalog, "Smartphone", "Elektronik");
+
+    // Hapus jenis
+    printf("\nHapus jenis Makanan beserta produknya");
+    delJenis(&katalog, "Makanan");
+
+    printf("\n\n=== Katalog Setelah Update ===\n");
+    printKatalog(katalog);
 
     return 0;
 }
