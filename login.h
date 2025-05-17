@@ -1,15 +1,17 @@
 #ifndef LOGIN_H
 #define LOGIN_H
 #include <stdio.h>
+#include "transitKota.h"
 typedef struct {
     char username[50];
     int pin;
     int saldo;
 } User;
+void beliProduk(TreeManager *tm);
 void topUp(User *user);
 void initDatabase();
 void menuAdmin();
-void menuUser(User *user);
+void menuUser(User *user, TreeManager *tm);
 void setUsername(User *n, const char *username);
 void setPin(User *n, int pin);
 void setSaldo(User *n, int saldo);
@@ -20,5 +22,5 @@ void simpanUser(User *u);
 void registrasi();
 void loginAdmin();
 int cekUsernameSudahAda(const char *username);
-void loginUser();
+void loginUser(TreeManager *tm);
 #endif

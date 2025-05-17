@@ -2,8 +2,12 @@
 #include <windows.h>
 #include "styleText.h"
 #include "login.h"
+#include "transitKota.h"
 
 int main(){
+    sqlite3 *db;
+    TreeManager tm;
+    InitTree(db, &tm);
     initDatabase();
     char choice1, choice2;
     printf("\n\n\n\n\t\t\t\t\t\tWelcome to online shop\n");
@@ -22,13 +26,19 @@ int main(){
     		loginAdmin();
 		}
         else if(choice2 == '2'){
-        	loginUser();
+        	loginUser(&tm);
 	}
     } else if (choice1 == '2') {
     	system("cls");
-        registrasi();
+        registrasi(&tm);
     } else {
         printf("Pilihan tidak valid. Silakan jalankan ulang program.\n");
     }
     return 0;
 }
+
+
+
+
+
+

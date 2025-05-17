@@ -120,7 +120,7 @@ retry:
     }
 }
 
-void loginUser() {
+void loginUser(TreeManager *tm) {
     char inputUsername[50];
     int pinlogin;
     User user;
@@ -139,7 +139,7 @@ void loginUser() {
         inputPin(&pinlogin);
         if (pinlogin == user.pin) {
             printf("Login berhasil! Selamat datang, %s.\n", user.username);
-            menuUser(&user);
+            menuUser(&user, tm);
             break;
         } else {
             printf("PIN salah! Coba lagi.\n");
@@ -163,9 +163,36 @@ void viewProduct()
 void menuAdmin()
 {
     system("cls");
-    printf("implement me");
+    printf("1. ");
 }
-void menuUser(User *user)
+
+void infoPemesanan(User *user)
+{
+    system("cls");
+    printf("\t\t\t\t\t\t\tINFO PEMESANAN\n");
+    printf("\t\t\t\t\t<=====================================>\n\n");
+    printf("Pengiriman barang Anda sedang dalam proses.\n");
+    printf("Status Transit: .\n");
+    printf("Estimasi sampai: 2 hari.\n");
+}
+
+void beliProduk(TreeManager *tm) {
+    char tujuan[100];
+    // Input data pembelian (nama, produk, dll)
+    // ...
+    printf("Masukkan kota tujuan: ");
+    scanf("%s", tujuan);
+
+    // Proses pembelian produk
+    // ...
+
+    // Setelah pembelian berhasil, tampilkan info rute pengiriman
+    Node *target = find_node_by_name(tm, tujuan);
+    printf("Rute pengiriman ke %s:\n", tujuan);
+    print_route(target);
+}
+
+void menuUser(User *user, TreeManager *tm)
 {
     int choice;
     do
@@ -173,9 +200,11 @@ void menuUser(User *user)
         system("cls");
         printf("\t\t\t\t\t\t\tMENU USER\n");
         printf("\t\t\t\t\t<=====================================>\n\n\n");
-        printf("1.Top Up Saldo\n");
+        printf("1. Top Up Saldo\n");
         printf("2. Tampilkan Produk\n");
-        printf("3. Keluar\n");
+        printf("3. Info Pemesanan\n");
+        printf("4. Beli Produk\n");
+        printf("5. Keluar\n");
         printf("Masukkan pilihan: ");
         scanf("%d", &choice);
         switch (choice)
@@ -188,13 +217,21 @@ void menuUser(User *user)
             viewProduct();
             break;
         case 3:
+            infoPemesanan(user);
+            break;
+        case 4:
+            beliProduk(tm);
+            printf("Fitur beli produk belum diimplementasikan.\n");
+            system("pause");
+            break;
+        case 5:
             printf("Keluar dari program!\n");
             break;
         default:
-            printf("pilihan tidak valid");
+            printf("Pilihan tidak valid\n");
             break;
         }
-    } while (choice != 3);
+    } while (choice != 5);
 }
 
 void setUsername(User *n, const char *username)
