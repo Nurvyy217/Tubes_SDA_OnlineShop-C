@@ -17,7 +17,7 @@ typedef struct {
     int node_count;
 } TreeManager;
 
-void InitTree(sqlite3 *db, TreeManager *tm);
+void InitTree(sqlite3 **db, TreeManager *tm);
 void create_table_if_not_exists(sqlite3 *db);
 void insert_default_tree(sqlite3 *db);
 void load_tree(TreeManager *tm, sqlite3 *db);

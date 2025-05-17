@@ -2,14 +2,23 @@
 #include "transitKota.h"
 #include <string.h>
 #include <stdlib.h>
+#include "login.h"
 
-void InitTree(sqlite3 *db, TreeManager *tm) {
+void InitTree(sqlite3 **db, TreeManager *tm) {
     // Initialize the TreeManager
     tm->node_count = 0;
 
-    create_table_if_not_exists(db);
-    insert_default_tree(db);
-    load_tree(tm, db);
+    // Open the transit database
+    int rc = sqlite3_open("nbtree.db", db);
+    if (rc) {
+        fprintf(stderr, "Cannot open transit database: %s\n", sqlite3_errmsg(*db));
+        return;
+    }
+
+    create_table_if_not_exists(*db);
+    insert_default_tree(*db);
+    load_tree(tm, *db);
+    closeDatabase(*db);
 }
 
 void PrintRuteKota(TreeManager *tm, const char *tujuan) {
