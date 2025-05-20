@@ -6,7 +6,6 @@
 
 int main() {
     sqlite3 *userDb;
-    sqlite3 *transitDb;
     TreeManager tm;
     
     // Initialize both databases
