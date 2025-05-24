@@ -2,6 +2,7 @@
 #define KATALOG_H
 #define MAX 100
 #define Nil NULL
+#include <stdbool.h>
 // #include <sqlite3.h>
 
 // Struct Katalog Produk
@@ -29,7 +30,7 @@ typedef struct {
     addressJenis First;   
 }List;
 
-// MODUL KATALOG
+// MODUL KATALOG INTERFACE
 void adminKatalog(); 
 // IS : admin tidak dapat mengontrol katalog
 // FS : admin dapat mengontrol penuh katalog 
@@ -75,9 +76,24 @@ addressProduk searchProduk(List *P, char* barang);
 int getHargaProduk(List *P, char* barang);
 // IS : node memiliki data harga
 // FS : mengembalikan nilai dari data harga yang dicari
+int getStokProduk(List *P, char* barang);
+// IS : node memiliki data stok
+// FS : mengembalikkan nilai dari data stok yang dicari
+bool isDuplikatJenis(List *P, char* jenis);
+// IS : nilai duplikasi jenis false
+// FS : mengembalikan nilai boolean duplikasi jenis bisa true dan bisa false
+bool isDuplikatProduk(addressProduk *P, char* produk);
+// IS : nilai duplikasi produk false
+// FS : mengembalikan nilai boolean duplikasi produk bisa true dan bisa false
 
-// FILE OPERATION OF KATALOG
+// FILE OPERATION OF KATALOG    
+void saveKatalogToFile(List katalog, char* file);
+// IS : file .txt bisa kosong bisa tidak, data belum disimpan di file
+// FS : file .txt terupdate, data telah disimpan di file
 
+void loadKatalogFile(List *katalog, char* filename);
+// IS : file .txt bisa kosong dan bisa tidak, data tidak diambil ke program
+// FS : file .txt diambil di program dan bisa di manipulasi dalam program
 
 
 #endif

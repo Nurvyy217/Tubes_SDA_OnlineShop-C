@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "katalog.h": "c"
+        "katalog.h": "c",
+        "login.h": "c"
     }
 }
