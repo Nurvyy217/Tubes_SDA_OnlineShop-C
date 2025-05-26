@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <stdio.h>>
+#include <stdio.h>
 
 // MODUL POV ADMIN
 void adminKatalog(){
@@ -18,6 +18,7 @@ void adminKatalog(){
     int statusInt = 1;
     katalog.First = Nil;
     bool search;
+    loadKatalogFromFile(&katalog);
 
     // Begin
     for(;;){
@@ -125,9 +126,53 @@ void adminKatalog(){
                 }
             }
         }else if(decision == 6){
-            
+            subDecision = 0;
+            while(subDecision == 0){
+                system("cls");
+                printf("\nStatus Pilihan : 6. Tambah Stok");
+                printf("\nMasukkan nama produk yang ingin ditambah stoknya: ");
+                scanf("%s", produk);
+                addressProduk P = searchProduk(&katalog, produk);
+                if(P != Nil){
+                    printf("Produk ditemukan: %s\nStok saat ini: %d\n", P->barang, P->stok);
+                    printf("Masukkan jumlah stok yang ingin ditambahkan: ");
+                    scanf("%d", &stok);
+                    addStokProduk(&katalog, stok, produk);
+                    printf("Stok berhasil ditambah.");
+                    sleep(2);
+                    subDecision = 1;
+                } else {
+                    printf("Produk tidak ditemukan.");
+                    sleep(2);
+                    subDecision = 1;
+                }
+            }
         }else if(decision == 7){
-
+            subDecision = 0;
+            while(subDecision == 0){
+                system("cls");
+                printf("\nStatus Pilihan : 7. Kurangi Stok");
+                printf("\nMasukkan nama produk yang ingin dikurangi stoknya: ");
+                scanf("%s", produk);
+                addressProduk P = searchProduk(&katalog, produk);
+                if(P != Nil){
+                    printf("Produk ditemukan: %s\nStok saat ini: %d\n", P->barang, P->stok);
+                    printf("Masukkan jumlah stok yang ingin dikurangi: ");
+                    scanf("%d", &stok);
+                    if(stok > 0){
+                        minusStokProduk(&katalog, stok, produk);
+                        printf("Stok berhasil dikurangi.");
+                    } else {
+                        printf("Jumlah pengurangan harus lebih dari 0.");
+                    }
+                    sleep(2);
+                    subDecision = 1;
+                } else {
+                    printf("Produk tidak ditemukan.");
+                    sleep(2);
+                    subDecision = 1;
+                }
+            }
         }else if(decision == 8){
             printf("Update disimpan....");
             sleep(2);
@@ -137,6 +182,7 @@ void adminKatalog(){
         }else{
             printf("Pilihan tidak valid....");
         }
+        saveKatalogToFile(katalog);
     }
 
 }
@@ -493,49 +539,84 @@ bool isDuplikatProduk(addressProduk *P, char* produk){
 }
 
 // MODUL FILE OPERATION
-void saveKatalogToFile(List katalog, char* filename) {
-    FILE *f = fopen(filename, "w");
-    if (f == NULL) {
-        printf("\t\tGagal membuka file untuk menyimpan!\n");
-        return;
-    }
-
-    addressJenis jenis = katalog.First;
-    while (jenis != Nil) {
-        fprintf(f, "JENIS:%s\n", jenis->Jenis);
-        addressProduk produk = jenis->produkJenis;
-        while (produk != Nil) {
-            fprintf(f, "PRODUK:%s;%d;%d\n", produk->barang, produk->stok, produk->harga);
-            produk = produk->next;
-        }
-        jenis = jenis->next_jenis;
-    }
-
-    fclose(f);
-    printf("\t\tData berhasil disimpan ke %s\n", filename);
-}
-
-void loadKatalogFile(List *katalog, char* filename) {
-    FILE *f = fopen(filename, "r");
-    if (f == NULL) {
-        printf("\t\tFile tidak ditemukan!\n");
+void loadKatalogFromFile(List *L){
+    FILE *fp = fopen("katalog.txt", "r");
+    if(fp == NULL){
+        printf("File katalog.txt tidak ditemukan. Memulai katalog kosong.\n");
         return;
     }
 
     char line[256];
-    char jenisSekarang[MAX];
-    while (fgets(line, sizeof(line), f)) {
-        if (strncmp(line, "JENIS:", 6) == 0) {
-            sscanf(line + 6, "%[^\n]", jenisSekarang);
-            addJenis(katalog, jenisSekarang);
-        } else if (strncmp(line, "PRODUK:", 7) == 0) {
-            char barang[MAX];
-            int stok, harga;
-            sscanf(line + 7, "%[^;];%d;%d", barang, &stok, &harga);
-            addProduk(katalog, harga, stok, barang, jenisSekarang);
+    addressJenis currentJenis = NULL;
+
+    while(fgets(line, sizeof(line), fp)){
+        if(strncmp(line, "Jenis:", 6) == 0){
+            char namaJenis[MAX];
+            sscanf(line, "Jenis: %[^\n]", namaJenis);
+
+            // Alokasi jenis baru
+            addressJenis newJenis = (addressJenis) malloc(sizeof(JENIS));
+            strcpy(newJenis->Jenis, namaJenis);
+            newJenis->next_jenis = NULL;
+            newJenis->produkJenis = NULL;
+
+            // Insert ke list
+            if(L->First == NULL){
+                L->First = newJenis;
+            } else {
+                addressJenis temp = L->First;
+                while(temp->next_jenis != NULL) temp = temp->next_jenis;
+                temp->next_jenis = newJenis;
+            }
+
+            currentJenis = newJenis;
+        } else if(strncmp(line, "Produk:", 7) == 0){
+            char namaProduk[MAX];
+            int harga, stok;
+            sscanf(line, "Produk: %[^;];Harga:%d;Stok:%d", namaProduk, &harga, &stok);
+
+            // Alokasi produk baru
+            addressProduk newProduk = (addressProduk) malloc(sizeof(PRODUK));
+            strcpy(newProduk->barang, namaProduk);
+            newProduk->harga = harga;
+            newProduk->stok = stok;
+            newProduk->next = NULL;
+
+            // Masukkan ke produkJenis
+            if(currentJenis != NULL){
+                if(currentJenis->produkJenis == NULL){
+                    currentJenis->produkJenis = newProduk;
+                } else {
+                    addressProduk tempP = currentJenis->produkJenis;
+                    while(tempP->next != NULL) tempP = tempP->next;
+                    tempP->next = newProduk;
+                }
+            }
         }
     }
 
-    fclose(f);
-    printf("\t\tData berhasil dimuat dari %s\n", filename);
+    fclose(fp);
+}
+
+void saveKatalogToFile(List L){
+    FILE *fp = fopen("katalog.txt", "w");
+    if(fp == NULL){
+        printf("Gagal membuka file untuk menyimpan katalog.\n");
+        return;
+    }
+
+    addressJenis J = L.First;
+    while(J != NULL){
+        fprintf(fp, "Jenis: %s\n", J->Jenis);
+
+        addressProduk P = J->produkJenis;
+        while(P != NULL){
+            fprintf(fp, "Produk: %s;Harga:%d;Stok:%d\n", P->barang, P->harga, P->stok);
+            P = P->next;
+        }
+
+        J = J->next_jenis;
+    }
+
+    fclose(fp);
 }

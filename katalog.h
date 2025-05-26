@@ -87,11 +87,11 @@ bool isDuplikatProduk(addressProduk *P, char* produk);
 // FS : mengembalikan nilai boolean duplikasi produk bisa true dan bisa false
 
 // FILE OPERATION OF KATALOG    
-void saveKatalogToFile(List katalog, char* file);
+void saveKatalogToFile(List L);
 // IS : file .txt bisa kosong bisa tidak, data belum disimpan di file
 // FS : file .txt terupdate, data telah disimpan di file
 
-void loadKatalogFile(List *katalog, char* filename);
+void loadKatalogFromFile(List *L);
 // IS : file .txt bisa kosong dan bisa tidak, data tidak diambil ke program
 // FS : file .txt diambil di program dan bisa di manipulasi dalam program
 
