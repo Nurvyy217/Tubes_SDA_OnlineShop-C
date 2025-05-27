@@ -1,2 +1,2 @@
-gcc main.c login.c styleText.c sqlite3.c transitKota.c -o main
+gcc main.c login.c styleText.c transitKota.c -o main
 pause

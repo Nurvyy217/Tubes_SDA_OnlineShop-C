@@ -2,70 +2,75 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
-#include "sqlite3.h"
 #include "styleText.h"
 #include "login.h"
 
-// Remove global db variable
+#define USER_FILE "user.txt"
 
-void initDatabase(sqlite3 **db) {
-    char *errMsg = 0;
-    if (sqlite3_open("userDB.db", db)) {
-        fprintf(stderr, "Tidak bisa membuka database: %s\n", sqlite3_errmsg(*db));
-        exit(1);
-    }
-
-    const char *createTable =
-        "CREATE TABLE IF NOT EXISTS user ("
-        "username TEXT PRIMARY KEY,"
-        "pin INTEGER,"
-        "saldo INTEGER);";
-
-    if (sqlite3_exec(*db, createTable, 0, 0, &errMsg) != SQLITE_OK) {
-        fprintf(stderr, "SQL error: %s\n", errMsg);
-        sqlite3_free(errMsg);
-        exit(1);
+void initUserFile() {
+    FILE *file = fopen(USER_FILE, "a");
+    if (file) {
+        fclose(file);
     }
 }
 
-void closeDatabase(sqlite3 *db) {
-    if (db) {
-        sqlite3_close(db);
+void simpanUser(User *u) {
+    FILE *file = fopen(USER_FILE, "a");
+    if (!file) {
+        printf("Error: Cannot open user file\n");
+        return;
     }
+    fprintf(file, "%s,%d,%d\n", u->username, u->pin, u->saldo);
+    fclose(file);
 }
 
-void simpanUser(User *u, sqlite3 *db) {
-    char sql[256];
-    snprintf(sql, sizeof(sql),
-             "INSERT INTO user (username, pin, saldo) VALUES ('%s', %d, %d);",
-             u->username, u->pin, u->saldo);
+int getUserByUsername(const char *username, User *u) {
+    FILE *file = fopen(USER_FILE, "r");
+    if (!file) return 0;
 
-    char *errMsg;
-    if (sqlite3_exec(db, sql, 0, 0, &errMsg) != SQLITE_OK) {
-        fprintf(stderr, "Gagal simpan user: %s\n", errMsg);
-        sqlite3_free(errMsg);
+    char line[256];
+    while (fgets(line, sizeof(line), file)) {
+        char tempUsername[50];
+        int tempPin, tempSaldo;
+        sscanf(line, "%[^,],%d,%d", tempUsername, &tempPin, &tempSaldo);
+        
+        if (strcmp(tempUsername, username) == 0) {
+            strcpy(u->username, tempUsername);
+            u->pin = tempPin;
+            u->saldo = tempSaldo;
+            fclose(file);
+            return 1;
+        }
     }
+    fclose(file);
+    return 0;
 }
 
-int getUserByUsername(const char *username, User *u, sqlite3 *db) {
-    sqlite3_stmt *stmt;
-    const char *sql = "SELECT username, pin, saldo FROM user WHERE username = ?;";
-    if (sqlite3_prepare_v2(db, sql, -1, &stmt, 0) != SQLITE_OK) return 0;
+void updateUserInFile(User *user) {
+    FILE *file = fopen(USER_FILE, "r");
+    FILE *tempFile = fopen("temp.txt", "w");
+    if (!file || !tempFile) return;
 
-    sqlite3_bind_text(stmt, 1, username, -1, SQLITE_STATIC);
-
-    int found = 0;
-    if (sqlite3_step(stmt) == SQLITE_ROW) {
-        strcpy(u->username, (const char *)sqlite3_column_text(stmt, 0));
-        u->pin = sqlite3_column_int(stmt, 1);
-        u->saldo = sqlite3_column_int(stmt, 2);
-        found = 1;
+    char line[256];
+    while (fgets(line, sizeof(line), file)) {
+        char tempUsername[50];
+        int tempPin, tempSaldo;
+        sscanf(line, "%[^,],%d,%d", tempUsername, &tempPin, &tempSaldo);
+        
+        if (strcmp(tempUsername, user->username) == 0) {
+            fprintf(tempFile, "%s,%d,%d\n", user->username, user->pin, user->saldo);
+        } else {
+            fprintf(tempFile, "%s", line);
+        }
     }
-    sqlite3_finalize(stmt);
-    return found;
+
+    fclose(file);
+    fclose(tempFile);
+    remove(USER_FILE);
+    rename("temp.txt", USER_FILE);
 }
 
-void topUp(User *user, sqlite3 *db) {
+void topUp(User *user) {
     int jumlahIsiSaldo;
     system("cls");
     printTopCenter("TOP UP SALDO\n");
@@ -75,26 +80,14 @@ void topUp(User *user, sqlite3 *db) {
 
     if (jumlahIsiSaldo > 0) {
         user->saldo += jumlahIsiSaldo;
-        char sql[256];
-        snprintf(sql, sizeof(sql),
-                 "UPDATE user SET saldo = %d WHERE username = '%s';",
-                 user->saldo, user->username);
-
-        char *errMsg;
-        if (sqlite3_exec(db, sql, 0, 0, &errMsg) != SQLITE_OK) {
-            fprintf(stderr, "SQL error: %s\n", errMsg);
-            sqlite3_free(errMsg);
-            return;
-        }
-
+        updateUserInFile(user);
         printf("Saldo berhasil diisi. Saldo Anda: %d\n", user->saldo);
     } else {
         printf("Jumlah saldo yang diisi harus lebih dari 0.\n");
     }
 }
 
-
-void registrasi(sqlite3 *db) {
+void registrasi() {
     User userBaru;
     char username[50];
     int pin, konfirmasiPin;
@@ -105,7 +98,7 @@ retry:
     printf("\t\t\t\t\t<=====================================>\n");
     printf("\n\nMasukkan username: ");
     scanf("%s", username);
-    if (cekUsernameSudahAda(username, db)) {
+    if (cekUsernameSudahAda(username)) {
         printf("Username sudah digunakan.\n");
         Sleep(2000);
         goto retry;
@@ -119,14 +112,14 @@ retry:
         setUsername(&userBaru, username);
         setPin(&userBaru, pin);
         setSaldo(&userBaru, 0);
-        simpanUser(&userBaru, db);
+        simpanUser(&userBaru);
         printf("Akun berhasil dibuat.\n");
     } else {
         printf("PIN tidak cocok.\n");
     }
 }
 
-void loginUser(TreeManager *tm, sqlite3 *db) {
+void loginUser(TreeManager *tm) {
     char inputUsername[50];
     int pinlogin;
     User user;
@@ -136,7 +129,7 @@ void loginUser(TreeManager *tm, sqlite3 *db) {
     printf("\n\nMasukkan username: ");
     scanf("%s", inputUsername);
 
-    if (!getUserByUsername(inputUsername, &user, db)) {
+    if (!getUserByUsername(inputUsername, &user)) {
         printf("Username tidak ditemukan.\n");
         return;
     }
@@ -145,7 +138,7 @@ void loginUser(TreeManager *tm, sqlite3 *db) {
         inputPin(&pinlogin);
         if (pinlogin == user.pin) {
             printf("Login berhasil! Selamat datang, %s.\n", user.username);
-            menuUser(&user, tm, db);
+            menuUser(&user, tm);
             break;
         } else {
             printf("PIN salah! Coba lagi.\n");
@@ -153,9 +146,9 @@ void loginUser(TreeManager *tm, sqlite3 *db) {
     }
 }
 
-int cekUsernameSudahAda(const char *username, sqlite3 *db) {
+int cekUsernameSudahAda(const char *username) {
     User temp;
-    return getUserByUsername(username, &temp, db);
+    return getUserByUsername(username, &temp);
 }
 
 void viewProduct() {
@@ -179,21 +172,15 @@ void infoPemesanan(User *user) {
 
 void beliProduk(TreeManager *tm) {
     char tujuan[100];
-    // Input data pembelian (nama, produk, dll)
-    // ...
     printf("Masukkan kota tujuan: ");
     scanf("%s", tujuan);
 
-    // Proses pembelian produk
-    // ...
-
-    // Setelah pembelian berhasil, tampilkan info rute pengiriman
     Node *target = find_node_by_name(tm, tujuan);
     printf("Rute pengiriman ke %s:\n", tujuan);
     print_route(target);
 }
 
-void menuUser(User *user, TreeManager *tm, sqlite3 *db) {
+void menuUser(User *user, TreeManager *tm) {
     int choice;
     do {
         system("cls");
@@ -208,7 +195,7 @@ void menuUser(User *user, TreeManager *tm, sqlite3 *db) {
         scanf("%d", &choice);
         switch (choice) {
         case 1:
-            topUp(user, db);
+            topUp(user);
             system("pause");
             break;
         case 2:
@@ -263,7 +250,6 @@ void loginAdmin() {
     int inputPassword;
     int isAdminValid = 0;
 
-    // Data admin (hardcoded atau gunakan file admin.txt)
     strcpy(adminUsername, "admin");
     adminPassword = 1234;
     system("cls");
@@ -285,3 +271,4 @@ void loginAdmin() {
         printf("\nLogin Admin gagal! Username atau Password salah.\n");
     }
 }
+

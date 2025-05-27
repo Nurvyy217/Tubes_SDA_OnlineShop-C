@@ -5,13 +5,11 @@
 #include "transitKota.h"
 
 int main() {
-    sqlite3 *userDb;
-    sqlite3 *transitDb;
     TreeManager tm;
     
-    // Initialize both databases
-    initDatabase(&userDb);
-    InitTree(&transitDb, &tm);
+    // Initialize files
+    initUserFile();
+    InitTree(&tm);
     
     char choice1, choice2;
     printf("\n\n\n\n\t\t\t\t\t\tWelcome to online shop\n");
@@ -30,16 +28,14 @@ int main() {
             loginAdmin();
         }
         else if(choice2 == '2'){
-            loginUser(&tm, userDb);
+            loginUser(&tm);
         }
     } else if (choice1 == '2') {
         system("cls");
-        registrasi(userDb);
+        registrasi();
     } else {
         printf("Pilihan tidak valid. Silakan jalankan ulang program.\n");
     }
     
-    // Close both database connections before exiting
-    closeDatabase(userDb);
     return 0;
 }

@@ -2,115 +2,72 @@
 #include "transitKota.h"
 #include <string.h>
 #include <stdlib.h>
-#include "login.h"
 
-void InitTree(sqlite3 **db, TreeManager *tm) {
+#define TREE_FILE "tree.txt"
+
+void InitTree(TreeManager *tm) {
     // Initialize the TreeManager
     tm->node_count = 0;
+    
+    // Load tree from file or create default if doesn't exist
+    FILE *file = fopen(TREE_FILE, "r");
+    if (!file) {
+        // File doesn't exist, create default tree and save it
+        insert_default_tree(tm);
+        save_tree(tm);
+    } else {
+        // File exists, load the tree
+        fclose(file);
+        load_tree(tm);
+    }
+}
 
-    // Open the transit database
-    int rc = sqlite3_open("nbtree.db", db);
-    if (rc) {
-        fprintf(stderr, "Cannot open transit database: %s\n", sqlite3_errmsg(*db));
+void save_tree(TreeManager *tm) {
+    FILE *file = fopen(TREE_FILE, "w");
+    if (!file) {
+        printf("Error: Cannot open tree file for writing\n");
         return;
     }
 
-    create_table_if_not_exists(*db);
-    insert_default_tree(*db);
-    load_tree(tm, *db);
-    closeDatabase(*db);
-}
-
-void PrintRuteKota(TreeManager *tm, const char *tujuan) {
-    Node *target = find_node_by_name(tm, (char *)tujuan);
-    print_route(target);
-}
-
-Node* find_node_by_name(TreeManager *tm, char *name) {
     for (int i = 0; i < tm->node_count; i++) {
-        if (strcasecmp(tm->nodes[i]->name, name) == 0) return tm->nodes[i];
-    }
-    return NULL;
-}
-
-// Buat tabel nbtree jika belum ada
-void create_table_if_not_exists(sqlite3 *db) {
-    const char *sql =
-        "CREATE TABLE IF NOT EXISTS nbtree ("
-        "id INTEGER PRIMARY KEY, "
-        "name TEXT NOT NULL, "
-        "parent_id INTEGER, "
-        "FOREIGN KEY(parent_id) REFERENCES nbtree(id));";
-    char *errmsg = NULL;
-    int rc = sqlite3_exec(db, sql, 0, 0, &errmsg);
-    if (rc != SQLITE_OK) {
-        fprintf(stderr, "SQL error: %s\n", errmsg);
-        sqlite3_free(errmsg);
-    }
-}
-
-// Insert data default ke tabel
-void insert_default_tree(sqlite3 *db) {
-    const char *check_sql = "SELECT COUNT(*) FROM nbtree;";
-    sqlite3_stmt *stmt;
-    sqlite3_prepare_v2(db, check_sql, -1, &stmt, 0);
-    sqlite3_step(stmt);
-    int count = sqlite3_column_int(stmt, 0);
-    sqlite3_finalize(stmt);
-    if (count > 0) return;
-
-    const char *insert_sql = "INSERT INTO nbtree (id, name, parent_id) VALUES (?, ?, ?);";
-    sqlite3_prepare_v2(db, insert_sql, -1, &stmt, 0);
-
-    struct {
-        int id;
-        const char *name;
-        int parent_id;
-    } entries[] = {
-        {1, "Bandung", 0},
-        {2, "Cimahi", 1}, {3, "Sumedang", 1}, {4, "Garut", 1},
-        {5, "Cianjur", 2}, {6, "Purwakarta", 2},
-        {7, "Sukabumi", 5}, {8, "Bogor", 5},
-        {9, "Depok", 8}, {10, "Jakarta", 9}, {11, "Tangerang", 10},
-        {12, "Karawang", 6}, {13, "Subang", 6},
-        {14, "Majalengka", 3}, {15, "Indramayu", 14},
-        {16, "Tasik", 4}, {17, "Ciamis", 16}, {18, "Banjar", 17}, {19, "Pangandaran", 18}
-    };
-
-    for (int i = 0; i < sizeof(entries) / sizeof(entries[0]); i++) {
-        sqlite3_bind_int(stmt, 1, entries[i].id);
-        sqlite3_bind_text(stmt, 2, entries[i].name, -1, SQLITE_STATIC);
-        if (entries[i].parent_id == 0)
-            sqlite3_bind_null(stmt, 3);
-        else
-            sqlite3_bind_int(stmt, 3, entries[i].parent_id);
-            
-        sqlite3_step(stmt);
-        sqlite3_reset(stmt);
+        fprintf(file, "%d,%s,%d\n", 
+            tm->nodes[i]->id,
+            tm->nodes[i]->name,
+            tm->nodes[i]->parent_id);
     }
 
-    sqlite3_finalize(stmt);
+    fclose(file);
 }
 
-// Bangun tree dari hasil query
-void load_tree(TreeManager *tm, sqlite3 *db) {
-    const char *sql = "SELECT id, name, parent_id FROM nbtree;";
-    sqlite3_stmt *stmt;
-    sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
+void load_tree(TreeManager *tm) {
+    FILE *file = fopen(TREE_FILE, "r");
+    if (!file) {
+        printf("Error: Cannot open tree file\n");
+        return;
+    }
 
-    while (sqlite3_step(stmt) == SQLITE_ROW) {
+    // Clear existing nodes
+    for (int i = 0; i < tm->node_count; i++) {
+        free(tm->nodes[i]);
+    }
+    tm->node_count = 0;
+
+    char line[256];
+    while (fgets(line, sizeof(line), file)) {
         Node *node = malloc(sizeof(Node));
-        node->id = sqlite3_column_int(stmt, 0);
-        strcpy(node->name, (const char *)sqlite3_column_text(stmt, 1));
-        node->parent_id = sqlite3_column_type(stmt, 2) == SQLITE_NULL ? 0 : sqlite3_column_int(stmt, 2);
+        sscanf(line, "%d,%[^,],%d", 
+            &node->id,
+            node->name,
+            &node->parent_id);
+        
         node->parent = NULL;
         node->first_child = NULL;
         node->next_sibling = NULL;
         tm->nodes[tm->node_count++] = node;
     }
-    sqlite3_finalize(stmt);
+    fclose(file);
 
-    // Bangun hubungan parent-child dan sibling
+    // Build parent-child and sibling relationships
     for (int i = 0; i < tm->node_count; i++) {
         Node *child = tm->nodes[i];
         if (child->parent_id == 0) continue;
@@ -137,7 +94,41 @@ void load_tree(TreeManager *tm, sqlite3 *db) {
     }
 }
 
-// Cetak rute dari root ke node tujuan
+void insert_default_tree(TreeManager *tm) {
+    struct {
+        int id;
+        const char *name;
+        int parent_id;
+    } entries[] = {
+        {1, "Bandung", 0},
+        {2, "Cimahi", 1}, {3, "Sumedang", 1}, {4, "Garut", 1},
+        {5, "Cianjur", 2}, {6, "Purwakarta", 2},
+        {7, "Sukabumi", 5}, {8, "Bogor", 5},
+        {9, "Depok", 8}, {10, "Jakarta", 9}, {11, "Tangerang", 10},
+        {12, "Karawang", 6}, {13, "Subang", 6},
+        {14, "Majalengka", 3}, {15, "Indramayu", 14},
+        {16, "Tasik", 4}, {17, "Ciamis", 16}, {18, "Banjar", 17}, {19, "Pangandaran", 18}
+    };
+
+    for (size_t i = 0; i < sizeof(entries) / sizeof(entries[0]); i++) {
+        Node *node = malloc(sizeof(Node));
+        node->id = entries[i].id;
+        strcpy(node->name, entries[i].name);
+        node->parent_id = entries[i].parent_id;
+        node->parent = NULL;
+        node->first_child = NULL;
+        node->next_sibling = NULL;
+        tm->nodes[tm->node_count++] = node;
+    }
+}
+
+Node* find_node_by_name(TreeManager *tm, char *name) {
+    for (int i = 0; i < tm->node_count; i++) {
+        if (strcasecmp(tm->nodes[i]->name, name) == 0) return tm->nodes[i];
+    }
+    return NULL;
+}
+
 void print_route(Node *target) {
     if (!target) {
         printf("Node tidak ditemukan.\n");
@@ -157,4 +148,9 @@ void print_route(Node *target) {
         if (i > 0) printf(" -> ");
     }
     printf("\n");
+}
+
+void PrintRuteKota(TreeManager *tm, const char *tujuan) {
+    Node *target = find_node_by_name(tm, (char *)tujuan);
+    print_route(target);
 }
