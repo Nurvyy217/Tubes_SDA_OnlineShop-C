@@ -599,17 +599,19 @@ void loadKatalogFromFile(List *L){
 }
 
 void saveKatalogToFile(List L){
+    addressJenis J = Nil;
+    addressProduk P = Nil;
     FILE *fp = fopen("katalog.txt", "w");
     if(fp == NULL){
         printf("Gagal membuka file untuk menyimpan katalog.\n");
         return;
     }
 
-    addressJenis J = L.First;
+    J = L.First;
     while(J != NULL){
         fprintf(fp, "Jenis: %s\n", J->Jenis);
 
-        addressProduk P = J->produkJenis;
+        P = J->produkJenis;
         while(P != NULL){
             fprintf(fp, "Produk: %s;Harga:%d;Stok:%d\n", P->barang, P->harga, P->stok);
             P = P->next;
