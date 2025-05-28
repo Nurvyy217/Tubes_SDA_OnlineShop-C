@@ -1,5 +1,5 @@
-/* 
-=======================      NOTE     ============================= 
+/*
+=======================      NOTE     =============================
 
 Setelah pull dan mendapatkan file ini (test.c), uncommand '# src/main/test.c' dalam .gitignore
 
@@ -16,10 +16,12 @@ command ini bisa dihapus jika sudah melakukan step diatas
 #include "login.h"
 #include "katalog.h"
 #include "global.h"
+#include "printTemplate.h"
 
-int main(){
+int main()
+{
     char choice1, choice2;
-    
+
     clear_screen();
     print_center("TESTING MODUL", WIDTH, HEIGHT);
     sleep(1);
