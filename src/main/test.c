@@ -10,12 +10,10 @@ Cara complie lakukan command
 command ini bisa dihapus jika sudah melakukan step diatas
 */
 
-#include <stdio.h>
-#include <windows.h>
 #include "styleText.h"
 #include "login.h"
 #include "katalog.h"
-#include "global.h"
+#include "environment.h"
 #include "printTemplate.h"
 
 int main()
