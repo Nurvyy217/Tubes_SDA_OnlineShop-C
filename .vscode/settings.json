@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "katalog.h": "c",
-        "login.h": "c"
+        "login.h": "c",
+        "styletext.h": "c",
+        "sqlite3.h": "c",
+        "windows.h": "c",
+        "printtemplate.h": "c"
     }
 }
