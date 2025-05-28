@@ -1,2 +1,3 @@
 *.exe
 # src/main/test.c
+.vscode
