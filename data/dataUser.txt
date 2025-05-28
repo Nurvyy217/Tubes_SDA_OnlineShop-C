@@ -1,6 +1,0 @@
-Username: hasbi
-PIN: 2345
-Saldo: 0
-Username: faliq
-PIN: 1234
-Saldo: 110000
