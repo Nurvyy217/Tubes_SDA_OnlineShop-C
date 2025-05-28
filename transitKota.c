@@ -9,16 +9,26 @@ void InitTree(TreeManager *tm) {
     // Initialize the TreeManager
     tm->node_count = 0;
     
-    // Load tree from file or create default if doesn't exist
+    // Check if file exists
     FILE *file = fopen(TREE_FILE, "r");
     if (!file) {
         // File doesn't exist, create default tree and save it
         insert_default_tree(tm);
         save_tree(tm);
     } else {
-        // File exists, load the tree
+        // Check if file is empty
+        fseek(file, 0, SEEK_END);
+        long fileSize = ftell(file);
         fclose(file);
-        load_tree(tm);
+        
+        if (fileSize == 0) {
+            // File exists but is empty, create default tree
+            insert_default_tree(tm);
+            save_tree(tm);
+        } else {
+            // File exists and has content, load the tree
+            load_tree(tm);
+        }
     }
 }
 
@@ -135,15 +145,22 @@ void print_route(Node *target) {
         return;
     }
 
-    Node *stack[100];
-    int top = 0;
+    int depth = 0;
+    Node *temp = target;
+    while (temp) {
+        depth++;
+        temp = temp->parent;
+    }
 
+    Node *stack[depth];
+
+    depth = 0;
     while (target) {
-        stack[top++] = target;
+        stack[depth++] = target;
         target = target->parent;
     }
 
-    for (int i = top - 1; i >= 0; i--) {
+    for (int i = depth - 1; i >= 0; i--) {
         printf("%s", stack[i]->name);
         if (i > 0) printf(" -> ");
     }
