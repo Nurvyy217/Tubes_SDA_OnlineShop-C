@@ -1,3 +1,4 @@
 *.exe
 # src/main/test.c
 .vscode/
+src/include/global.h
