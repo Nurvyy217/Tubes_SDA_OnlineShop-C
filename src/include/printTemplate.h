@@ -5,13 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <unistd.h>
-#include <sys/ioctl.h>
-#endif
-
 typedef void (*PrintRowFn)(void* data, int index);
 
 void clear_screen();

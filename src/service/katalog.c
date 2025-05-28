@@ -1,7 +1,7 @@
 #include "katalog.h"
 #include <malloc.h>
 #include <string.h>
-#include <unistd.h>
+// #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -540,7 +540,7 @@ bool isDuplikatProduk(addressProduk *P, char* produk){
 
 // MODUL FILE OPERATION
 void loadKatalogFromFile(List *L){
-    FILE *fp = fopen("katalog.txt", "r");
+    FILE *fp = fopen("data/katalog.txt", "r");
     if(fp == NULL){
         printf("File katalog.txt tidak ditemukan. Memulai katalog kosong.\n");
         return;

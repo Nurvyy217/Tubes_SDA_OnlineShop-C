@@ -6,11 +6,7 @@
 #include "transitKota.h"
 
 void clear_screen() {
-#ifdef _WIN32
     system("cls");
-#else
-    printf("\033[2J\033[1;1H");
-#endif
 }
 
 /* Melakukan print center dengan parameter string, panjang dan lebar */

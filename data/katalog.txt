@@ -1,5 +1,0 @@
-Jenis: tas
-Produk: eiger;Harga:1000000;Stok:15
-Produk: bodypack;Harga:400000;Stok:13
-Jenis: laptop
-Produk: asus;Harga:15000000;Stok:10
