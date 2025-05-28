@@ -5,10 +5,23 @@
 #include "login.h"
 #include "katalog.h"
 
-#define WIDTH 120
-#define HEIGHT 80
+#define WIDTH 60
+#define HEIGHT 11
 
 int main(){
-    print_center("SELAMAT DATANG ADMIN", 50, 10);
+    clear_screen();
+    print_center("SELAMAT DATANG ADMIN", WIDTH, HEIGHT);
+    sleep(1);
+    clear_screen();
+    print_title("INI ADALAH JUDUL", WIDTH);
+    printf("JFljasfjsalkfjs\n");
+    printf("JFljasfjsalkfjs\n");
+    printf("JFljasfjsalkfjs\n");
+    printf("JFljasfjsalkfjs\n");
+    printf("JFljasfjsalkfjs\n");
+    printf("JFljasfjsalkfjs\n");
+    printf("JFljasfjsalkfjs\n");
+
+
     return 0;
 }

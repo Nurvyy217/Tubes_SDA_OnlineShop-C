@@ -1,4 +1,9 @@
 #include "printTemplate.h"
+#include "admin.h"
+#include "katalog.h"
+#include "login.h"
+#include "styleText.h"
+#include "transitKota.h"
 
 void clear_screen() {
 #ifdef _WIN32
@@ -10,44 +15,58 @@ void clear_screen() {
 
 /* Melakukan print center dengan parameter string, panjang dan lebar */
 void print_center(const char *text, int width, int height) {
-    clear_screen(); // clear screen first
-
     int text_len = strlen(text);
-    
-    int vertical_padding = height / 2;
+
+    int vertical_padding = (height - 3) / 2;
     int horizontal_padding = (width - text_len) / 2;
 
-    // Top empty lines
+    // Border atas
+    for (int i = 0; i < width; i++) putchar('=');
+    putchar('\n');
+
+    // Padding atas
     for (int i = 0; i < vertical_padding; i++) {
-        printf("\n");
+        for (int j = 0; j < width; j++) putchar(' ');
+        putchar('\n');
     }
 
-    // Centered text line
-    for (int i = 0; i < horizontal_padding; i++) printf(" ");
+    // Print Text
+    for (int i = 0; i < horizontal_padding; i++) putchar(' ');
     printf("%s\n", text);
 
-    // Bottom padding (optional for symmetry)
-    for (int i = 0; i < height - vertical_padding - 1; i++) {
-        printf("\n");
+    // Padding bawah
+    int bottom_padding = height - vertical_padding - 3;
+    for (int i = 0; i < bottom_padding; i++) {
+        for (int j = 0; j < width; j++) putchar(' ');
+        putchar('\n');
     }
+
+    // Border bawah
+    for (int i = 0; i < width; i++) putchar('=');
+    putchar('\n');
 }
+  
+/* Melakukan print judul */
+void print_title(const char *title, int width) {
+    // Print border atas
+    for (int i = 0; i < width; i++) {
+        putchar('=');
+    }
+    putchar('\n');
 
-void print_top_center(const char *title, int width, int padding) {
-    clear_screen();
+    // Print text
+    int len = strlen(title);
+    int padding = (width - len) / 2;
 
-    char *border = malloc(width + 1);
-    if (!border) return;
-    memset(border, '=', width);
-    border[width] = '\0';
+    for (int i = 0; i < padding; i++) putchar(' ');
+    printf("%s\n", title);
 
-    int left_pad = (width - strlen(title)) / 2;
-
-    printf("%s\n", border);
-    printf("%*s%s\n", left_pad, "", title);
-    printf("%s\n", border);
-    for (int i = 0; i < padding; i++) printf("\n");
-
-    free(border);
+    // Print border bawah
+    for (int i = 0; i < width; i++) {
+        putchar('=');
+    }
+    putchar('\n');
+    putchar('\n');
 }
 
 void print_table(const char* headers[], int col_count, void* data[], int row_count, PrintRowFn print_row) {
@@ -70,3 +89,14 @@ void print_table(const char* headers[], int col_count, void* data[], int row_cou
         print_row(data[i], i + 1);
     }
 }
+
+// Row Example
+// void print_transaction_row(void* data, int index) {
+//     Transaction* t = (Transaction*)data;
+//     printf("| %-3d | %-3d | %-3d | %-3d | %-6d | %-10s |\n", index, t->user_id, t->item_id, t->quantity, t->total_price, t->status);
+// }
+
+// void print_user_row(void* data, int index) {
+//     User* u = (User*)data;
+//     printf("| %-3d | %-15s | %-20s | %-6d |\n", index, u->username, u->email, u->saldo);
+// }
