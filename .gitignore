@@ -1,0 +1,4 @@
+*.exe
+# src/main/test.c
+.vscode/
+src/include/environment.h
