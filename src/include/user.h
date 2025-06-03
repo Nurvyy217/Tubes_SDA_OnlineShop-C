@@ -2,13 +2,14 @@
 #define LOGIN_H
 
 #include <stdio.h>
-#include "transitKota.h"
+#include "tree.h"
 
 // Path file user
 #define USER_FILE "data/user.txt"
 
 // Struktur data user
-typedef struct {
+typedef struct
+{
     char username[50];
     int pin;
     int saldo;

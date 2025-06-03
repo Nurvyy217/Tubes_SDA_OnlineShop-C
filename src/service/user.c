@@ -3,20 +3,23 @@
 #include <string.h>
 #include <windows.h>
 #include "../include/styleText.h"
-#include "../include/login.h"
+#include "../include/user.h"
+#include "../include/stack.h"
 
-
-
-void initUserFile() {
+void initUserFile()
+{
     FILE *file = fopen(USER_FILE, "a");
-    if (file) {
+    if (file)
+    {
         fclose(file);
     }
 }
 
-void simpanUser(User *u) {
+void simpanUser(User *u)
+{
     FILE *file = fopen(USER_FILE, "a");
-    if (!file) {
+    if (!file)
+    {
         printf("Error: Cannot open user file\n");
         return;
     }
@@ -24,17 +27,21 @@ void simpanUser(User *u) {
     fclose(file);
 }
 
-int getUserByUsername(const char *username, User *u) {
+int getUserByUsername(const char *username, User *u)
+{
     FILE *file = fopen(USER_FILE, "r");
-    if (!file) return 0;
+    if (!file)
+        return 0;
 
     char line[256];
-    while (fgets(line, sizeof(line), file)) {
+    while (fgets(line, sizeof(line), file))
+    {
         char tempUsername[50];
         int tempPin, tempSaldo;
         sscanf(line, "%[^,],%d,%d", tempUsername, &tempPin, &tempSaldo);
-        
-        if (strcmp(tempUsername, username) == 0) {
+
+        if (strcmp(tempUsername, username) == 0)
+        {
             strcpy(u->username, tempUsername);
             u->pin = tempPin;
             u->saldo = tempSaldo;
@@ -46,20 +53,26 @@ int getUserByUsername(const char *username, User *u) {
     return 0;
 }
 
-void updateUserInFile(User *user) {
+void updateUserInFile(User *user)
+{
     FILE *file = fopen(USER_FILE, "r");
     FILE *tempFile = fopen("temp.txt", "w");
-    if (!file || !tempFile) return;
+    if (!file || !tempFile)
+        return;
 
     char line[256];
-    while (fgets(line, sizeof(line), file)) {
+    while (fgets(line, sizeof(line), file))
+    {
         char tempUsername[50];
         int tempPin, tempSaldo;
         sscanf(line, "%[^,],%d,%d", tempUsername, &tempPin, &tempSaldo);
-        
-        if (strcmp(tempUsername, user->username) == 0) {
+
+        if (strcmp(tempUsername, user->username) == 0)
+        {
             fprintf(tempFile, "%s,%d,%d\n", user->username, user->pin, user->saldo);
-        } else {
+        }
+        else
+        {
             fprintf(tempFile, "%s", line);
         }
     }
@@ -70,7 +83,8 @@ void updateUserInFile(User *user) {
     rename("temp.txt", USER_FILE);
 }
 
-void topUp(User *user) {
+void topUp(User *user)
+{
     int jumlahIsiSaldo;
     system("cls");
     printTopCenter("TOP UP SALDO\n");
@@ -78,16 +92,20 @@ void topUp(User *user) {
     printf("\n\nMasukkan jumlah saldo yang ingin diisi: ");
     scanf(" %d", &jumlahIsiSaldo);
 
-    if (jumlahIsiSaldo > 0) {
+    if (jumlahIsiSaldo > 0)
+    {
         user->saldo += jumlahIsiSaldo;
         updateUserInFile(user);
         printf("Saldo berhasil diisi. Saldo Anda: %d\n", user->saldo);
-    } else {
+    }
+    else
+    {
         printf("Jumlah saldo yang diisi harus lebih dari 0.\n");
     }
 }
 
-void registrasi() {
+void registrasi()
+{
     User userBaru;
     char username[50];
     int pin, konfirmasiPin;
@@ -98,7 +116,8 @@ retry:
     printf("\t\t\t\t\t<=====================================>\n");
     printf("\n\nMasukkan username: ");
     scanf("%s", username);
-    if (cekUsernameSudahAda(username)) {
+    if (cekUsernameSudahAda(username))
+    {
         printf("Username sudah digunakan.\n");
         Sleep(2000);
         goto retry;
@@ -108,18 +127,22 @@ retry:
     printf("Konfirmasi PIN: ");
     inputPin(&konfirmasiPin);
 
-    if (pin == konfirmasiPin) {
+    if (pin == konfirmasiPin)
+    {
         setUsername(&userBaru, username);
         setPin(&userBaru, pin);
         setSaldo(&userBaru, 0);
         simpanUser(&userBaru);
         printf("Akun berhasil dibuat.\n");
-    } else {
+    }
+    else
+    {
         printf("PIN tidak cocok.\n");
     }
 }
 
-void loginUser(TreeManager *tm) {
+void loginUser(TreeManager *tm)
+{
     char inputUsername[50];
     int pinlogin;
     User user;
@@ -129,39 +152,48 @@ void loginUser(TreeManager *tm) {
     printf("\n\nMasukkan username: ");
     scanf("%s", inputUsername);
 
-    if (!getUserByUsername(inputUsername, &user)) {
+    if (!getUserByUsername(inputUsername, &user))
+    {
         printf("Username tidak ditemukan.\n");
         return;
     }
 
-    while (1) {
+    while (1)
+    {
         inputPin(&pinlogin);
-        if (pinlogin == user.pin) {
+        if (pinlogin == user.pin)
+        {
             printf("Login berhasil! Selamat datang, %s.\n", user.username);
             menuUser(&user, tm);
             break;
-        } else {
+        }
+        else
+        {
             printf("PIN salah! Coba lagi.\n");
         }
     }
 }
 
-int cekUsernameSudahAda(const char *username) {
+int cekUsernameSudahAda(const char *username)
+{
     User temp;
     return getUserByUsername(username, &temp);
 }
 
-void viewProduct() {
+void viewProduct()
+{
     system("cls");
     printf("Implement me");
 }
 
-void menuAdmin() {
+void menuAdmin()
+{
     system("cls");
     printf("1. ");
 }
 
-void infoPemesanan(User *user) {
+void infoPemesanan(User *user)
+{
     system("cls");
     printf("\t\t\t\t\t\t\tINFO PEMESANAN\n");
     printf("\t\t\t\t\t<=====================================>\n\n");
@@ -170,19 +202,22 @@ void infoPemesanan(User *user) {
     printf("Estimasi sampai: 2 hari.\n");
 }
 
-void beliProduk(TreeManager *tm) {
+void beliProduk(TreeManager *tm)
+{
     char tujuan[100];
     printf("Masukkan kota tujuan: ");
     scanf("%s", tujuan);
 
-    Node *target = find_node_by_name(tm, tujuan);
+    TreeNode *target = find_node_by_name(tm, tujuan);
     printf("Rute pengiriman ke %s:\n", tujuan);
     PrintRuteKota(tm, tujuan);
 }
 
-void menuUser(User *user, TreeManager *tm) {
+void menuUser(User *user, TreeManager *tm)
+{
     int choice;
-    do {
+    do
+    {
         system("cls");
         printf("\t\t\t\t\t\t\tMENU USER\n");
         printf("\t\t\t\t\t<=====================================>\n\n\n");
@@ -193,7 +228,8 @@ void menuUser(User *user, TreeManager *tm) {
         printf("5. Keluar\n");
         printf("Masukkan pilihan: ");
         scanf("%d", &choice);
-        switch (choice) {
+        switch (choice)
+        {
         case 1:
             topUp(user);
             system("pause");
@@ -219,31 +255,38 @@ void menuUser(User *user, TreeManager *tm) {
     } while (choice != 5);
 }
 
-void setUsername(User *n, const char *username) {
+void setUsername(User *n, const char *username)
+{
     strcpy(n->username, username);
 }
 
-void setPin(User *n, int pin) {
+void setPin(User *n, int pin)
+{
     n->pin = pin;
 }
 
-void setSaldo(User *n, int saldo) {
+void setSaldo(User *n, int saldo)
+{
     n->saldo = saldo;
 }
 
-char *getUsername(User *n) {
+char *getUsername(User *n)
+{
     return n->username;
 }
 
-int getPin(User *n) {
+int getPin(User *n)
+{
     return n->pin;
 }
 
-int getSaldo(User *n) {
+int getSaldo(User *n)
+{
     return n->saldo;
 }
 
-void loginAdmin() {
+void loginAdmin()
+{
     char adminUsername[50];
     char inputUsername[50];
     int adminPassword;
@@ -259,15 +302,19 @@ void loginAdmin() {
     scanf("%s", inputUsername);
     inputPin(&inputPassword);
 
-    if (strcmp(inputUsername, adminUsername) == 0 && inputPassword == adminPassword) {
+    if (strcmp(inputUsername, adminUsername) == 0 && inputPassword == adminPassword)
+    {
         isAdminValid = 1;
     }
 
-    if (isAdminValid) {
+    if (isAdminValid)
+    {
         printf("\n\n\nLogin Admin berhasil. Selamat datang, Admin.\n");
         Sleep(2000);
         menuAdmin();
-    } else {
+    }
+    else
+    {
         printf("\nLogin Admin gagal! Username atau Password salah.\n");
     }
 }
