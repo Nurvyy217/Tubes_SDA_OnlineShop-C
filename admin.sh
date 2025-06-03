@@ -1,8 +1,8 @@
 #!/bin/bash
 
-OUTPUT="test.exe"
+OUTPUT="admin.exe"
 INCLUDE_DIR="./src/include"
-SRC_MAIN="./src/main/test.c"
+SRC_MAIN="./src/main/admin.c"
 SERVICE=$(find ./src/service -name "*.c")
 HELPERS=$(find ./src/helper -name "*.c")
 

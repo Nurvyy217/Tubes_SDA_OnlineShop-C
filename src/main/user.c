@@ -4,10 +4,14 @@
 #include "printTemplate.h"
 #include "login.h"
 #include "katalog.h"
-#include "global.h"
+#include "../include/environment.h"
 
 int main() {
+    print_center("SELAMAT DATANG USER", WIDTH, HEIGHT);
+    sleep(2);
     clear_screen();
-    print_center("MODUL USER", WIDTH, HEIGHT);
+
+    print_title("MODUL USER", WIDTH);
+    
     return 0;
 }
