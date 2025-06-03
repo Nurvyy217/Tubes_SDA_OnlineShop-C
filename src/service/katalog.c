@@ -779,7 +779,7 @@ void saveKatalogToFile(List L)
 {
     addressJenis J = Nil;
     addressProduk P = Nil;
-    FILE *fp = fopen("katalog.txt", "w");
+    FILE *fp = fopen("data/katalog.txt", "w");
     if (fp == NULL)
     {
         printf("Gagal membuka file untuk menyimpan katalog.\n");
