@@ -4,6 +4,7 @@
 #include "login.h"
 #include "katalog.h"
 #include "katalog.c"
+#include <windows.h>
 
 int main(){
     char choice1, choice2;
@@ -19,7 +20,7 @@ int main(){
     // 	printf("\t\t\t\t\t<=====================================>\n");
     // 	printf("\n\n\n\nPilihan: ");scanf(" %c",&choice2);
     // 	system("cls");
-    // 	if(choice2 == '1'){
+    // 	if(choice2 == '1'){3
     // 		loginAdmin();
 	// 	}
     //     else if(choice2 == '2'){
@@ -35,6 +36,7 @@ int main(){
 
     // test modul katalog 
     // AKTIFKAN JIKA ANDA PENASARAN HEHE
+    system("color 4F");
     adminKatalog();
 
     return 0;
