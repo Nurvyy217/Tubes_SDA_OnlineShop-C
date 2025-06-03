@@ -4,6 +4,7 @@
 #include <windows.h>
 #include "../include/styleText.h"
 #include "../include/login.h"
+#include "../include/stack.h"
 
 
 

@@ -17,11 +17,10 @@ typedef struct {
     int node_count;
 } TreeManager;
 
+
 void InitTree(TreeManager *tm);
 void load_tree(TreeManager *tm);
 Node* find_node_by_name(TreeManager *tm, char *name);
-void print_route(Node *target);
-void PrintRuteKota(TreeManager *tm, const char *tujuan);
 void save_tree(TreeManager *tm);
 void insert_default_tree(TreeManager *tm);
 

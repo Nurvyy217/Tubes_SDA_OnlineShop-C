@@ -2,13 +2,14 @@
 #include <windows.h>
 #include "../include/styleText.h"
 #include "../include/login.h"
-#include "../include/transitKota.h"
+#include "../include/tree.h"
 
-int main() {
+int main()
+{
     TreeManager tm;
     initUserFile();
     InitTree(&tm);
-    
+
     char choice;
     system("cls");
     printf("\n\n\n\n\t\t\t\t\t\tWelcome to online shop\n");
@@ -16,17 +17,23 @@ int main() {
     system("cls");
     printf("\t\t\t\t\t\t\t1.LOGIN / 2.REGISTRASI\n");
     printf("\t\t\t\t\t\t<==================================>\n");
-    printf("\n\n\n\nPilihan: ");scanf(" %c", &choice);
+    printf("\n\n\n\nPilihan: ");
+    scanf(" %c", &choice);
     system("cls");
-    if (choice == '1') {
+    if (choice == '1')
+    {
         system("cls");
         loginUser(&tm);
-    } else if (choice == '2') {
+    }
+    else if (choice == '2')
+    {
         system("cls");
         registrasi();
-    } else {
+    }
+    else
+    {
         printf("Pilihan tidak valid. Silakan jalankan ulang program.\n");
     }
-    
+
     return 0;
 }
