@@ -176,7 +176,7 @@ void beliProduk(TreeManager *tm) {
     printf("Masukkan kota tujuan: ");
     scanf("%s", tujuan);
 
-    Node *target = find_node_by_name(tm, tujuan);
+    TreeNode *target = find_node_by_name(tm, tujuan);
     printf("Rute pengiriman ke %s:\n", tujuan);
     PrintRuteKota(tm, tujuan);
 }

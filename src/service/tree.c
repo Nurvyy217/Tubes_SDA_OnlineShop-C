@@ -77,7 +77,7 @@ void load_tree(TreeManager *tm)
     char line[256];
     while (fgets(line, sizeof(line), file))
     {
-        Node *node = malloc(sizeof(Node));
+        TreeNode *node = malloc(sizeof(TreeNode));
         sscanf(line, "%d,%[^,],%d",
                &node->id,
                node->name,
@@ -93,11 +93,11 @@ void load_tree(TreeManager *tm)
     // Build parent-child and sibling relationships
     for (int i = 0; i < tm->node_count; i++)
     {
-        Node *child = tm->nodes[i];
+        TreeNode *child = tm->nodes[i];
         if (child->parent_id == 0)
             continue;
 
-        Node *parent = NULL;
+        TreeNode *parent = NULL;
         for (int j = 0; j < tm->node_count; j++)
         {
             if (tm->nodes[j]->id == child->parent_id)
@@ -115,7 +115,7 @@ void load_tree(TreeManager *tm)
             }
             else
             {
-                Node *sibling = parent->first_child;
+                TreeNode *sibling = parent->first_child;
                 while (sibling->next_sibling)
                 {
                     sibling = sibling->next_sibling;
@@ -156,7 +156,7 @@ void insert_default_tree(TreeManager *tm)
 
     for (size_t i = 0; i < sizeof(entries) / sizeof(entries[0]); i++)
     {
-        Node *node = malloc(sizeof(Node));
+        TreeNode *node = malloc(sizeof(TreeNode));
         node->id = entries[i].id;
         strcpy(node->name, entries[i].name);
         node->parent_id = entries[i].parent_id;
@@ -167,7 +167,7 @@ void insert_default_tree(TreeManager *tm)
     }
 }
 
-Node *find_node_by_name(TreeManager *tm, char *name)
+TreeNode *find_node_by_name(TreeManager *tm, char *name)
 {
     for (int i = 0; i < tm->node_count; i++)
     {

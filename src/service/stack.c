@@ -8,7 +8,7 @@ void CreateEmpty(Stack *S)
     Top(*S) = NULL;
 }
 
-void Push(Stack *S, Node *tree) {
+void Push(Stack *S, TreeNode *tree) {
     addressStack newNode = (addressStack)malloc(sizeof(StackNode));
     if (newNode != NULL) {
         strcpy(City(newNode), tree->name);
@@ -25,7 +25,7 @@ void Pop(Stack *S) {
     free(temp);
 }
 
-void print_route(Node *target)
+void print_route(TreeNode *target)
 {
      if (!target)
     {
@@ -36,22 +36,22 @@ void print_route(Node *target)
     Stack S;
     CreateEmpty(&S);
 
-    Node *temp = target;
+    TreeNode *temp = target;
     while (temp) {
         Push(&S, temp);
         temp = temp->parent;
     }
-    int first = 1;
+    int helper = 1;
     while (Top(S)) {
-        if (!first) printf(" -> ");
+        if (!helper) printf(" -> ");
         Pop(&S);
-        first = 0;
+        helper = 0;
     }
     printf("\n");
 }
 
 void PrintRuteKota(TreeManager *tm, const char *tujuan)
 {
-    Node *target = find_node_by_name(tm, (char *)tujuan);
+    TreeNode *target = find_node_by_name(tm, (char *)tujuan);
     print_route(target);
 }
