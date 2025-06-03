@@ -34,6 +34,9 @@ typedef struct {
 void adminKatalog(); 
 // IS : admin tidak dapat mengontrol katalog
 // FS : admin dapat mengontrol penuh katalog 
+void userKatalog();
+// IS : user tidak dapat melihat katalog
+// FS : user dapat melihat katalog dari toko
 
 // MODUL KONSTRUKTOR
 addressProduk alokasi_Produk(int harga, int stok, char* barang);
@@ -61,7 +64,7 @@ void addStokProduk(List *P, int stok, char* produk);
 // FS : data stok produk bertambah nilainya
 void minusStokProduk(List *P, int stock, char* produk);
 // IS : data stok produk ada dan belum berkurang
-// FS : data stok produk bertambah nilainya
+// FS : data stok produk berkurang nilainya
 void updateHargaProduk(List *P, int harga, char* produk);
 // IS : data harga produk ada
 // FS : data harga produk di update
@@ -82,18 +85,19 @@ int getStokProduk(List *P, char* barang);
 bool isDuplikatJenis(List *P, char* jenis);
 // IS : nilai duplikasi jenis false
 // FS : mengembalikan nilai boolean duplikasi jenis bisa true dan bisa false
-bool isDuplikatProduk(addressProduk *P, char* produk);
+bool isDuplikatProduk(addressProduk P, char* produk);
 // IS : nilai duplikasi produk false
 // FS : mengembalikan nilai boolean duplikasi produk bisa true dan bisa false
+
 
 // FILE OPERATION OF KATALOG    
 void saveKatalogToFile(List L);
 // IS : file .txt bisa kosong bisa tidak, data belum disimpan di file
 // FS : file .txt terupdate, data telah disimpan di file
-
 void loadKatalogFromFile(List *L);
 // IS : file .txt bisa kosong dan bisa tidak, data tidak diambil ke program
 // FS : file .txt diambil di program dan bisa di manipulasi dalam program
+
 
 
 #endif

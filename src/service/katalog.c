@@ -31,7 +31,7 @@ void adminKatalog()
         printf("========================\n");
         printf("Selamat Datang admin");
         printf("\n1.Tambah Jenis\n2.Hapus Jenis\n3.Tambah Produk\n4.Hapus Produk\n");
-        printf("5.Ganti Harga\n6.Tambah Stok\n7.Kurangi Stok\n8.Keluar");
+        printf("5.Update Harga\n6.Tambah Stok\n7.Kurangi Stok\n8.Keluar");
         printf("\nPilihan anda : ");
         scanf("%d", &decision);
         if (decision == 1)
@@ -39,7 +39,9 @@ void adminKatalog()
             system("cls");
             printf("\nStatus Pilihan : 1. Tambah Jenis");
             printf("\nMasukkan Jenis barang baru : ");
-            scanf("%s", jenis);
+            getchar();
+            fgets(jenis, sizeof(jenis), stdin);
+            jenis[strcspn(jenis, "\n")] = '\0';
             addJenis(&katalog, jenis);
             printf("\nData telah dipdate");
             sleep(2);
@@ -49,7 +51,9 @@ void adminKatalog()
             system("cls");
             printf("\nStatus Pilihan : 2. Hapus Jenis");
             printf("\nMasukkan Jenis barang yang akan dihapus : ");
-            scanf("%s", jenis);
+            getchar();
+            fgets(jenis, sizeof(jenis), stdin);
+            jenis[strcspn(jenis, "\n")] = '\0';
             delJenis(&katalog, jenis);
             printf("\nData telah di update");
             sleep(2);
@@ -57,47 +61,57 @@ void adminKatalog()
         else if (decision == 3)
         {
             subDecision = 0;
-            while (subDecision == 0)
-            {
-                system("cls");
-                printf("\nStatus Pilihan : 3. Tambah Produk");
-                printf("\nMasukkan Produk yang akan ditambahkan : ");
-                scanf("%s", produk);
-                printf("Masukkan Jenis produk yang akan ditambahkan barangnya : ");
-                scanf("%s", jenis);
-                printf("Masukkan Jumlah stok barang : ");
-                scanf("%d", &stok);
-                printf("Masukkan Harga barang : ");
-                scanf("%d", &harga);
-                system("cls");
-                printf("Status Tambahan \n");
-                printf("%-5s | %-20s | %-5s | %-10s\n", "No", "Barang", "Stok", "Harga");
-                printf("----------------------------------------------------------\n");
-                printf("%-5d | %-20s | %-5d | %-10d\n", statusInt, produk, stok, harga);
-                sleep(1);
-                printf("\nApakah data sudah sesuai ?\n1. Ya\n2. Tidak\nMasukkan pilihan anda : ");
-                scanf("%d", &subDecision);
-                if (subDecision == 1)
-                {
-                    addProduk(&katalog, harga, stok, produk, jenis);
-                    printf("Data telah di update...");
-                    sleep(2);
-                }
-            }
+            while(subDecision == 0){
+        system("cls");
+        printf("\nStatus Pilihan : 3. Tambah Produk");
+        printf("\nMasukkan Produk yang akan ditambahkan : ");
+        fgets(produk, sizeof(produk), stdin);
+        produk[strcspn(produk, "\n")] = '\0';
+
+        printf("Masukkan Jenis produk yang akan ditambahkan barangnya : ");
+        fgets(jenis, sizeof(jenis), stdin);
+        jenis[strcspn(jenis, "\n")] = '\0';
+
+        printf("Masukkan Jumlah stok barang : ");
+        scanf("%d", &stok);
+        printf("Masukkan Harga barang : ");
+        scanf("%d", &harga);
+
+        // Bersihkan sisa newline di buffer sebelum looping ulang, karena scanf tidak menghabiskan newline
+        while(getchar() != '\n');
+
+        system("cls");
+        printf("Status Tambahan \n");
+        printf("%-5s | %-20s | %-5s | %-10s\n", "No", "Barang", "Stok", "Harga");
+        printf("----------------------------------------------------------\n");
+        printf("%-5d | %-20s | %-5d | %-10d\n", statusInt, produk, stok, harga);
+        sleep(1);
+        printf("\nApakah data sudah sesuai ?\n1. Ya\n2. Tidak\nMasukkan pilihan anda : ");
+        scanf("%d", &subDecision);
+
+        while(getchar() != '\n'); // bersihkan buffer newline lagi
+        if(subDecision == 1){
+            addProduk(&katalog, harga, stok, produk, jenis);
+            printf("Data telah di update...");
+            sleep(2);
         }
-        else if (decision == 4)
-        {
+    }
+        }else if(decision == 4){
             subDecision = 0;
             while (subDecision == 0)
             {
                 system("cls");
                 printf("\nStatus Pilihan : 4. Hapus Produk");
                 printf("\nMasukkan Jenis dari produk yang akan dihapus : ");
-                scanf("%s", jenis);
+                getchar();
+                fgets(jenis, sizeof(jenis), stdin);
+                jenis[strcspn(jenis, "\n")] = '\0'; 
                 printf("\nMasukkan Produk yang akan dihapus : ");
-                scanf("%s", produk);
+                getchar();
+                fgets(produk, sizeof(produk), stdin);
+                produk[strcspn(produk, "\n")] = '\0'; 
                 printf("Data %s ditemukan di kategori %s", produk, jenis);
-                printf("\nApakah anda yakin ingin menghapus ? \n1.Ya\n2.tidak\nMasukkan pilihan : ");
+                printf("\n  ");
                 scanf("%d", &subDecision);
                 if (subDecision == 1)
                 {
@@ -117,9 +131,11 @@ void adminKatalog()
             while (subDecision == 0)
             {
                 system("cls");
-                printf("\nStatus Pilihan : 5. Ganti Harga");
+                printf("\nStatus Pilihan : 5. Update Harga");
                 printf("\nMasukkan produk yang akan diganti harganya : ");
-                scanf("%s", produk);
+                getchar();
+                fgets(produk, sizeof(produk), stdin);
+                produk[strcspn(produk, "\n")] = '\0'; 
                 P = searchProduk(&katalog, produk);
                 if (P != Nil)
                 {
@@ -158,7 +174,9 @@ void adminKatalog()
                 system("cls");
                 printf("\nStatus Pilihan : 6. Tambah Stok");
                 printf("\nMasukkan nama produk yang ingin ditambah stoknya: ");
-                scanf("%s", produk);
+                getchar();
+                fgets(produk, sizeof(produk), stdin);
+                produk[strcspn(produk, "\n")] = '\0'; 
                 addressProduk P = searchProduk(&katalog, produk);
                 if (P != Nil)
                 {
@@ -186,7 +204,9 @@ void adminKatalog()
                 system("cls");
                 printf("\nStatus Pilihan : 7. Kurangi Stok");
                 printf("\nMasukkan nama produk yang ingin dikurangi stoknya: ");
-                scanf("%s", produk);
+                getchar();
+                fgets(produk, sizeof(produk), stdin);
+                produk[strcspn(produk, "\n")] = '\0'; 
                 addressProduk P = searchProduk(&katalog, produk);
                 if (P != Nil)
                 {
@@ -229,9 +249,10 @@ void adminKatalog()
     }
 }
 
-// konstruktor
-addressProduk alokasi_Produk(int harga, int stok, char *barang)
-{
+// MODUL POV USER
+
+// KONSTRUKTOR 
+addressProduk alokasi_Produk(int harga, int stok, char* barang){
     addressProduk P = (addressProduk)malloc(sizeof(PRODUK));
     if (P != Nil)
     {
@@ -296,13 +317,10 @@ void addProduk(List *P, int harga, int stok, char *barang, char *jenis)
             }
         }
         temp = tempJenis->produkJenis; // tempJenis->produkJenis akan menjadi first untuk list produk
-        if (temp != Nil)
-        {
-            duplikat = isDuplikatProduk(&temp, barang);
-            if (duplikat == false)
-            {
-                while (temp->next != Nil)
-                {
+        if(temp != Nil){
+            duplikat = isDuplikatProduk(temp, barang);
+            if(duplikat == false){
+                while(temp->next != Nil){
                     temp = temp->next;
                 }
             }
@@ -675,16 +693,12 @@ bool isDuplikatJenis(List *P, char *jenis)
     }
 }
 
-bool isDuplikatProduk(addressProduk *P, char *produk)
-{
+bool isDuplikatProduk(addressProduk P, char* produk){
     // (*P) adalah poiner menunjuk ke jenis paling depan
-    addressProduk tempProduk = (*P);
-    if (tempProduk != Nil)
-    {
-        while (tempProduk != Nil)
-        {
-            if (strcmp(tempProduk->barang, produk) == 0)
-            {
+    addressProduk tempProduk = P;
+    if(tempProduk != Nil){
+        while(tempProduk != Nil){
+            if(strcmp(tempProduk->barang, produk) == 0){
                 return true;
             }
             tempProduk = tempProduk->next;
