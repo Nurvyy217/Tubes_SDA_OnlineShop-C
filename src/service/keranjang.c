@@ -23,7 +23,6 @@ void AllocateCart(Cart **newCart){
     }
 }
 
-
 void InsertLast(CartList *list, address newCart) {
     if (list->First == NULL) {
         list->First = newCart;
@@ -36,6 +35,109 @@ void InsertLast(CartList *list, address newCart) {
     }
 }
 
+void AddCart(CartList *List, int item_id, int quantity){
+    Cart *newCart, *existing;
+    int id;
+    
+    existing = CheckItemExisted(*List, item_id);
+
+    if (existing != NULL) {
+        existing->quantity += quantity;
+        printf("Berhasil mengupdate keranjang!\n");
+
+        RewriteCartFile(*List);
+        return;
+    }
+
+    AllocateCart(&newCart);
+    if(!newCart) {
+        printf("Gagal mengalokasi keranjang...\n");
+        return;
+    }
+
+    id = GetLastCartID();
+
+    newCart->id = id + 1; 
+    newCart->item_id = item_id;
+    newCart->quantity = quantity;
+    newCart->next = NULL;
+
+    AddToFile(newCart->id, newCart->item_id, newCart->quantity);
+    InsertLast(List, newCart);
+}
+
+void PrintCart(CartList List){
+    CartList TempList;
+    address TempNode;
+
+    CreateEmpty(&TempList);
+    GenerateCartList(&TempList);
+
+    TempNode = TempList.First;
+
+    while (TempNode != NULL) {
+        FILE *katalog = fopen("data/katalog.txt", "r");
+        if (katalog == NULL) {
+            perror("Failed to open katalog.txt");
+            return;
+        }
+
+        char line[200];
+        int id, price, stock;
+        char name[50], type[20];
+        boolean found = false;
+
+        while (fgets(line, sizeof(line), katalog)) {
+            if (sscanf(line, "%d,%[^,],%[^,],%d,%d", &id, name, type, &price, &stock) == 5) {
+                if (id == TempNode->item_id) {
+                    found = true;
+                    printf("Cart ID: %d | Item ID: %d | Qty: %d | Name: %s | Type: %s | Price: %d\n",
+                        TempNode->id, TempNode->item_id, TempNode->quantity, name, type, price);
+                    break;
+                }
+            }
+        }
+
+        if (!found) {
+            printf("Cart ID: %d | Item ID: %d | Qty: %d | [Item not found in katalog]\n",
+                TempNode->id, TempNode->item_id, TempNode->quantity);
+        }
+
+        fclose(katalog);
+        TempNode = TempNode->next;
+    }
+}
+
+void AddToFile(int id, int item_id, int quantity){
+    FILE *cartFile;
+    cartFile = fopen("data/cart.txt", "a");
+    if(!cartFile){
+        perror("Error opening cart.txt");
+    } else {
+        fprintf(cartFile, "%d,%d,%d\n", id, item_id, quantity);
+        printf("Keranjang ditambahkan!\n");
+        fclose(cartFile);
+    }
+}
+
+void RewriteCartFile(CartList List) {
+    FILE *cartFile = fopen("data/cart.txt", "w");
+    address temp; 
+    if (!cartFile) {
+        perror("Error rewriting cart.txt");
+        return;
+    }
+
+    temp = List.First;
+    while (temp != NULL) {
+        fprintf(cartFile, "%d,%d,%d\n", temp->id, temp->item_id, temp->quantity);
+        temp = temp->next;
+    }
+
+    fclose(cartFile);
+}
+
+// HELPER 
 void GenerateCartList(CartList *List) {
     address newCart;
     char line[100];
@@ -62,66 +164,6 @@ void GenerateCartList(CartList *List) {
     fclose(file);
 }
 
-void AddCart(CartList *List, int item_id, int quantity){
-    Cart *newCart, *existing;
-    int id;
-    
-    existing = CheckItemExisted(*List, item_id);
-
-    if (existing != NULL) {
-        existing->quantity += quantity;
-        printf("Quantity updated for item_id %d: now %d\n", item_id, existing->quantity);
-
-        RewriteCartFile(*List);
-        return;
-    }
-
-    AllocateCart(&newCart);
-    if(!newCart) {
-        printf("Gagal mengalokasi keranjang...\n");
-        return;
-    }
-
-    id = GetLastCartID();
-
-    newCart->id = id + 1; 
-    newCart->item_id = item_id;
-    newCart->quantity = quantity;
-    newCart->next = NULL;
-
-    AddToFile(newCart->id, newCart->item_id, newCart->quantity);
-    InsertLast(List, newCart);
-}
-
-void AddToFile(int id, int item_id, int quantity){
-    FILE *cartFile;
-    cartFile = fopen("data/cart.txt", "a");
-    if(!cartFile){
-        perror("Error opening cart.txt");
-    } else {
-        fprintf(cartFile, "%d,%d,%d\n", id, item_id, quantity);
-        printf("Keranjang ditambahkan!\n");
-        fclose(cartFile);
-    }
-}
-
-void RewriteCartFile(CartList List) {
-    FILE *cartFile = fopen("data/cart.txt", "w");
-    if (!cartFile) {
-        perror("Error rewriting cart.txt");
-        return;
-    }
-
-    address p = List.First;
-    while (p != NULL) {
-        fprintf(cartFile, "%d,%d,%d\n", p->id, p->item_id, p->quantity);
-        p = p->next;
-    }
-
-    fclose(cartFile);
-}
-
-// HELPER 
 int GetLastCartID() {
     int id, item_id, qty;
     int lastID = 0;
