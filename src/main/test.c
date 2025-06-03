@@ -13,7 +13,7 @@ command ini bisa dihapus jika sudah melakukan step diatas
 #include "styleText.h"
 #include "login.h"
 #include "katalog.h"
-#include "environment.h"
+#include "global.h"
 #include "printTemplate.h"
 
 int main()
