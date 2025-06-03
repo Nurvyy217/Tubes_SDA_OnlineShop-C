@@ -85,14 +85,3 @@ void print_table(const char* headers[], int col_count, void* data[], int row_cou
         print_row(data[i], i + 1);
     }
 }
-
-// Row Example
-// void print_transaction_row(void* data, int index) {
-//     Transaction* t = (Transaction*)data;
-//     printf("| %-3d | %-3d | %-3d | %-3d | %-6d | %-10s |\n", index, t->user_id, t->item_id, t->quantity, t->total_price, t->status);
-// }
-
-// void print_user_row(void* data, int index) {
-//     User* u = (User*)data;
-//     printf("| %-3d | %-15s | %-20s | %-6d |\n", index, u->username, u->email, u->saldo);
-// }

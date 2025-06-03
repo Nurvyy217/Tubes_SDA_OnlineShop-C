@@ -23,6 +23,7 @@ void PrintCart(CartList List);
 
 void AddToFile(int id, int item_id, int quantity);
 void RewriteCartFile(CartList List);
+void CheckOut(CartList *List);
 
 void GenerateCartList(CartList *List);
 int GetLastCartID();

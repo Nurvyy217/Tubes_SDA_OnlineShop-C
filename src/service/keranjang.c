@@ -1,4 +1,5 @@
 #include "../include/keranjang.h"
+#include "../helper/printTemplate.c"
 
 // MAIN PROGRAM
 void CreateEmpty(CartList *List){
@@ -64,17 +65,28 @@ void AddCart(CartList *List, int item_id, int quantity){
 
     AddToFile(newCart->id, newCart->item_id, newCart->quantity);
     InsertLast(List, newCart);
+    printf("Berhasil menambahkan keranjang!\n");
 }
 
 void PrintCart(CartList List){
     CartList TempList;
     address TempNode;
+    char line[100];
+    int id, price, stock;
+    char name[50], type[20];
+    boolean found;
 
     CreateEmpty(&TempList);
     GenerateCartList(&TempList);
 
     TempNode = TempList.First;
+    found = false;
 
+    printf("============================================================\n");
+    printf("| No  | Item Name      | Type           | Price      | Qty |\n");
+    printf("============================================================\n");
+
+    int no = 1;
     while (TempNode != NULL) {
         FILE *katalog = fopen("data/katalog.txt", "r");
         if (katalog == NULL) {
@@ -82,32 +94,41 @@ void PrintCart(CartList List){
             return;
         }
 
-        char line[200];
-        int id, price, stock;
-        char name[50], type[20];
-        boolean found = false;
-
         while (fgets(line, sizeof(line), katalog)) {
             if (sscanf(line, "%d,%[^,],%[^,],%d,%d", &id, name, type, &price, &stock) == 5) {
                 if (id == TempNode->item_id) {
                     found = true;
-                    printf("Cart ID: %d | Item ID: %d | Qty: %d | Name: %s | Type: %s | Price: %d\n",
-                        TempNode->id, TempNode->item_id, TempNode->quantity, name, type, price);
+                    printf("| %-3d | %-14s | %-14s | %-10d | %-4d|\n",
+                        no, name, type, price, TempNode->quantity);
                     break;
                 }
             }
         }
 
         if (!found) {
-            printf("Cart ID: %d | Item ID: %d | Qty: %d | [Item not found in katalog]\n",
-                TempNode->id, TempNode->item_id, TempNode->quantity);
+            printf("| %-3d | %-14s | %-9s | %-11s | %-4d|\n",
+                no, "[UNKNOWN]", "-", "-", TempNode->quantity);
         }
 
         fclose(katalog);
         TempNode = TempNode->next;
+        no++;
     }
+
+    printf("============================================================\n");
 }
 
+void CheckOut(CartList *List){
+    int id;
+
+    print_title("CHECKOUT KERANJANG", WIDTH);
+    PrintCart(*List);
+    printf("\nMasukan no keranjang: ");
+    scanf("%d", &id);
+
+}
+
+// FILES
 void AddToFile(int id, int item_id, int quantity){
     FILE *cartFile;
     cartFile = fopen("data/cart.txt", "a");
@@ -115,7 +136,6 @@ void AddToFile(int id, int item_id, int quantity){
         perror("Error opening cart.txt");
     } else {
         fprintf(cartFile, "%d,%d,%d\n", id, item_id, quantity);
-        printf("Keranjang ditambahkan!\n");
         fclose(cartFile);
     }
 }
@@ -133,7 +153,6 @@ void RewriteCartFile(CartList List) {
         fprintf(cartFile, "%d,%d,%d\n", temp->id, temp->item_id, temp->quantity);
         temp = temp->next;
     }
-
     fclose(cartFile);
 }
 
