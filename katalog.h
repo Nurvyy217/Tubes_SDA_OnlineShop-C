@@ -40,7 +40,7 @@ void userKatalog();
 // FS : user dapat melihat katalog dari toko
 
 // MODUL KONSTRUKTOR
-addressProduk alokasi_Produk(int harga, int stok, char* barang, int id);
+addressProduk alokasi_Produk(int harga, int stok, char* barang, int *id);
 // IS : Tidak ada NODE yang dibuat untuk produk
 // FS : Terdapat sebuah NODE untuk produk
 addressJenis alokasi_Jenis(char* jenis);
@@ -48,7 +48,7 @@ addressJenis alokasi_Jenis(char* jenis);
 // FS : Tedapat sebuah NODE untuk Jenis barang
 
 // MODUL CONTROL LIST
-void addProduk(List *P, int harga, int stok, char* barang, char* jenis, int id);
+void addProduk(List *P, int harga, int stok, char* barang, char* jenis, int *id);
 // IS : list produk tidak ada atau bisa saja ada 
 // FS : list produk terdapat sebuah node atau list bertambah
 void addJenis(List *P, char* Jenis);
@@ -72,8 +72,8 @@ void updateHargaProduk(List *P, int harga, char* produk);
 
 // MODUL NON CONTROL
 void printKatalog(List P);
-// IS : list belum di print ke terminal
-// FS : list sudah di print ke terminal
+// IS : semua list produk belum di print ke terminal
+// FS : semua list produk sudah di print ke terminal
 addressProduk searchProduk(List *P, char* barang);
 // IS : terdapat pointer yang menunjuk ke arah sembarang
 // FS : mengembalikan pointer yang menunjuk ke arah node barang yang dituju
@@ -89,6 +89,9 @@ bool isDuplikatJenis(List *P, char* jenis);
 bool isDuplikatProduk(addressProduk P, char* produk);
 // IS : nilai duplikasi produk false
 // FS : mengembalikan nilai boolean duplikasi produk bisa true dan bisa false
+void printKatalogByKategori(List P);
+// IS : list produk spesifik dari sebuah jenis belum di print ke terminal 
+// FS : list produk spesifik dari sudah jenis belum di print ke terminal 
 
 
 // FILE OPERATION OF KATALOG    
@@ -99,6 +102,8 @@ void loadKatalogFromFile(List *L);
 // IS : file .txt bisa kosong dan bisa tidak, data tidak diambil ke program
 // FS : file .txt diambil di program dan bisa di manipulasi dalam program
 
+void saveKatalogIdFile(List L);
+void loadKatalogIdFromFile(List *L);
 
 
 #endif

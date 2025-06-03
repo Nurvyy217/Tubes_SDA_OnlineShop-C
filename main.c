@@ -6,6 +6,7 @@
 #include "katalog.c"
 #include <windows.h>
 
+
 int main(){
     char choice1, choice2;
     // printf("Welcome to online shop\n");
@@ -36,7 +37,6 @@ int main(){
 
     // test modul katalog 
     // AKTIFKAN JIKA ANDA PENASARAN HEHE
-    system("color 4F");
     adminKatalog();
 
     return 0;

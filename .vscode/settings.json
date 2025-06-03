@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "katalog.h": "c",
-        "login.h": "c"
+        "login.h": "c",
+        "styletext.h": "c"
     }
 }

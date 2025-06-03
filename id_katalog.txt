@@ -1,0 +1,3 @@
+2; adiddas durano; sepatu lari; 500000; 10
+3; eiger shoes; sepatu gunung; 700000; 15
+1; converse chucknorris; sepatu casual; 1200000; 15
