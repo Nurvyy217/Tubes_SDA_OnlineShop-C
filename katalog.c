@@ -18,10 +18,12 @@ void adminKatalog(){
     int statusInt = 1;
     katalog.First = Nil;
     bool search;
+    int id = 0;
     loadKatalogFromFile(&katalog);
 
     // Begin
     for(;;){
+        id++;
         system("cls");
         printf("KATALOG");
         printf("\n========================");
@@ -84,7 +86,7 @@ void adminKatalog(){
 
         while(getchar() != '\n'); // bersihkan buffer newline lagi
         if(subDecision == 1){
-            addProduk(&katalog, harga, stok, produk, jenis);
+            addProduk(&katalog, harga, stok, produk, jenis, id);
             printf("Data telah di update...");
             sleep(2);
         }
@@ -214,13 +216,14 @@ void adminKatalog(){
 // MODUL POV USER
 
 // KONSTRUKTOR 
-addressProduk alokasi_Produk(int harga, int stok, char* barang){
+addressProduk alokasi_Produk(int harga, int stok, char* barang, int id){
     addressProduk P = (addressProduk)malloc(sizeof(PRODUK));
     if(P != Nil){
         strcpy(P->barang, barang);
         P->stok = stok;
         P->harga = harga;
         P->next = Nil;
+        P->id = id;
         return P;
     }else{
         printf("alokasi gagal!!!");
@@ -242,9 +245,9 @@ addressJenis alokasi_Jenis(char* Jenis){
 }
 
 // MODUL CONTROL
-void addProduk(List *P, int harga, int stok, char* barang, char* jenis){
+void addProduk(List *P, int harga, int stok, char* barang, char* jenis, int id){
     // (*P) akan selalu menunjuk ke depan jenis katalog
-    addressProduk X = alokasi_Produk(harga, stok, barang);
+    addressProduk X = alokasi_Produk(harga, stok, barang, id);
     addressProduk temp;
     addressJenis tempJenis = (*P).First;
     bool duplikat;
@@ -471,7 +474,7 @@ void printKatalog(List P){
                 printf("----------------------------------------------------------\n");
 
                 while(produk != Nil){
-                    printf("%-5d | %-20s | %-5d | %-10d\n", i, produk->barang, produk->stok, produk->harga);
+                    printf("%-5d | %-20s | %-5d | %-10d\n", produk->id, produk->barang, produk->stok, produk->harga);
                     i++;
                     produk = produk->next;
                 }

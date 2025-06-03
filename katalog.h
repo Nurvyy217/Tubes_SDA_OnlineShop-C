@@ -11,6 +11,7 @@ typedef char barang;
 typedef int infoHarga;
 typedef struct PRODUK* addressProduk;
 typedef struct PRODUK{
+    int id;
     infoJumlah stok; // stok barang
     barang barang[MAX]; // nama barang 
     infoHarga harga; // harga barang 
@@ -39,7 +40,7 @@ void userKatalog();
 // FS : user dapat melihat katalog dari toko
 
 // MODUL KONSTRUKTOR
-addressProduk alokasi_Produk(int harga, int stok, char* barang);
+addressProduk alokasi_Produk(int harga, int stok, char* barang, int id);
 // IS : Tidak ada NODE yang dibuat untuk produk
 // FS : Terdapat sebuah NODE untuk produk
 addressJenis alokasi_Jenis(char* jenis);
@@ -47,7 +48,7 @@ addressJenis alokasi_Jenis(char* jenis);
 // FS : Tedapat sebuah NODE untuk Jenis barang
 
 // MODUL CONTROL LIST
-void addProduk(List *P, int harga, int stok, char* barang, char* jenis);
+void addProduk(List *P, int harga, int stok, char* barang, char* jenis, int id);
 // IS : list produk tidak ada atau bisa saja ada 
 // FS : list produk terdapat sebuah node atau list bertambah
 void addJenis(List *P, char* Jenis);
