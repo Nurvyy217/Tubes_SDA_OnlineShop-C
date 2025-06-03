@@ -1,5 +1,5 @@
 *.exe
-# src/main/test.c
+src/main/test.c
 .vscode/
 src/include/environment.h
 src/include/global.h

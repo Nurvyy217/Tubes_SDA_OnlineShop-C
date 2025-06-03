@@ -10,7 +10,6 @@ echo "Compiling test..."
 gcc -o $OUTPUT $SRC_MAIN $HELPERS $SERVICE -I$INCLUDE_DIR
 
 if [ $? -eq 0 ]; then
-    echo "Test compiled successfully!"
     ./$OUTPUT
 else
     echo "Test compilation failed."
