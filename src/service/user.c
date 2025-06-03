@@ -210,6 +210,7 @@ void beliProduk(TreeManager *tm)
 
     TreeNode *target = find_node_by_name(tm, tujuan);
     printf("Rute pengiriman ke %s:\n", tujuan);
+    print_tree_horizontal_centered(tm);
     PrintRuteKota(tm, tujuan);
 }
 

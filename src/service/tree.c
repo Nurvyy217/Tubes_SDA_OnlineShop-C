@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "../include/stack.h"
 
+
 void InitTree(TreeManager *tm)
 {
     // Initialize the TreeManager
@@ -177,3 +178,96 @@ TreeNode *find_node_by_name(TreeManager *tm, char *name)
     return NULL;
 }
 
+
+// Helper untuk mendapatkan lebar subtree
+int subtree_width(TreeNode *node) {
+    if (!node) return 0;
+    if (!node->first_child) return (int)strlen(node->name);
+    int width = 0;
+    TreeNode *child = node->first_child;
+    while (child) {
+        width += subtree_width(child) + 4; // 4 spasi antar anak
+        child = child->next_sibling;
+    }
+    return width;
+}
+
+// Print node pada posisi tertentu
+void print_at(char canvas[][MAX_WIDTH], int row, int col, const char *text) {
+    for (int i = 0; text[i] && col + i < MAX_WIDTH; i++)
+        canvas[row][col + i] = text[i];
+}
+
+// Recursive print
+int print_tree_centered(TreeNode *node, char canvas[][MAX_WIDTH], int row, int col) {
+    if (!node) return 0;
+    int name_len = (int)strlen(node->name);
+
+    // Hitung total width subtree
+    int total_width = subtree_width(node);
+    if (total_width < name_len) total_width = name_len;
+
+    // Posisi node di tengah subtree
+    int node_col = col + total_width / 2 - name_len / 2;
+    print_at(canvas, row, node_col, node->name);
+
+    // Print garis ke anak-anak
+    TreeNode *child = node->first_child;
+    int child_col = col;
+    while (child) {
+        int child_width = subtree_width(child);
+        int child_name_len = (int)strlen(child->name);
+        int child_node_col = child_col + child_width / 2 - child_name_len / 2;
+
+        // Garis vertikal dari parent ke child
+        int parent_mid = node_col + name_len / 2;
+        int child_mid = child_node_col + child_name_len / 2;
+        int line_row = row + 1;
+        if (parent_mid == child_mid) {
+            canvas[line_row][parent_mid] = '|';
+        } else {
+            // Garis miring/horisontal
+            int start = parent_mid < child_mid ? parent_mid : child_mid;
+            int end = parent_mid > child_mid ? parent_mid : child_mid;
+            for (int i = start; i <= end; i++)
+                canvas[line_row][i] = '-';
+            canvas[line_row][parent_mid] = '+';
+            canvas[line_row][child_mid] = '+';
+            canvas[line_row + 1][child_mid] = '|';
+        }
+
+        // Rekursif ke anak
+        print_tree_centered(child, canvas, row + 2, child_col);
+        child_col += child_width + 4;
+        child = child->next_sibling;
+    }
+    return total_width;
+}
+
+void print_tree_horizontal_centered(TreeManager *tm) {
+    // Cari root
+    TreeNode *root = NULL;
+    for (int i = 0; i < tm->node_count; i++) {
+        if (tm->nodes[i]->parent_id == 0) {
+            root = tm->nodes[i];
+            break;
+        }
+    }
+    if (!root) return;
+
+    // Siapkan canvas kosong
+    char canvas[40][MAX_WIDTH];
+    for (int i = 0; i < 40; i++)
+        for (int j = 0; j < MAX_WIDTH; j++)
+            canvas[i][j] = ' ';
+
+    print_tree_centered(root, canvas, 0, 0);
+
+    // Print canvas
+    for (int i = 0; i < 40; i++) {
+        int last = MAX_WIDTH - 1;
+        while (last >= 0 && canvas[i][last] == ' ') last--;
+        if (last > 0)
+            printf("%.*s\n", last + 1, canvas[i]);
+    }
+}
