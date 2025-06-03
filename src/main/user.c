@@ -4,7 +4,7 @@
 #include "printTemplate.h"
 #include "login.h"
 #include "katalog.h"
-#include "global.h"
+#include "environment.h"
 
 int main() {
     clear_screen();
