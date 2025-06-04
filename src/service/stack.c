@@ -49,9 +49,3 @@ void print_route(TreeNode *target)
     }
     printf("\n");
 }
-
-void PrintRuteKota(TreeManager *tm, const char *tujuan)
-{
-    TreeNode *target = find_node_by_name(tm, (char *)tujuan);
-    print_route(target);
-}

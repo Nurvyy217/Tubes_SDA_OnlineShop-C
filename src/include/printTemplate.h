@@ -1,6 +1,8 @@
 #ifndef PRINT_TEMPLATE_H
 #define PRINT_TEMPLATE_H
 
+#include "../include/environment.h"
+
 typedef void (*PrintRowFn)(void* data, int index);
 
 void clear_screen();

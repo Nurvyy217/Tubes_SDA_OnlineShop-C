@@ -28,4 +28,5 @@ void print_tree_horizontal_centered(TreeManager *tm);
 int print_tree_centered(TreeNode *node, char canvas[][MAX_WIDTH], int row, int col);
 void print_at(char canvas[][MAX_WIDTH], int row, int col, const char *text);
 int subtree_width(TreeNode *node);
+void showCityList(TreeManager *tm);
 #endif

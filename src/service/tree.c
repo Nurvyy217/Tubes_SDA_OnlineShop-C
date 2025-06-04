@@ -271,3 +271,12 @@ void print_tree_horizontal_centered(TreeManager *tm) {
             printf("%.*s\n", last + 1, canvas[i]);
     }
 }
+
+void showCityList(TreeManager *tm) {
+    printf("Daftar kota yang tersedia:\n");
+    for (int i = 0; i < tm->node_count; i++) {
+        printf("%s", tm->nodes[i]->name);
+        if (i < tm->node_count - 1) printf(", ");
+    }
+    printf("\n");
+}
