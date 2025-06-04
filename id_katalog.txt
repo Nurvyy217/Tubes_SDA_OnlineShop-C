@@ -1,3 +1,6 @@
-2; adiddas durano; sepatu lari; 500000; 10
-3; eiger shoes; sepatu gunung; 700000; 15
-1; converse chucknorris; sepatu casual; 1200000; 15
+Jenis: tas
+1; navyclub; tas; 200000; 100
+5; bodypack; tas; 3000; 30
+Jenis: sepatu
+3; nike; sepatu; 600000; 30
+4; adiddas; sepatu; 400000; 40

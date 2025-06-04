@@ -1,6 +1,0 @@
-Jenis: sepatu lari
-Produk: adiddas durano;Harga:500000;Stok:10
-Jenis: sepatu gunung
-Produk: eiger shoes;Harga:700000;Stok:15
-Jenis: sepatu casual
-Produk: converse chucknorris;Harga:1200000;Stok:15

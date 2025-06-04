@@ -35,12 +35,9 @@ typedef struct {
 void adminKatalog(); 
 // IS : admin tidak dapat mengontrol katalog
 // FS : admin dapat mengontrol penuh katalog 
-void userKatalog();
-// IS : user tidak dapat melihat katalog
-// FS : user dapat melihat katalog dari toko
 
 // MODUL KONSTRUKTOR
-addressProduk alokasi_Produk(int harga, int stok, char* barang, int *id);
+addressProduk alokasi_Produk(int harga, int stok, char* barang, int id);
 // IS : Tidak ada NODE yang dibuat untuk produk
 // FS : Terdapat sebuah NODE untuk produk
 addressJenis alokasi_Jenis(char* jenis);
@@ -48,7 +45,7 @@ addressJenis alokasi_Jenis(char* jenis);
 // FS : Tedapat sebuah NODE untuk Jenis barang
 
 // MODUL CONTROL LIST
-void addProduk(List *P, int harga, int stok, char* barang, char* jenis, int *id);
+void addProduk(List *P, int harga, int stok, char* barang, char* jenis, int id);
 // IS : list produk tidak ada atau bisa saja ada 
 // FS : list produk terdapat sebuah node atau list bertambah
 void addJenis(List *P, char* Jenis);
@@ -92,6 +89,9 @@ bool isDuplikatProduk(addressProduk P, char* produk);
 void printKatalogByKategori(List P);
 // IS : list produk spesifik dari sebuah jenis belum di print ke terminal 
 // FS : list produk spesifik dari sudah jenis belum di print ke terminal 
+int getMaxIdOfProduk(List P);
+// IS : node produk memiliki sebuah id
+// FS : mengembalikan nilai dari id produk paling tinggi
 
 
 // FILE OPERATION OF KATALOG    
@@ -102,8 +102,6 @@ void loadKatalogFromFile(List *L);
 // IS : file .txt bisa kosong dan bisa tidak, data tidak diambil ke program
 // FS : file .txt diambil di program dan bisa di manipulasi dalam program
 
-void saveKatalogIdFile(List L);
-void loadKatalogIdFromFile(List *L);
 
 
 #endif
