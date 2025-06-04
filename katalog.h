@@ -86,7 +86,7 @@ bool isDuplikatJenis(List *P, char* jenis);
 bool isDuplikatProduk(addressProduk P, char* produk);
 // IS : nilai duplikasi produk false
 // FS : mengembalikan nilai boolean duplikasi produk bisa true dan bisa false
-void printKatalogByKategori(List P);
+void userPrintKatalogByKategori(List P);
 // IS : list produk spesifik dari sebuah jenis belum di print ke terminal 
 // FS : list produk spesifik dari sudah jenis belum di print ke terminal 
 int getMaxIdOfProduk(List P);

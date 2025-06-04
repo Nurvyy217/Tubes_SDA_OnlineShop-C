@@ -1,6 +1,8 @@
 Jenis: tas
-1; navyclub; tas; 200000; 100
+1; navyclub; tas; 300000; 100
 5; bodypack; tas; 3000; 30
+7; hp; tas; 200000; 30
 Jenis: sepatu
-3; nike; sepatu; 600000; 30
-4; adiddas; sepatu; 400000; 40
+3; nike; sepatu; 600000; 35
+4; adiddas; sepatu; 400000; 38
+6; puma; sepatu; 400000; 30

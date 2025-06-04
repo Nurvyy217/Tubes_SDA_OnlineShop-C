@@ -223,7 +223,7 @@ void adminKatalog(){
         saveKatalogToFile(katalog);
     }
     system("cls");
-    printKatalogByKategori(katalog);
+    userPrintKatalogByKategori(katalog);
 }
 
 // MODUL POV USER
@@ -580,7 +580,7 @@ bool isDuplikatProduk(addressProduk P, char* produk){
     }
 }
 
-void printKatalogByKategori(List P){
+void userPrintKatalogByKategori(List P){
     char jenis[MAX];
     addressJenis kategori = Nil;
     addressProduk produk = Nil;
