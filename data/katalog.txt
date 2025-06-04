@@ -1,2 +1,0 @@
-Jenis: A
-Produk: PRODUK_A;Harga:10000;Stok:3
