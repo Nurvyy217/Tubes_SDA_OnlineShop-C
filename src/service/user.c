@@ -5,6 +5,7 @@
 #include "../include/styleText.h"
 #include "../include/user.h"
 #include "../include/stack.h"
+#include "../include/printTemplate.h"
 
 
 void initUserFile()
@@ -114,9 +115,8 @@ void topUp(User *user)
 {
     int jumlahIsiSaldo;
     system("cls");
-    printTopCenter("TOP UP SALDO\n");
-    printf("\t\t\t\t\t\t\t<=====================================>\n");
-    printf("\n\nMasukkan jumlah saldo yang ingin diisi: ");
+    print_title("TOP UP SALDO", WIDTH);
+    printf("\nMasukkan jumlah saldo yang ingin diisi: ");
     scanf(" %d", &jumlahIsiSaldo);
 
     if (jumlahIsiSaldo > 0)
@@ -142,9 +142,8 @@ void registration()
 
 retry:
     system("cls");
-    printf("\t\t\t\t\t\t\tBUAT AKUN\n");
-    printf("\t\t\t\t\t<=====================================>\n");
-    printf("\n\nMasukkan username: ");
+    print_title("BUAT AKUN", WIDTH);
+    printf("\nMasukkan username: ");
     scanf("%s", username);
     if (isUsernameExists(username))
     {
@@ -192,9 +191,8 @@ void loginUser(TreeManager *tm, List P, User *user)
     int pinlogin;
     
 
-    printf("\t\t\t\t\t\t\tLOGIN USER\n");
-    printf("\t\t\t\t\t<=====================================>\n");
-    printf("\n\nMasukkan username: ");
+    print_title("LOGIN USER", WIDTH);
+    printf("\nMasukkan username: ");
     scanf("%s", inputUsername);
 
     if (!getUserByUsername(inputUsername, user))
@@ -229,8 +227,8 @@ int isUsernameExists(const char *username)
 void infoPemesanan(User *user)
 {
     system("cls");
-    printf("\t\t\t\t\t\t\tINFO PEMESANAN\n");
-    printf("\t\t\t\t\t<=====================================>\n\n");
+    print_title("INFO PEMESANAN", WIDTH);
+    printf("\n");
     printf("Pengiriman barang Anda sedang dalam proses.\n");
     printf("Status Transit: .\n");
     printf("Estimasi sampai: 2 hari.\n");
@@ -240,7 +238,7 @@ void viewProduct(TreeManager *tm, User *user, List P){
     int choice;
     start:
     userPrintKatalogByKategori(P);
-    printf("\n1. Beli produk\n");
+    printf("\n\n\n1. Beli produk\n");
     printf("2. Masukkan ke keranjang\n");
         printf("3. Kembali\n");
         printf("Masukkan pilihan anda : ");
@@ -298,12 +296,11 @@ void userMenu(User *user, TreeManager *tm, List P)
     do
     {
         system("cls");
-        printf("\t\t\t\t\t\t\tMENU USER\n");
-        printf("\t\t\t\t\t<=====================================>\n\n\n");
-        printf("1. Top Up Saldo\n");
-        printf("2. Tampilkan Produk\n");
+        print_title("MENU USER", WIDTH);
+        printf("\n1. Top Up Saldo\n");
+        printf("2. Lihat/Beli Produk\n");
         printf("3. Info Pemesanan\n");
-        printf("4. Lihat/Beli Produk\n");
+        printf("4. Keranjang saya\n");
         printf("5. Keluar\n");
         printf("Masukkan pilihan: ");
         scanf("%d", &choice);
@@ -315,12 +312,13 @@ void userMenu(User *user, TreeManager *tm, List P)
             break;
         case 2:
             viewProduct(tm, user, P);
+            system("pause");
             break;
         case 3:
             infoPemesanan(user);
             break;
         case 4:
-            viewProduct(tm, user, P);
+            printf("implement cart module here...\n");
             system("pause");
             break;
         case 5:
@@ -330,7 +328,7 @@ void userMenu(User *user, TreeManager *tm, List P)
             printf("Pilihan tidak valid\n");
             break;
         }
-    } while (choice != 5);
+    } while (choice != 4);
 }
 
 

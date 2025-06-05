@@ -4,6 +4,7 @@
 #include "../include/user.h"
 #include "../include/tree.h"
 #include "../include/katalog.h"
+#include "../include/printTemplate.h"
 
 int main()
 {
@@ -16,12 +17,11 @@ int main()
 
     char choice;
     system("cls");
-    printf("\n\n\n\n\t\t\t\t\t\tWelcome to online shop\n");
+    print_center("Welcome to Alpenlishop!", WIDTH, HEIGHT);
     Sleep(3000);
     system("cls");
-    printf("\t\t\t\t\t\t\t1.LOGIN / 2.REGISTRASI\n");
-    printf("\t\t\t\t\t\t<==================================>\n");
-    printf("\n\n\n\nPilihan: ");
+    print_title("1.LOGIN / 2.REGISTRASI", WIDTH);
+    printf("\n\nPilihan: ");
     scanf(" %c", &choice);
     system("cls");
     if (choice == '1')
