@@ -783,3 +783,58 @@ void loadKatalogFromFile(List *L){
     fclose(fp);
 }
    
+// MODUL INTERFACE USER KATALOG
+void userProductBuy(List P){
+    int quantity;
+    int harga;
+    char barang[MAX];
+    int jumlah;
+    addressProduk produk = Nil;
+    char choice;
+
+    for(;;){
+        printf("Barang yang akan dibeli :");
+        getchar();
+        fgets(barang, sizeof(barang), stdin);
+        barang[strcspn(barang, "\n")] = '\0'; 
+        produk = searchProduk(&P, barang);
+        if(produk != Nil){
+            printf("Barang %s tersedia di toko..\n", produk->barang);
+            harga = produk->harga;
+            printf("Harga barang : %d", harga);
+            printf("\nJumlah Barang yang dibeli : ");
+            scanf("%d", &quantity);
+            if(quantity <= 0){
+                printf("jumlah barang yang akan dibeli tidak valid!!");
+                sleep(1);
+                return;
+            }else if(quantity > produk->stok){
+                printf("Stok barang tidak mencukupi! Stok tersedia %d\n", produk->stok);
+                sleep(1);
+                return;
+            }else{
+                jumlah = quantity * harga;
+                printf("Detail Pesanan : \n");
+                printf("%-5s | %-20s | %-5s | %-10s\n", "No", "Barang", "Jumlah", "Total Harga");
+                printf("----------------------------------------------------------\n");
+                printf("%-5d | %-20s | %-5d | %-10d\n", 1, produk->barang, quantity, jumlah);
+                printf("Apakah detail pesanan sudah sesuai ? (Y/N)");
+                getchar();
+                scanf("%c", &choice);
+                if(choice == 'y' || choice == 'Y'){
+                    minusStokProduk(&P, quantity, barang);
+                    printf("Pesanan sedang di proses....\nTerimakasih sudah berbelanja di toko ini :)");
+                    sleep(2);
+                    // modul status antrian ??
+                    break;
+                }else if(choice == 'n' || choice == 'N'){
+                    printf("Silakan masukkan ulang nama barang...\n");
+                    sleep(1);
+                    continue;
+                }
+            }
+        }else{
+            printf("barang tidak ditemukan di toko....");
+        }
+    }
+}

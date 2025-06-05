@@ -244,7 +244,7 @@ void viewProduct(TreeManager *tm, User *user, List P){
         printf("Masukkan pilihan anda : ");
         scanf(" %c", &choice);
         if(choice == '1'){
-            buyProduct(tm, user);
+            buyProduct(tm, user, P);
             system("cls");    
         }else if(choice == '2'){
             printf("modul keranjang...");
@@ -255,7 +255,7 @@ void viewProduct(TreeManager *tm, User *user, List P){
 }
 
 
-void buyProduct(TreeManager *tm, User *user)
+void buyProduct(TreeManager *tm, User *user, List L)
 {
     char tujuan[100];
     int useDomisili = 0;
@@ -282,8 +282,9 @@ void buyProduct(TreeManager *tm, User *user)
             break;
         }
     }
-
+    
     //Modul mengurangi stok barang
+    userProductBuy(L);
 
     TreeNode *target = find_node_by_name(tm, tujuan);
     printf("Rute pengiriman:\n");

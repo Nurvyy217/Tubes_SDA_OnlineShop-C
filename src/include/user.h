@@ -71,7 +71,7 @@ void topUp(User *user);
 // Fitur beli produk
 // IS : User belum melakukan pembelian
 // FS : Proses pembelian produk berjalan sesuai input user
-void buyProduct(TreeManager *tm, User *user);
+void buyProduct(TreeManager *tm, User *user, List L);
 
 
 #endif

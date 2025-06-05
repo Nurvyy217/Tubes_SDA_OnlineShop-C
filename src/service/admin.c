@@ -38,25 +38,29 @@ void loginAdmin(TreeManager *tm) {
 
 void menuAdmin(TreeManager *tm) {
     int choice;
-    system("cls");
-    print_title("MENU ADMIN", WIDTH);
-    printf("\n1. Proses Transaksi\n");
-    printf("2. Kelola Katalog\n");
-    printf("Masukkan pilihan: ");
-    scanf(" %d", &choice);
-    switch (choice) {
-    case 1:
-        ProsesTransaksi(tm);
-        system("pause");
-        break;
-    case 2:
-        adminKatalog();
-        system("pause");
-        break;
-    default:
-        printf("Pilihan tidak valid.\n");
-        break;
+    for(;;){
+        system("cls");
+        print_title("MENU ADMIN", WIDTH);
+        printf("\n1. Proses Transaksi\n");
+        printf("2. Kelola Katalog\n3. Keluar\n");
+        printf("Masukkan pilihan: ");
+        scanf(" %d", &choice);
+        switch (choice) {
+        case 1:
+            ProsesTransaksi(tm);
+            system("pause");
+            break;
+        case 2:
+            adminKatalog();
+            break;
+        case 3:
+            return;
+        default:
+            printf("Pilihan tidak valid.\n");
+            break;
+        }
     }
+
 }
 
 void ProsesTransaksi(TreeManager *tm){
