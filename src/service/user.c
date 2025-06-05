@@ -6,6 +6,7 @@
 #include "../include/user.h"
 #include "../include/stack.h"
 
+
 void initUserFile()
 {
     FILE *file = fopen(USER_FILE, "a");
@@ -171,11 +172,11 @@ retry:
 
     if (pin == konfirmasiPin)
     {
-        userBaru.id = getLastUserId() + 1;
-        setUsername(&userBaru, username);
-        setPin(&userBaru, pin);
-        setSaldo(&userBaru, 0);
-        strcpy(userBaru.domisili, domisili);
+         userBaru.id = getLastUserId() + 1;
+        strcpy(userBaru.username, username); 
+        userBaru.pin = pin;                  
+        userBaru.saldo = 0;                  
+        strcpy(userBaru.domisili, domisili); 
         saveUser(&userBaru);
         printf("Akun berhasil dibuat.\n");
     }
@@ -185,7 +186,7 @@ retry:
     }
 }
 
-void loginUser(TreeManager *tm)
+void loginUser(TreeManager *tm, List P)
 {
     char inputUsername[50];
     int pinlogin;
@@ -208,7 +209,7 @@ void loginUser(TreeManager *tm)
         if (pinlogin == user.pin)
         {
             printf("Login berhasil! Selamat datang, %s.\n", user.username);
-            userMenu(&user, tm);
+            userMenu(&user, tm, P);
             break;
         }
         else
@@ -235,13 +236,20 @@ void infoPemesanan(User *user)
     printf("Estimasi sampai: 2 hari.\n");
 }
 
-void viewProduct(TreeManager *tm, User *user){
-    //print katalog
-    printf("1. Beli produk\n");
+void viewProduct(TreeManager *tm, User *user, List P){
+    int choice;
+    userPrintKatalogByKategori(P);
+    printf("\n1. Beli produk\n");
     printf("2. Masukkan ke keranjang\n");
-    printf("3. Kembali\n");
-    buyProduct(tm, user);
-    //keranjang
+        printf("3. Kembali\n");
+        printf("Masukkan pilihan anda : ");
+        scanf(" %c", &choice);
+        if(choice == '1'){
+            buyProduct(tm, user);
+            system("cls");    
+        }else if(choice == '2'){
+            printf("modul pembelian...");
+        }
 }
 
 
@@ -273,12 +281,14 @@ void buyProduct(TreeManager *tm, User *user)
         }
     }
 
+    //Modul mengurangi stok barang
+
     TreeNode *target = find_node_by_name(tm, tujuan);
     printf("Rute pengiriman:\n");
     print_route(target);
 }
 
-void userMenu(User *user, TreeManager *tm)
+void userMenu(User *user, TreeManager *tm, List P)
 {
     int choice;
     do
@@ -300,13 +310,13 @@ void userMenu(User *user, TreeManager *tm)
             system("pause");
             break;
         case 2:
-            viewProduct(tm, user);
+            viewProduct(tm, user, P);
             break;
         case 3:
             infoPemesanan(user);
             break;
         case 4:
-            viewProduct(tm, user);
+            viewProduct(tm, user, P);
             system("pause");
             break;
         case 5:
@@ -319,32 +329,6 @@ void userMenu(User *user, TreeManager *tm)
     } while (choice != 5);
 }
 
-void setUsername(User *n, const char *username)
-{
-    strcpy(n->username, username);
-}
 
-void setPin(User *n, int pin)
-{
-    n->pin = pin;
-}
 
-void setSaldo(User *n, int saldo)
-{
-    n->saldo = saldo;
-}
 
-char *getUsername(User *n)
-{
-    return n->username;
-}
-
-int getPin(User *n)
-{
-    return n->pin;
-}
-
-int getSaldo(User *n)
-{
-    return n->saldo;
-}

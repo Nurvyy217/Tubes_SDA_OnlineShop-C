@@ -2,6 +2,7 @@
 #define USER_H
 
 #include <stdio.h>
+#include "katalog.h"
 #include "tree.h"
 
 // Path file user
@@ -30,7 +31,7 @@ void registration();
 // Login user
 // IS : User belum login
 // FS : User berhasil login jika data benar, atau gagal jika salah
-void loginUser(TreeManager *tm);
+void loginUser(TreeManager *tm, List P);
 
 // Simpan user baru ke file
 // IS : Data user belum tersimpan di file
@@ -55,27 +56,17 @@ int getUserByUsername(const char *username, User *u);
 // Menu utama user
 // IS : User sudah login
 // FS : Menampilkan menu dan menjalankan fitur sesuai pilihan user
-void userMenu(User *user, TreeManager *tm);
+void userMenu(User *user, TreeManager *tm, List P);
 
 // Menampilkan produk
 // IS : Produk belum ditampilkan
 // FS : Daftar produk ditampilkan ke user
-void viewProduct(TreeManager *tm, User *user);
+void viewProduct(TreeManager *tm, User *user, List P);
 
 // Top up saldo user
 // IS : Saldo user belum bertambah
 // FS : Saldo user bertambah sesuai input
 void topUp(User *user);
-
-// Fungsi bantu set/get user
-// IS : Data field user belum diubah/dibaca
-// FS : Data field user sudah diubah/dibaca sesuai fungsi
-void setUsername(User *n, const char *username);
-void setPin(User *n, int pin);
-void setSaldo(User *n, int saldo);
-int getPin(User *n);
-char *getUsername(User *n);
-int getSaldo(User *n);
 
 // Fitur beli produk
 // IS : User belum melakukan pembelian

@@ -1,4 +1,4 @@
-#include "katalog.h"
+#include "../include/katalog.h"
 #include <malloc.h>
 #include <string.h>
 #include <unistd.h>
@@ -7,7 +7,7 @@
 
 
 /*
-    REMIDER : 
+    REMINDER : 
     Agar bisa menggunakan modul modul dll katalog, pastikan untuk selalu membuka file terlebih dahulu dengan modul laod file dan ditutup dengan modul save file
     *contoh kode : 
 
@@ -643,17 +643,11 @@ void userPrintKatalogByKategori(List P){
                     produk = produk->next;
                     i++;
                 }
+                break;
             }
         }else{
             printf("belum ada kategori yang ditambahkan di toko ini....");
             sleep(2);
-        }
-        printf("\n\n1.kembali\n2.beli barang\nMasukkan pilihan anda : ");
-        scanf("%c", &choice);
-        if(choice == '1'){
-            system("cls");    
-        }else if(choice == '2'){
-            printf("modul pembelian...");
             break;
         }
     }

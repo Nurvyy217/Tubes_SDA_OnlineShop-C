@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "../include/styleText.h"
 #include "../include/tree.h"
+#include "../include/katalog.h"
 
 void loginAdmin(TreeManager *tm) {
     char adminUsername[50];
@@ -49,7 +50,8 @@ void menuAdmin(TreeManager *tm) {
         system("pause");
         break;
     case 2:
-        printf("Fitur Kelola Katalog belum diimplementasikan.\n");
+        adminKatalog();
+        system("pause");
         break;
     default:
         printf("Pilihan tidak valid.\n");

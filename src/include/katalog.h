@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #define FILE_KATALOG "data/katalog.txt"
 
+
 // Struct Katalog Produk
 typedef int infoJumlah;
 typedef char barang;

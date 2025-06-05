@@ -3,12 +3,15 @@
 #include "../include/styleText.h"
 #include "../include/user.h"
 #include "../include/tree.h"
+#include "../include/katalog.h"
 
 int main()
 {
+    List P;
     TreeManager tm;
     initUserFile();
     InitTree(&tm);
+    loadKatalogFromFile(&P);
 
     char choice;
     system("cls");
@@ -23,7 +26,7 @@ int main()
     if (choice == '1')
     {
         system("cls");
-        loginUser(&tm);
+        loginUser(&tm, P);
     }
     else if (choice == '2')
     {

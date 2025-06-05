@@ -1,0 +1,2 @@
+Jenis: Running
+1; adidas; Running; 500000; 10
