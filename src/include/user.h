@@ -31,7 +31,7 @@ void registration();
 // Login user
 // IS : User belum login
 // FS : User berhasil login jika data benar, atau gagal jika salah
-void loginUser(TreeManager *tm, List P);
+void loginUser(TreeManager *tm, List P, User *user);
 
 // Simpan user baru ke file
 // IS : Data user belum tersimpan di file

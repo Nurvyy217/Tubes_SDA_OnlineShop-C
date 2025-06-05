@@ -8,6 +8,7 @@
 int main()
 {
     List P;
+    User user;
     TreeManager tm;
     initUserFile();
     InitTree(&tm);
@@ -26,7 +27,7 @@ int main()
     if (choice == '1')
     {
         system("cls");
-        loginUser(&tm, P);
+        loginUser(&tm, P, &user);
     }
     else if (choice == '2')
     {

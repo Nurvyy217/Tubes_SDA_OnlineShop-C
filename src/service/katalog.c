@@ -605,6 +605,7 @@ void userPrintKatalogByKategori(List P){
     int i;
     char choice;
 
+    system("cls");
     for(;;){
         i = 1;
         temp = P.First;
@@ -643,12 +644,12 @@ void userPrintKatalogByKategori(List P){
                     produk = produk->next;
                     i++;
                 }
-                break;
+                return;
             }
         }else{
             printf("belum ada kategori yang ditambahkan di toko ini....");
             sleep(2);
-            break;
+            return;
         }
     }
     return;

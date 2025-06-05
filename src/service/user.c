@@ -186,18 +186,18 @@ retry:
     }
 }
 
-void loginUser(TreeManager *tm, List P)
+void loginUser(TreeManager *tm, List P, User *user)
 {
     char inputUsername[50];
     int pinlogin;
-    User user;
+    
 
     printf("\t\t\t\t\t\t\tLOGIN USER\n");
     printf("\t\t\t\t\t<=====================================>\n");
     printf("\n\nMasukkan username: ");
     scanf("%s", inputUsername);
 
-    if (!getUserByUsername(inputUsername, &user))
+    if (!getUserByUsername(inputUsername, user))
     {
         printf("Username tidak ditemukan.\n");
         return;
@@ -206,10 +206,10 @@ void loginUser(TreeManager *tm, List P)
     while (1)
     {
         inputPin(&pinlogin);
-        if (pinlogin == user.pin)
+        if (pinlogin == user->pin)
         {
-            printf("Login berhasil! Selamat datang, %s.\n", user.username);
-            userMenu(&user, tm, P);
+            printf("Login berhasil! Selamat datang, %s.\n", user->username);
+            userMenu(user, tm, P);
             break;
         }
         else
@@ -238,6 +238,7 @@ void infoPemesanan(User *user)
 
 void viewProduct(TreeManager *tm, User *user, List P){
     int choice;
+    start:
     userPrintKatalogByKategori(P);
     printf("\n1. Beli produk\n");
     printf("2. Masukkan ke keranjang\n");
@@ -248,7 +249,10 @@ void viewProduct(TreeManager *tm, User *user, List P){
             buyProduct(tm, user);
             system("cls");    
         }else if(choice == '2'){
-            printf("modul pembelian...");
+            printf("modul keranjang...");
+        }
+        else{
+            goto start;
         }
 }
 
