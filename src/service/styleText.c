@@ -1,4 +1,4 @@
-#include "styleText.h"
+#include "../include/styleText.h"
 #include <stdio.h>
 #include <windows.h>
 #include <conio.h>
