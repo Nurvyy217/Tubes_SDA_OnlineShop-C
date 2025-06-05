@@ -3,7 +3,7 @@
 #define MAX 100
 #define Nil NULL
 #include <stdbool.h>
-// #include <sqlite3.h>
+#define FILE_KATALOG "data/katalog.txt"
 
 // Struct Katalog Produk
 typedef int infoJumlah;
@@ -11,6 +11,7 @@ typedef char barang;
 typedef int infoHarga;
 typedef struct PRODUK* addressProduk;
 typedef struct PRODUK{
+    int id;
     infoJumlah stok; // stok barang
     barang barang[MAX]; // nama barang 
     infoHarga harga; // harga barang 
@@ -34,12 +35,9 @@ typedef struct {
 void adminKatalog(); 
 // IS : admin tidak dapat mengontrol katalog
 // FS : admin dapat mengontrol penuh katalog 
-void userKatalog();
-// IS : user tidak dapat melihat katalog
-// FS : user dapat melihat katalog dari toko
 
 // MODUL KONSTRUKTOR
-addressProduk alokasi_Produk(int harga, int stok, char* barang);
+addressProduk alokasi_Produk(int harga, int stok, char* barang, int id);
 // IS : Tidak ada NODE yang dibuat untuk produk
 // FS : Terdapat sebuah NODE untuk produk
 addressJenis alokasi_Jenis(char* jenis);
@@ -47,7 +45,7 @@ addressJenis alokasi_Jenis(char* jenis);
 // FS : Tedapat sebuah NODE untuk Jenis barang
 
 // MODUL CONTROL LIST
-void addProduk(List *P, int harga, int stok, char* barang, char* jenis);
+void addProduk(List *P, int harga, int stok, char* barang, char* jenis, int id);
 // IS : list produk tidak ada atau bisa saja ada 
 // FS : list produk terdapat sebuah node atau list bertambah
 void addJenis(List *P, char* Jenis);
@@ -71,8 +69,8 @@ void updateHargaProduk(List *P, int harga, char* produk);
 
 // MODUL NON CONTROL
 void printKatalog(List P);
-// IS : list belum di print ke terminal
-// FS : list sudah di print ke terminal
+// IS : semua list produk belum di print ke terminal
+// FS : semua list produk sudah di print ke terminal
 addressProduk searchProduk(List *P, char* barang);
 // IS : terdapat pointer yang menunjuk ke arah sembarang
 // FS : mengembalikan pointer yang menunjuk ke arah node barang yang dituju
@@ -88,6 +86,12 @@ bool isDuplikatJenis(List *P, char* jenis);
 bool isDuplikatProduk(addressProduk P, char* produk);
 // IS : nilai duplikasi produk false
 // FS : mengembalikan nilai boolean duplikasi produk bisa true dan bisa false
+void userPrintKatalogByKategori(List P);
+// IS : list produk spesifik dari sebuah jenis belum di print ke terminal 
+// FS : list produk spesifik dari sudah jenis belum di print ke terminal 
+int getMaxIdOfProduk(List P);
+// IS : node produk memiliki sebuah id
+// FS : mengembalikan nilai dari id produk paling tinggi
 
 
 // FILE OPERATION OF KATALOG    

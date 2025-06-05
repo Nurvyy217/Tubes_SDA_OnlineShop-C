@@ -1,5 +1,5 @@
 #include "../include/printTemplate.h"
-#include "environment.h"
+
 
 void clear_screen() {
 #ifdef _WIN32

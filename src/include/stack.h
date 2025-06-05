@@ -23,6 +23,5 @@ void Push(Stack *S, TreeNode *tree);
 void Pop(Stack *S);
 void CreateEmpty(Stack *S);
 void print_route(TreeNode *target);
-void PrintRuteKota(TreeManager *tm, const char *tujuan);
 
 #endif

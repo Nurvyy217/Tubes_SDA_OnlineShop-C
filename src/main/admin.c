@@ -1,4 +1,5 @@
-#include <stdio.h>
+#include "../include/printTemplate.h"
+#include "../include/admin.h"
 #include <windows.h>
 #include "../include/printTemplate.h"
 #include "../include/styleText.h"
@@ -8,11 +9,11 @@
 
 int main()
 {
+    TreeManager tm;
     print_center("SELAMAT DATANG ADMIN", WIDTH, HEIGHT);
     sleep(2);
     clear_screen();
 
-    print_title("MODUL ADMIN", WIDTH);
-
+    loginAdmin(&tm);
     return 0;
 }
