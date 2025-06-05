@@ -5,4 +5,4 @@ Jenis: tas
 Jenis: sepatu
 3; nike; sepatu; 600000; 35
 4; adiddas; sepatu; 400000; 38
-6; puma; sepatu; 400000; 30
+8; adiddas samba; sepatu; 60000; 35

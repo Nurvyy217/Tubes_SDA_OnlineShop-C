@@ -174,7 +174,7 @@ void adminKatalog(){
                     printf("Masukkan jumlah stok yang ingin ditambahkan: ");
                     scanf("%d", &stok);
                     addStokProduk(&katalog, stok, produk);
-                    printf("Stok berhasil ditambah.");
+                    printf("\nData telah diupdate");
                     sleep(2);
                     subDecision = 1;
                 } else {
