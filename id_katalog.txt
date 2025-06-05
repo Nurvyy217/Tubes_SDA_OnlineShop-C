@@ -1,8 +1,0 @@
-Jenis: tas
-1; navyclub; tas; 300000; 100
-5; bodypack; tas; 3000; 30
-7; hp; tas; 200000; 30
-Jenis: sepatu
-3; nike; sepatu; 600000; 35
-4; adiddas; sepatu; 400000; 38
-8; adiddas samba; sepatu; 60000; 35

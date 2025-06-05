@@ -1,9 +1,25 @@
-#include "katalog.h"
+#include "../include/katalog.h"
+#include "../include/printTemplate.h"
 #include <malloc.h>
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+
+/*
+    REMINDER : 
+    Agar bisa menggunakan modul modul dll katalog, pastikan untuk selalu membuka file terlebih dahulu dengan modul laod file dan ditutup dengan modul save file
+    *contoh kode : 
+
+    loadKatalogFromFile()
+
+    // baris kode untuk operasi katlog
+    
+    saveKatalogToFile()
+
+    */
+
 
 // MODUL POV ADMIN
 void adminKatalog(){
@@ -174,7 +190,7 @@ void adminKatalog(){
                     printf("Masukkan jumlah stok yang ingin ditambahkan: ");
                     scanf("%d", &stok);
                     addStokProduk(&katalog, stok, produk);
-                    printf("\nData telah diupdate");
+                    printf("\nMengupdate data....");
                     sleep(2);
                     subDecision = 1;
                 } else {
@@ -200,6 +216,8 @@ void adminKatalog(){
                     if(stok > 0){
                         minusStokProduk(&katalog, stok, produk);
                         printf("Stok berhasil dikurangi.");
+                        printf("\nMengupdate data....");
+                        sleep(2);
                     } else {
                         printf("Jumlah pengurangan harus lebih dari 0.");
                     }
@@ -223,7 +241,7 @@ void adminKatalog(){
         saveKatalogToFile(katalog);
     }
     system("cls");
-    userPrintKatalogByKategori(katalog);
+    // userPrintKatalogByKategori(katalog); // modul ini digunakan untuk testing saja dan untuk penggunaannya bisa di lain hal...
 }
 
 // MODUL POV USER
@@ -588,12 +606,14 @@ void userPrintKatalogByKategori(List P){
     int i;
     char choice;
 
+    system("cls");
     for(;;){
         i = 1;
         temp = P.First;
         kategori = P.First;
-        printf("============================\n");
-        printf("%-10s | %-20s\n", "No", "Jenis");
+        print_title("KATEGORI BARANG", WIDTH);
+        printf("\n============================\n");
+        printf("%-5s | %-20s\n", "No", "Kategori");
         printf("============================\n");
         while(temp != Nil){
             printf("%-5d | %-20s\n", i, temp->Jenis);
@@ -617,7 +637,8 @@ void userPrintKatalogByKategori(List P){
 
             if(strcmp(kategori->Jenis, jenis) == 0){
                 produk = kategori->produkJenis;
-                printf("Jenis : %s\n", jenis);
+                print_title("KATALOG BARANG", WIDTH);
+                printf("\nKategori : %s\n\n", jenis);
                 printf("%-5s | %-20s | %-5s | %-10s\n", "No", "Barang", "Stok", "Harga");
                 printf("----------------------------------------------------------\n");
                 i = 1;
@@ -626,18 +647,12 @@ void userPrintKatalogByKategori(List P){
                     produk = produk->next;
                     i++;
                 }
+                return;
             }
         }else{
             printf("belum ada kategori yang ditambahkan di toko ini....");
             sleep(2);
-        }
-        printf("\n\n1.kembali\n2.beli barang\nMasukkan pilihan anda : ");
-        scanf("%c", &choice);
-        if(choice == '1'){
-            system("cls");    
-        }else if(choice == '2'){
-            printf("modul pembelian...");
-            break;
+            return;
         }
     }
     return;
@@ -673,7 +688,7 @@ int getMaxIdOfProduk(List P){
 void saveKatalogToFile(List L){
     addressProduk produk = Nil;
     addressJenis jenis = Nil;
-    FILE *fp = fopen("id_katalog.txt", "w");
+    FILE *fp = fopen(FILE_KATALOG, "w");
     if(fp == Nil){
         printf("Gagal membuka file untuk menyimpan katalog.\n");
         return;
@@ -707,7 +722,7 @@ void loadKatalogFromFile(List *L){
     int id, harga, stok;
     char namaProduk[MAX], jenis[MAX];
 
-    FILE *fp = fopen("id_katalog.txt", "r");
+    FILE *fp = fopen(FILE_KATALOG, "r");
     if(fp == Nil){
         printf("File id_katalog.txt tidak ditemukan. Memulai katalog kosong.\n");
         return;
@@ -768,44 +783,62 @@ void loadKatalogFromFile(List *L){
     fclose(fp);
 }
    
+// MODUL INTERFACE USER KATALOG
+void userProductBuy(List P){
+    int quantity;
+    int harga;
+    char barang[MAX];
+    int jumlah;
+    addressProduk produk = Nil;
+    char choice;
 
-// if(nodeJenis != Nil){
-//             if(tempJenis != Nil){
-//                 booleanJenis = isDuplikatJenis(L, jenis);
-//                 if(booleanJenis == false){
-//                     while(tempJenis->next_jenis != Nil){
-//                         tempJenis = tempJenis->next_jenis;
-//                     }
-//                     tempJenis->next_jenis = nodeJenis;
-//                     tempProduk = nodeJenis->produkJenis;
-//                     if(tempProduk != Nil){
-//                         while(tempProduk->next != Nil){
-//                             tempProduk = tempProduk->next;
-//                         }
-//                         tempProduk->next = nodeProduk;
-//                     }else{
-//                         nodeJenis->produkJenis = nodeProduk;
-//                     }
-//                 }else{
-//                     free(nodeJenis); 
-//                     while(strcmp(tempJenis->Jenis, jenis) != 0){
-//                         tempJenis = tempJenis->next_jenis;
-//                     }
-//                     tempProduk = tempJenis->produkJenis;
-//                     if(tempJenis->produkJenis != Nil){
-//                         while(tempProduk->next != Nil){
-//                             tempProduk = tempProduk->next;
-//                         }
-//                         tempProduk->next = nodeProduk;
-//                     }else{
-//                         tempJenis->produkJenis = nodeProduk;
-//                     }
-//                 }
-//             }else{
-//                 (*L).First = nodeJenis;
-//                 nodeJenis->produkJenis = nodeProduk;
-//             }
-//         }else{
-//             printf("alokasi gagal...");
-//         }
-//     }
+    for(;;){
+        printf("Barang yang akan dibeli :");
+        getchar();
+        fgets(barang, sizeof(barang), stdin);
+        barang[strcspn(barang, "\n")] = '\0'; 
+        produk = searchProduk(&P, barang);
+        if(produk != Nil){
+            printf("Barang %s tersedia di toko..\n", produk->barang);
+            harga = produk->harga;
+            printf("Harga barang : %d", harga);
+            printf("\nJumlah Barang yang dibeli : ");
+            scanf("%d", &quantity);
+            if(quantity <= 0){
+                printf("jumlah barang yang akan dibeli tidak valid!!");
+                sleep(1);
+                return;
+            }else if(quantity > produk->stok){
+                printf("Stok barang tidak mencukupi! Stok tersedia %d\n", produk->stok);
+                sleep(1);
+                return;
+            }else{
+                jumlah = quantity * harga;
+                printf("Detail Pesanan : \n");
+                printf("%-5s | %-20s | %-5s | %-10s\n", "No", "Barang", "Jumlah", "Total Harga");
+                printf("----------------------------------------------------------\n");
+                printf("%-5d | %-20s | %-5d | %-10d\n", 1, produk->barang, quantity, jumlah);
+                printf("Apakah detail pesanan sudah sesuai ? (Y/N)");
+                getchar();
+                scanf("%c", &choice);
+                if(choice == 'y' || choice == 'Y'){
+                    minusStokProduk(&P, quantity, barang);
+                    printf("Pesanan sedang di proses....\nTerimakasih sudah berbelanja di toko ini :)");
+                    sleep(2);
+
+                    
+                    // modul masuk ke antrian barang Enqueue (QUEUE)
+
+
+                    break;
+                }else if(choice == 'n' || choice == 'N'){
+                    printf("Silakan masukkan ulang nama barang...\n");
+                    sleep(1);
+                    continue;
+                }
+            }
+        }else{
+            printf("barang tidak ditemukan di toko....");
+        }
+    }
+}

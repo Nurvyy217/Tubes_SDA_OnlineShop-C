@@ -3,7 +3,8 @@
 #define MAX 100
 #define Nil NULL
 #include <stdbool.h>
-// #include <sqlite3.h>
+#define FILE_KATALOG "data/katalog.txt"
+
 
 // Struct Katalog Produk
 typedef int infoJumlah;
@@ -35,6 +36,9 @@ typedef struct {
 void adminKatalog(); 
 // IS : admin tidak dapat mengontrol katalog
 // FS : admin dapat mengontrol penuh katalog 
+void userProductBuy(List P);
+// IS : user tidak dapat memilih barang untuk dibeli
+// FS : user bisa memilih barnag untuk dibeli dan stok barang berkurang
 
 // MODUL KONSTRUKTOR
 addressProduk alokasi_Produk(int harga, int stok, char* barang, int id);
