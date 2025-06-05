@@ -1,8 +1,8 @@
 #include "../include/keranjang.h"
-#include "../helper/printTemplate.c"
+#include "../include/printTemplate.h"
 
 // MAIN PROGRAM
-void CreateEmpty(CartList *List){
+void CreateEmptyCart(CartList *List){
     List->First = NULL;
 }
 
@@ -76,7 +76,7 @@ void PrintCart(CartList List){
     char name[50], type[20];
     boolean found;
 
-    CreateEmpty(&TempList);
+    CreateEmptyCart(&TempList);
     GenerateCartList(&TempList);
 
     TempNode = TempList.First;
@@ -125,7 +125,7 @@ void CheckOut(CartList *List){
     PrintCart(*List);
     printf("\nMasukan no keranjang: ");
     scanf("%d", &id);
-
+    
 }
 
 // FILES

@@ -14,7 +14,7 @@ typedef struct {
     address First;
 } CartList;
 
-void CreateEmpty(CartList *List);
+void CreateEmptyCart(CartList *List);
 boolean IsEmpty(CartList List);
 void InsertLast(CartList *list, address newCart);
 void AllocateCart(Cart **newCart);

@@ -1,13 +1,15 @@
 #!/bin/bash
 
+GCC="/c/gcc/bin/gcc"
+
 OUTPUT="test.exe"
 INCLUDE_DIR="./src/include"
 SRC_MAIN="./src/main/test.c"
 SERVICE=$(find src/service -name "*.c")
 HELPERS=$(find src/helper -name "*.c")
 
-echo "Compiling test..."
-gcc -o $OUTPUT $SRC_MAIN $HELPERS $SERVICE -I$INCLUDE_DIR
+echo "Compiling test with Windows GCC..."
+"$GCC" -o $OUTPUT $SRC_MAIN $HELPERS $SERVICE -I$INCLUDE_DIR
 
 if [ $? -eq 0 ]; then
     ./$OUTPUT
