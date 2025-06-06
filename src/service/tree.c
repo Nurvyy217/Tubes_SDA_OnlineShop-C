@@ -193,7 +193,7 @@ int subtree_width(TreeNode *node) {
 }
 
 // Print node pada posisi tertentu
-void print_at(char canvas[][MAX_WIDTH], int row, int col, const char *text) {
+void print_tree_at(char canvas[][MAX_WIDTH], int row, int col, const char *text) {
     for (int i = 0; text[i] && col + i < MAX_WIDTH; i++)
         canvas[row][col + i] = text[i];
 }
@@ -209,7 +209,7 @@ int print_tree_centered(TreeNode *node, char canvas[][MAX_WIDTH], int row, int c
 
     // Posisi node di tengah subtree
     int node_col = col + total_width / 2 - name_len / 2;
-    print_at(canvas, row, node_col, node->name);
+    print_tree_at(canvas, row, node_col, node->name);
 
     // Print garis ke anak-anak
     TreeNode *child = node->first_child;

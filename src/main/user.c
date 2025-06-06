@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <windows.h>
-#include "../include/styleText.h"
 #include "../include/user.h"
 #include "../include/tree.h"
 #include "../include/katalog.h"

@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
-#include "../include/styleText.h"
 #include "../include/user.h"
 #include "../include/stack.h"
 #include "../include/printTemplate.h"
@@ -224,10 +223,10 @@ int isUsernameExists(const char *username)
     return getUserByUsername(username, &temp);
 }
 
-void infoPemesanan(User *user)
+void orderInformation(User *user)
 {
     system("cls");
-    print_title("INFO PEMESANAN", WIDTH);
+    print_title("INFO PESANAN", WIDTH);
     printf("\n");
     printf("Pengiriman barang Anda sedang dalam proses.\n");
     printf("Status Transit: .\n");
@@ -315,7 +314,7 @@ void userMenu(User *user, TreeManager *tm, List P)
             system("pause");
             break;
         case 3:
-            infoPemesanan(user);
+            orderInformation(user);
             break;
         case 4:
             printf("implement cart module here...\n");

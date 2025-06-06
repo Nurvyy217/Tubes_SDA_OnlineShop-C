@@ -19,9 +19,32 @@ typedef struct Stack
     addressStack Top;
 } Stack;
 
-void Push(Stack *S, TreeNode *tree);
-void Pop(Stack *S);
 void CreateEmpty(Stack *S);
+/*
+ * Membuat stack kosong
+ * IS : Stack belum tentu kosong
+ * FS : Stack dijamin kosong (Top = NULL)
+ */
+
+void Push(Stack *S, TreeNode *tree);
+/*
+ * Menambahkan nama kota dari node tree ke stack 
+ * IS : Stack bisa kosong atau berisi data
+ * FS : Stack bertambah satu node di atas berisi nama kota dari tree
+ */
+
+void Pop(Stack *S);
+/*
+ * Menghapus node paling atas stack dan menampilkan nama kota
+ * IS : Stack bisa kosong atau berisi data
+ * FS : Node paling atas dihapus, nama kota dicetak, memori node dibebaskan
+ */
+
 void print_route(TreeNode *target);
+/*
+ * Menampilkan rute dari root ke node target menggunakan stack
+ * IS : Stack kosong, node target valid
+ * FS : Rute dari root ke target dicetak ke layar dengan urutan yang benar
+ */
 
 #endif

@@ -4,7 +4,6 @@
 #include <string.h>
 #include <windows.h>
 #include <stdio.h>
-#include "../include/styleText.h"
 #include "../include/tree.h"
 #include "../include/katalog.h"
 
