@@ -4,8 +4,8 @@
 #include <string.h>
 #include <windows.h>
 #include <stdio.h>
-#include "../include/styleText.h"
 #include "../include/tree.h"
+#include "../include/katalog.h"
 
 void loginAdmin(TreeManager *tm) {
     char adminUsername[50];
@@ -17,9 +17,8 @@ void loginAdmin(TreeManager *tm) {
     strcpy(adminUsername, "admin");
     adminPassword = 1234;
     system("cls");
-    printf("\t\t\t\t\t\t\tLOGIN ADMIN\n");
-    printf("\t\t\t\t\t<=====================================>\n");
-    printf("\n\nMasukkan Username Admin: ");
+    print_title("LOGIN ADMIN", WIDTH);
+    printf("\nMasukkan Username Admin: ");
     scanf("%s", inputUsername);
     inputPin(&inputPassword);
 
@@ -39,7 +38,8 @@ void loginAdmin(TreeManager *tm) {
 void menuAdmin(TreeManager *tm) {
     int choice;
     system("cls");
-    printf("1. Proses Transaksi\n");
+    print_title("MENU ADMIN", WIDTH);
+    printf("\n1. Proses Transaksi\n");
     printf("2. Kelola Katalog\n");
     printf("Masukkan pilihan: ");
     scanf(" %d", &choice);
@@ -49,7 +49,8 @@ void menuAdmin(TreeManager *tm) {
         system("pause");
         break;
     case 2:
-        printf("Fitur Kelola Katalog belum diimplementasikan.\n");
+        adminKatalog();
+        system("pause");
         break;
     default:
         printf("Pilihan tidak valid.\n");
@@ -58,5 +59,7 @@ void menuAdmin(TreeManager *tm) {
 }
 
 void ProsesTransaksi(TreeManager *tm){
+    print_title("PROSES TRANSAKSI", WIDTH);
+    printf("\n\nTree:\n");
     print_tree_horizontal_centered(tm);
 }

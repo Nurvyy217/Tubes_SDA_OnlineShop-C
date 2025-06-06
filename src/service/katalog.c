@@ -1,4 +1,5 @@
-#include "katalog.h"
+#include "../include/katalog.h"
+#include "../include/printTemplate.h"
 #include <malloc.h>
 #include <string.h>
 #include <unistd.h>
@@ -7,7 +8,7 @@
 
 
 /*
-    REMIDER : 
+    REMINDER : 
     Agar bisa menggunakan modul modul dll katalog, pastikan untuk selalu membuka file terlebih dahulu dengan modul laod file dan ditutup dengan modul save file
     *contoh kode : 
 
@@ -605,12 +606,14 @@ void userPrintKatalogByKategori(List P){
     int i;
     char choice;
 
+    system("cls");
     for(;;){
         i = 1;
         temp = P.First;
         kategori = P.First;
-        printf("============================\n");
-        printf("%-10s | %-20s\n", "No", "Jenis");
+        print_title("KATEGORI BARANG", WIDTH);
+        printf("\n============================\n");
+        printf("%-5s | %-20s\n", "No", "Kategori");
         printf("============================\n");
         while(temp != Nil){
             printf("%-5d | %-20s\n", i, temp->Jenis);
@@ -634,7 +637,8 @@ void userPrintKatalogByKategori(List P){
 
             if(strcmp(kategori->Jenis, jenis) == 0){
                 produk = kategori->produkJenis;
-                printf("Jenis : %s\n", jenis);
+                print_title("KATALOG BARANG", WIDTH);
+                printf("\nKategori : %s\n\n", jenis);
                 printf("%-5s | %-20s | %-5s | %-10s\n", "No", "Barang", "Stok", "Harga");
                 printf("----------------------------------------------------------\n");
                 i = 1;
@@ -643,18 +647,12 @@ void userPrintKatalogByKategori(List P){
                     produk = produk->next;
                     i++;
                 }
+                return;
             }
         }else{
             printf("belum ada kategori yang ditambahkan di toko ini....");
             sleep(2);
-        }
-        printf("\n\n1.kembali\n2.beli barang\nMasukkan pilihan anda : ");
-        scanf("%c", &choice);
-        if(choice == '1'){
-            system("cls");    
-        }else if(choice == '2'){
-            printf("modul pembelian...");
-            break;
+            return;
         }
     }
     return;
