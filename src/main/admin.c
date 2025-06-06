@@ -8,6 +8,7 @@ int main()
     print_center("SELAMAT DATANG ADMIN", WIDTH, HEIGHT);
     sleep(2);
     clear_screen();
+    InitTree(&tm);
 
     loginAdmin(&tm);
     return 0;

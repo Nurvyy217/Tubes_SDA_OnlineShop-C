@@ -606,6 +606,7 @@ void userPrintKatalogByKategori(List P){
     int i;
     char choice;
 
+    start:
     system("cls");
     for(;;){
         i = 1;
@@ -631,8 +632,9 @@ void userPrintKatalogByKategori(List P){
             }
 
             if(kategori == Nil){
-                printf("tidak ada sebuah jenis yang sesuai....");
-                return;
+                printf("tidak ada jenis/kategori yang sesuai....");
+                sleep(2);
+                goto start;
             }
 
             if(strcmp(kategori->Jenis, jenis) == 0){
