@@ -17,6 +17,8 @@ typedef struct
     char domisili[50];
 } User;
 
+extern int UID;
+
 // Inisialisasi file user (buat jika belum ada)
 // IS : File user.txt bisa ada atau tidak ada
 // FS : File user.txt pasti ada (jika belum ada, dibuat baru)

@@ -188,7 +188,7 @@ retry:
 void loginUser(TreeManager *tm)
 {
     char inputUsername[50];
-    int pinlogin;
+    int pinlogin, UID;
     User user;
 
     printf("\t\t\t\t\t\t\tLOGIN USER\n");
@@ -207,6 +207,7 @@ void loginUser(TreeManager *tm)
         inputPin(&pinlogin);
         if (pinlogin == user.pin)
         {
+            UID = user.id;
             printf("Login berhasil! Selamat datang, %s.\n", user.username);
             userMenu(&user, tm);
             break;
