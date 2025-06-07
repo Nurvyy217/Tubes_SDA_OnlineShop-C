@@ -638,15 +638,17 @@ void userPrintKatalogByKategori(List P){
             if(strcmp(kategori->Jenis, jenis) == 0){
                 produk = kategori->produkJenis;
                 print_title("KATALOG BARANG", WIDTH);
-                printf("\nKategori : %s\n\n", jenis);
-                printf("%-5s | %-20s | %-5s | %-10s\n", "No", "Barang", "Stok", "Harga");
-                printf("----------------------------------------------------------\n");
+                printf("Kategori : %s\n\n", jenis);
+                printf("==================================================\n");
+                printf("| %-5s | %-20s | %-5s | %-7s |\n", "No", "Barang", "Stok", "Harga");
+                printf("==================================================\n");
                 i = 1;
                 while(produk != Nil){
-                    printf("%-5d | %-20s | %-5d | %-10d\n", i, produk->barang, produk->stok, produk->harga);
+                    printf("| %-5d | %-20s | %-5d | %-7d |\n", i, produk->barang, produk->stok, produk->harga);
                     produk = produk->next;
                     i++;
                 }
+                printf("==================================================\n");
                 return;
             }
         }else{

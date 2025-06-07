@@ -1,5 +1,7 @@
 #include "../include/keranjang.h"
 #include "../include/printTemplate.h"
+#include "../include/transaksi.h"
+#include "../include/keranjang.h"
 
 // MAIN PROGRAM
 void CreateEmptyCart(CartList *CList){
@@ -36,9 +38,12 @@ void InsertLast(CartList *CList, cartAddress newCart) {
     }
 }
 
-void AddCart(CartList *CList, CartList tempCartList, List P, int user_id) {
+void AddCart(CartList *CList, List P, int user_id) {
     Cart *newCart, *cartExist;
     int id, item_id, quantity;
+    CartList tempCartList;
+    
+    GenerateCartList(&tempCartList);
 
     printKatalog(P);
     printf("Masukkan ID Barang: ");
@@ -51,7 +56,6 @@ void AddCart(CartList *CList, CartList tempCartList, List P, int user_id) {
     if (cartExist != NULL) {
         cartExist->quantity += quantity;
         printf("Berhasil mengupdate keranjang!\n");
-
         RewriteCartFile(*CList);
         return;
     }
@@ -62,7 +66,7 @@ void AddCart(CartList *CList, CartList tempCartList, List P, int user_id) {
         return;
     }
 
-    id = GetLastCartID(*CList, tempCartList); // ✅ Compare both active and temp carts
+    id = GetLastCartID(*CList, tempCartList);  // ✅ Use generated tempCartList
 
     newCart->id = id + 1;
     newCart->user_id = user_id;
@@ -123,23 +127,24 @@ void PrintCart(CartList CList, int user_id){
     printf("============================================================\n");
 }
 
-void CheckOut(CartList *CList, TQueue *TList, List *P, User user){
+void CheckOut(CartList *CList, TQueue *TList, List *P, User *user)
+{
     cartAddress cartNode;
     int cart_id, total_price;
-    char line[100], productName[100],name[50], type[50], payVar;
+    char line[100], productName[100], name[50], type[50], payVar;
     int id, price, stock;
     bool found = false;
 
-    if (CountTransactionByUser(*TList, user.id) >= 3) {
+    if (CountTransactionByUser(*TList, user->id) >= 3) {
         printf("Transaksi penuh! Mohon menunggu proses transaksi.\n");
         return;
     }
 
     print_title("CHECKOUT KERANJANG", WIDTH);
-    PrintCart(*CList, user.id);
+    PrintCart(*CList, user->id);
     printf("\nMasukkan ID Keranjang: ");
     scanf("%d", &cart_id);
-    
+
     total_price = 0;
     cartNode = GetCartById(*CList, cart_id);
 
@@ -177,18 +182,17 @@ void CheckOut(CartList *CList, TQueue *TList, List *P, User user){
     minusStokProduk(P, cartNode->quantity, productName);
     saveKatalogToFile(*P);
 
-    SaveTransactionToFile(user.id, cart_id, cartNode->item_id, cartNode->quantity, total_price);
+    SaveTransactionToFile(user->id, cart_id, cartNode->item_id, cartNode->quantity, total_price);
     DeleteCartById(CList, cart_id);
 
     printf("Checkout berhasil!\n\n");
 
-    printf("Ingin melakukan pembayaran? [y/n]");
+    printf("Ingin melakukan pembayaran? [y/n] ");
     scanf(" %c", &payVar);
-    if (payVar == 'y')
-    {
-        PayTransaction(&user);
-    } else  {
-        printf("Kembali..");
+    if (payVar == 'y') {
+        PayTransaction(user);  // ✅ Just pass the pointer
+    } else {
+        printf("Kembali..\n");
         sleep(2);
         return;
     }

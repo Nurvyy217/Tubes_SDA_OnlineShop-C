@@ -184,7 +184,7 @@ retry:
     }
 }
 
-void loginUser(TreeManager *tm, List P, User *user)
+void loginUser(TreeManager *tm, List P, User *user, CartList *C, TQueue *T)
 {
     char inputUsername[50];
     int pinlogin;
@@ -206,7 +206,7 @@ void loginUser(TreeManager *tm, List P, User *user)
         {
             printf("\n\nLogin berhasil! Selamat datang, %s.\n", user->username);
             sleep(2);
-            userMenu(user, tm, P);
+            userMenu(user, tm, P, C, T);
             break;
         }
         else
@@ -233,17 +233,17 @@ void orderInformation(User *user)
     printf("Estimasi sampai: 2 hari.\n");
 }
 
-void viewProduct(TreeManager *tm, User *user, List P){
+void viewProduct(TreeManager *tm, User *user, List P, CartList *C, TQueue *T){
     int choice;
     start:
     userPrintKatalogByKategori(P);
-    printf("\n\n\n1. Beli produk\n");
+    printf("\n1. Beli produk\n");
     printf("2. Masukkan ke keranjang\n");
         printf("3. Kembali\n");
         printf("Masukkan pilihan anda : ");
         scanf(" %c", &choice);
         if(choice == '1'){
-            buyProduct(tm, user);
+            buyProduct(tm, user, C, T);
             system("cls");    
         }else if(choice == '2'){
             printf("modul keranjang...");
@@ -254,7 +254,7 @@ void viewProduct(TreeManager *tm, User *user, List P){
 }
 
 
-void buyProduct(TreeManager *tm, User *user)
+void buyProduct(TreeManager *tm, User *user, CartList *C, TQueue *T)
 {
     char tujuan[100];
     int useDomisili = 0;
@@ -282,14 +282,15 @@ void buyProduct(TreeManager *tm, User *user)
         }
     }
 
-    printf("MODUL ADD CART DAN CHECKOUT");
+    // AddCart(C, P, user->id);
+    // CheckOut(C, T, P, *user);
 
     TreeNode *target = find_node_by_name(tm, tujuan);
     printf("Rute pengiriman:\n");
     print_route(target);
 }
 
-void userMenu(User *user, TreeManager *tm, List P)
+void userMenu(User *user, TreeManager *tm, List P, CartList *C, TQueue *T)
 {
     int choice;
     do
@@ -310,7 +311,7 @@ void userMenu(User *user, TreeManager *tm, List P)
             system("pause");
             break;
         case 2:
-            viewProduct(tm, user, P);
+            viewProduct(tm, user, P, C, T);
             system("pause");
             break;
         case 3:
