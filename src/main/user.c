@@ -20,6 +20,7 @@ int main()
     // Initialization Module ADT
     initUserFile();
     InitTree(&tm);
+    P.First = NULL;
     loadKatalogFromFile(&P);
     GenerateCartList(&Clist);
     GenerateTransactionList(&TList);

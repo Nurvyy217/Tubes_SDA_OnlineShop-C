@@ -184,7 +184,7 @@ retry:
     }
 }
 
-void loginUser(TreeManager *tm, List P, User *user, CartList *C, TQueue *T)
+void loginUser(TreeManager *tm, List P, User *user)
 {
     char inputUsername[50];
     int pinlogin;
@@ -206,7 +206,7 @@ void loginUser(TreeManager *tm, List P, User *user, CartList *C, TQueue *T)
         {
             printf("\n\nLogin berhasil! Selamat datang, %s.\n", user->username);
             sleep(2);
-            userMenu(user, tm, P, C, T);
+            userMenu(user, tm, P);
             break;
         }
         else
@@ -233,7 +233,7 @@ void orderInformation(User *user)
     printf("Estimasi sampai: 2 hari.\n");
 }
 
-void viewProduct(TreeManager *tm, User *user, List P, CartList *C, TQueue *T){
+void viewProduct(TreeManager *tm, User *user, List P){
     int choice;
     start:
     userPrintKatalogByKategori(P);
@@ -243,7 +243,7 @@ void viewProduct(TreeManager *tm, User *user, List P, CartList *C, TQueue *T){
         printf("Masukkan pilihan anda : ");
         scanf(" %c", &choice);
         if(choice == '1'){
-            buyProduct(tm, user, C, T);
+            buyProduct(tm, user);
             system("cls");    
         }else if(choice == '2'){
             printf("modul keranjang...");
@@ -254,7 +254,7 @@ void viewProduct(TreeManager *tm, User *user, List P, CartList *C, TQueue *T){
 }
 
 
-void buyProduct(TreeManager *tm, User *user, CartList *C, TQueue *T)
+void buyProduct(TreeManager *tm, User *user)
 {
     char tujuan[100];
     int useDomisili = 0;
@@ -290,7 +290,7 @@ void buyProduct(TreeManager *tm, User *user, CartList *C, TQueue *T)
     print_route(target);
 }
 
-void userMenu(User *user, TreeManager *tm, List P, CartList *C, TQueue *T)
+void userMenu(User *user, TreeManager *tm, List P)
 {
     int choice;
     do
@@ -311,7 +311,7 @@ void userMenu(User *user, TreeManager *tm, List P, CartList *C, TQueue *T)
             system("pause");
             break;
         case 2:
-            viewProduct(tm, user, P, C, T);
+            viewProduct(tm, user, P);
             system("pause");
             break;
         case 3:
