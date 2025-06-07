@@ -92,7 +92,7 @@ void adminKatalog(){
             system("cls");
             printf("Status Tambahan \n");
             printf("%-5s | %-20s | %-5s | %-10s\n", "No", "Barang", "Stok", "Harga");
-            printf("----------------------------------------------------------\n");
+            printf("==========================================================\n");
             printf("%-5d | %-20s | %-5d | %-10d\n", statusInt, produk, stok, harga);
             sleep(1);
             printf("\nApakah data sudah sesuai ?\n1. Ya\n2. Tidak\nMasukkan pilihan anda : ");
@@ -156,7 +156,7 @@ void adminKatalog(){
                 if(P != Nil){
                     printf("Data ditemukan\n");
                     printf("%-5s | %-20s | %-5s | %-10s\n", "No", "Barang", "Stok", "Harga");
-                    printf("----------------------------------------------------------\n");
+                    printf("==========================================================\n");
                     printf("%-5d | %-20s | %-5d | %-10d\n", statusInt, P->barang, P->stok, P->harga);
                     printf("\nApakah barang yang dicari sudah sesuai ? \n1.Ya\n2.Tidak\nMasukkan pilihan anda : ");
                     scanf("%d", &temp);
@@ -232,8 +232,6 @@ void adminKatalog(){
         }else if(decision == 8){
             printf("Update disimpan....");
             sleep(2);
-            printf("\nSampai Jumpa Admin...");
-            sleep(2);
             break;
         }else{
             printf("Pilihan tidak valid....");
@@ -241,7 +239,6 @@ void adminKatalog(){
         saveKatalogToFile(katalog);
     }
     system("cls");
-    // userPrintKatalogByKategori(katalog); // modul ini digunakan untuk testing saja dan untuk penggunaannya bisa di lain hal...
 }
 
 // MODUL POV USER
@@ -465,7 +462,7 @@ void minusStokProduk(List *P, int stok, char* produk){
     barang = searchProduk(P, produk);
     if(barang != Nil){
         if(barang->stok == 0){
-            printf("tidak ada stok barang");
+            printf("Tidak ada stok barang");
         }else if(barang->stok < stok){
             printf("Stok tidak mencukupi! Stok saat ini: %d, permintaan: %d\n", barang->stok, stok);
         }else{
@@ -490,33 +487,39 @@ void updateHargaProduk(List *P, int harga, char* produk){
 void printKatalog(List P){
     addressJenis head = P.First;
     addressProduk produk = Nil;
-    int i;
 
-    if(head != Nil){
-        while(head != Nil){
-            printf("\nJenis: %s\n", head->Jenis);
-            printf("==========================================================\n");
+    if (head != Nil){
+        while (head != Nil){
+            printf("\nKategori: %s\n", head->Jenis);
+            printf("===========================================================\n");
             
             produk = head->produkJenis;
             
-            if(produk != Nil){
+            if (produk != Nil){
                 printf("%-5s | %-20s | %-5s | %-10s\n", "ID", "Barang", "Stok", "Harga");
-                printf("----------------------------------------------------------\n");
+                printf("===========================================================\n");
 
-                while(produk != Nil){
-                    printf("%-5d | %-20s | %-5d | %-10d\n", produk->id, produk->barang, produk->stok, produk->harga);
+                while (produk != Nil){
+                    if (produk->stok == 0){
+                        printf("%-5s | %-20s | %-5d | %-10d\n",
+                               "X", produk->barang, 0, produk->harga);
+                    } else {
+                        printf("%-5d | %-20s | %-5d | %-10d\n",
+                               produk->id, produk->barang, produk->stok, produk->harga);
+                    }
                     produk = produk->next;
                 }
-            }else{
+            } else {
                 printf("Mohon maaf, barang jenis '%s' belum tersedia.\n", head->Jenis);
             }
 
             head = head->next_jenis;
         }
-    }else{
+    } else {
         printf("\nMohon maaf, tidak ada barang di toko...\n");
     }
 }
+
 
 addressProduk searchProduk(List *P, char* barang){
     addressJenis tempJenis = (*P).First;
@@ -599,66 +602,69 @@ bool isDuplikatProduk(addressProduk P, char* produk){
 void userPrintKatalogByKategori(List P){
     char jenis[MAX];
     addressJenis kategori = Nil;
-    addressProduk produk = Nil;
-    addressJenis temp = Nil;
+    addressProduk produk  = Nil;
+    addressJenis temp     = Nil;
     int i;
     char choice;
 
+
     start:
     system("cls");
+
     for(;;){
-        i = 1;
+        i    = 1;
         temp = P.First;
         kategori = P.First;
+
         print_title("KATEGORI BARANG", WIDTH);
         printf("\n============================\n");
         printf("%-5s | %-20s\n", "No", "Kategori");
         printf("============================\n");
-        while(temp != Nil){
+        while (temp != Nil){
             printf("%-5d | %-20s\n", i, temp->Jenis);
             temp = temp->next_jenis;
             i++;
         }
-        printf("\nmasukkan kategori barang : ");
+
+        printf("\nMasukkan kategori barang : ");
         getchar();
         fgets(jenis, sizeof(jenis), stdin);
         jenis[strcspn(jenis, "\n")] = '\0';
         system("cls");
-        if(kategori != Nil){
-            while(kategori != Nil && strcmp(kategori->Jenis, jenis) != 0){
-                kategori = kategori->next_jenis;
-            }
 
-            if(kategori == Nil){
-                printf("tidak ada jenis/kategori yang sesuai....");
-                sleep(2);
-                goto start;
-            }
-
-            if(strcmp(kategori->Jenis, jenis) == 0){
-                produk = kategori->produkJenis;
-                print_title("KATALOG BARANG", WIDTH);
-                printf("Kategori : %s\n\n", jenis);
-                printf("==================================================\n");
-                printf("| %-5s | %-20s | %-5s | %-7s |\n", "No", "Barang", "Stok", "Harga");
-                printf("==================================================\n");
-                i = 1;
-                while(produk != Nil){
-                    printf("| %-5d | %-20s | %-5d | %-7d |\n", i, produk->barang, produk->stok, produk->harga);
-                    produk = produk->next;
-                    i++;
-                }
-                printf("==================================================\n");
-                return;
-            }
-        }else{
-            printf("belum ada kategori yang ditambahkan di toko ini....");
-            sleep(2);
-            return;
+        while (kategori != Nil && strcmp(kategori->Jenis, jenis) != 0){
+            kategori = kategori->next_jenis;
         }
+
+        if (kategori == Nil){
+            printf("Tidak ada jenis/kategori yang sesuai....");
+            sleep(2);
+            goto start;
+        }
+
+        produk = kategori->produkJenis;
+        print_title("KATALOG BARANG", WIDTH);
+        printf("Kategori : %s\n\n", jenis);
+        printf("==================================================\n");
+        printf("| %-5s | %-20s | %-5s | %-7s |\n",
+               "No", "Barang", "Stok", "Harga");
+        printf("==================================================\n");
+
+        i = 1;
+        while (produk != Nil){
+            if (produk->stok == 0){
+                printf("| %-5s | %-20s | %-5d | %-7d |\n",
+                       "X", produk->barang, 0, produk->harga);
+            } else {
+                printf("| %-5d | %-20s | %-5d | %-7d |\n",
+                       i, produk->barang, produk->stok, produk->harga);
+            }
+            i++;
+            produk = produk->next;
+        }
+        printf("==================================================\n");
+        return;
     }
-    return;
-    
 }
 
 int getMaxIdOfProduk(List P){
@@ -723,6 +729,8 @@ void loadKatalogFromFile(List *L){
     addressProduk nodeProduk = Nil;
     int id, harga, stok;
     char namaProduk[MAX], jenis[MAX];
+    
+    (*L).First = NULL;
 
     FILE *fp = fopen(FILE_KATALOG, "r");
     if(fp == Nil){

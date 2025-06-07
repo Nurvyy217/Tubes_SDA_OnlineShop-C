@@ -6,21 +6,18 @@
 #include "../include/stack.h"
 #include "../include/printTemplate.h"
 
-
-// Inisialisasi file user membuat file jika belum ada
 void initUserFile()
 {
-    FILE *file = fopen(USER_FILE, "a"); //mode append untuk membuat file jika belum ada
+    FILE *file = fopen(USER_FILE, "a");
     if (file)
     {
         fclose(file);
     }
 }
 
-// Simpan user baru ke file
 void saveUser(User *u)
 {
-    FILE *file = fopen(USER_FILE, "a"); 
+    FILE *file = fopen(USER_FILE, "a");
     if (!file)
     {
         printf("Error: Cannot open user file\n");
@@ -32,33 +29,36 @@ void saveUser(User *u)
 
 int getUserByUsername(const char *username, User *u)
 {
-    FILE *file = fopen(USER_FILE, "r"); //mode read untuk membaca file
+    FILE *file = fopen(USER_FILE, "r");
     if (!file)
-        return 0; //return 0 jika file tidak ditemukan
+        return 0;
 
     char line[256];
-    while (fgets(line, sizeof(line), file)) // membaca setiap baris dari file
+    while (fgets(line, sizeof(line), file))
     {
         int tempId, tempPin, tempSaldo;
         char tempUsername[50], tempDomisili[100];
+<<<<<<< HEAD
         if (sscanf(line, "%d,%49[^,],%d,%d,%99[^\n]", &tempId, tempUsername, &tempPin, &tempSaldo, tempDomisili) == 5) // parsing data dari baris
         //kenapa pakai &? karena sscanf membutuhkan alamat dari variabel untuk menyimpan data yang dibaca
+=======
+        if (sscanf(line, "%d,%49[^,],%d,%d,%99[^\n]", &tempId, tempUsername, &tempPin, &tempSaldo, tempDomisili) == 5)
+>>>>>>> 8fe4e7b64376c464ebae2aa0cc6e6b0246d876fb
         {
-            if (strcmp(tempUsername, username) == 0) // jika username cocok
+            if (strcmp(tempUsername, username) == 0)
             {
-                // copy data ke struct user
                 u->id = tempId;
                 strcpy(u->username, tempUsername);
                 u->pin = tempPin;
                 u->saldo = tempSaldo;
                 strcpy(u->domisili, tempDomisili);
                 fclose(file);
-                return 1; //return 1 jika user ditemukan
+                return 1;
             }
         }
     }
     fclose(file);
-    return 0; //return 0 jika user tidak ditemukan
+    return 0;
 }
 
 // update user di file jika ada perubahan
@@ -198,22 +198,33 @@ retry:
     }
 }
 
+<<<<<<< HEAD
 // login user
 void loginUser(TreeManager *tm, List P, User *user)
+=======
+void loginUser(TreeManager *tm, List *P, User *user, CartList *C, TQueue *T)
+>>>>>>> 8fe4e7b64376c464ebae2aa0cc6e6b0246d876fb
 {
     char inputUsername[50];
     int pinlogin;
 
     print_title("LOGIN USER", WIDTH);
+    while(1){
     printf("\nMasukkan username: ");
     scanf("%s", inputUsername);
+<<<<<<< HEAD
 
     if (!getUserByUsername(inputUsername, user)) // Cek apakah username ada di file
+=======
+    if (!getUserByUsername(inputUsername, user))
+>>>>>>> 8fe4e7b64376c464ebae2aa0cc6e6b0246d876fb
     {
         printf("Username tidak ditemukan.\n");
-        return;
+    }else{
+        break;
+        }
     }
-
+    
     while (1)
     {
         inputPin(&pinlogin);
@@ -221,7 +232,6 @@ void loginUser(TreeManager *tm, List P, User *user)
         {
             printf("\n\nLogin berhasil! Selamat datang, %s.\n", user->username);
             sleep(2);
-            userMenu(user, tm, P);
             break;
             // Keluar dari loop jika login berhasil dan masuk ke menu user
         }
@@ -230,6 +240,7 @@ void loginUser(TreeManager *tm, List P, User *user)
             printf("PIN salah! Coba lagi.\n");
         }
     }
+    return;
 }
 
 // Cek apakah username sudah ada, jika ada, return 1, jika tidak ada, return 0
@@ -242,41 +253,53 @@ int isUsernameExists(const char *username)
 // Tabel informasi/riwayat pesanan
 void orderInformation(User *user)
 {
+    TQueue TList;
     system("cls");
     print_title("INFO PESANAN", WIDTH);
-    printf("\n");
+    GenerateTransactionListByUser(&TList, user->id, NULL);
+    PrintTransaction(TList);
     printf("Pengiriman barang Anda sedang dalam proses.\n");
     printf("Status Transit: .\n");
     printf("Estimasi sampai: 2 hari.\n");
 }
 
+<<<<<<< HEAD
 // Lihat produk berdasarkan kategori
 void viewProduct(TreeManager *tm, User *user, List P){
+=======
+void viewProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T){
+>>>>>>> 8fe4e7b64376c464ebae2aa0cc6e6b0246d876fb
     int choice;
     start:
-    userPrintKatalogByKategori(P);
+    userPrintKatalogByKategori(*P);
     printf("\n1. Beli produk\n");
     printf("2. Masukkan ke keranjang\n");
         printf("3. Kembali\n");
         printf("Masukkan pilihan anda : ");
         scanf(" %c", &choice);
         if(choice == '1'){
-            buyProduct(tm, user);
+            buyProduct(tm, user, P, C, T);
             system("cls");    
         }else if(choice == '2'){
-            printf("modul keranjang...");
+            AddCart(C, user->id);
         }
         else{
             goto start;
         }
 }
 
+<<<<<<< HEAD
 // Beli Produk
 void buyProduct(TreeManager *tm, User *user)
+=======
+void buyProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T)
+>>>>>>> 8fe4e7b64376c464ebae2aa0cc6e6b0246d876fb
 {
     char tujuan[100];
     int useDomisili = 0;
     while (1) {
+        clear_screen();
+        print_title("PILIH ALAMAT", WIDTH);
         printf("Kota tujuan: %s\n", user->domisili);
         printf("Kirim ke alamat ini? (y/n): ");
         char yn[10];
@@ -300,13 +323,21 @@ void buyProduct(TreeManager *tm, User *user)
         }
     }
 
-    // AddCart(C, P, user->id);
-    // CheckOut(C, T, P, *user);
+    AddCart(C, user->id);
+    CheckOut(C, T, P, user->id);
 
+<<<<<<< HEAD
     TreeNode *target = find_node_by_name(tm, tujuan); // Menyimpan alamat node kota tujuan ke dalam TreeNode target
     printf("Rute pengiriman:\n");
+=======
+    TreeNode *target = find_node_by_name(tm, tujuan);
+    clear_screen();
+    print_title("RUTE PENGIRIMAN", WIDTH);
+>>>>>>> 8fe4e7b64376c464ebae2aa0cc6e6b0246d876fb
     print_route(target);
+    system("pause");
 }
+<<<<<<< HEAD
 
 
 // Menu utama untuk user
@@ -354,3 +385,5 @@ void userMenu(User *user, TreeManager *tm, List P)
 
 
 
+=======
+>>>>>>> 8fe4e7b64376c464ebae2aa0cc6e6b0246d876fb
