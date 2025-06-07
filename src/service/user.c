@@ -6,7 +6,6 @@
 #include "../include/stack.h"
 #include "../include/printTemplate.h"
 
-
 void initUserFile()
 {
     FILE *file = fopen(USER_FILE, "a");
@@ -184,7 +183,7 @@ retry:
     }
 }
 
-void loginUser(TreeManager *tm, List P, User *user)
+void loginUser(TreeManager *tm, List *P, User *user, CartList *C, TQueue *T)
 {
     char inputUsername[50];
     int pinlogin;
@@ -206,7 +205,7 @@ void loginUser(TreeManager *tm, List P, User *user)
         {
             printf("\n\nLogin berhasil! Selamat datang, %s.\n", user->username);
             sleep(2);
-            userMenu(user, tm, P);
+            userMenu(user, tm, P, C, T);
             break;
         }
         else
@@ -225,40 +224,44 @@ int isUsernameExists(const char *username)
 
 void orderInformation(User *user)
 {
+    TQueue TList;
     system("cls");
     print_title("INFO PESANAN", WIDTH);
-    printf("\n");
+    GenerateTransactionListByUser(&TList, user->id, NULL);
+    PrintTransaction(TList);
     printf("Pengiriman barang Anda sedang dalam proses.\n");
     printf("Status Transit: .\n");
     printf("Estimasi sampai: 2 hari.\n");
+    system("pause");
 }
 
-void viewProduct(TreeManager *tm, User *user, List P){
+void viewProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T){
     int choice;
     start:
-    userPrintKatalogByKategori(P);
+    userPrintKatalogByKategori(*P);
     printf("\n1. Beli produk\n");
     printf("2. Masukkan ke keranjang\n");
         printf("3. Kembali\n");
         printf("Masukkan pilihan anda : ");
         scanf(" %c", &choice);
         if(choice == '1'){
-            buyProduct(tm, user);
+            buyProduct(tm, user, P, C, T);
             system("cls");    
         }else if(choice == '2'){
-            printf("modul keranjang...");
+            AddCart(C, user->id);
         }
         else{
             goto start;
         }
 }
 
-
-void buyProduct(TreeManager *tm, User *user)
+void buyProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T)
 {
     char tujuan[100];
     int useDomisili = 0;
     while (1) {
+        clear_screen();
+        print_title("PILIH ALAMAT", WIDTH);
         printf("Kota tujuan: %s\n", user->domisili);
         printf("Kirim ke alamat ini? (y/n): ");
         char yn[10];
@@ -282,17 +285,23 @@ void buyProduct(TreeManager *tm, User *user)
         }
     }
 
-    // AddCart(C, P, user->id);
-    // CheckOut(C, T, P, *user);
+    AddCart(C, user->id);
+    CheckOut(C, T, P, user->id);
 
     TreeNode *target = find_node_by_name(tm, tujuan);
-    printf("Rute pengiriman:\n");
+    clear_screen();
+    print_title("RUTE PENGIRIMAN", WIDTH);
     print_route(target);
+    system("pause");
 }
 
-void userMenu(User *user, TreeManager *tm, List P)
+void userMenu(User *user, TreeManager *tm, List *P, CartList *C, TQueue *T)
 {
     int choice;
+    char pilihan;
+    boolean item;
+    item = false;
+
     do
     {
         system("cls");
@@ -301,7 +310,8 @@ void userMenu(User *user, TreeManager *tm, List P)
         printf("2. Lihat/Beli Produk\n");
         printf("3. Info Pesanan\n");
         printf("4. Keranjang saya\n");
-        printf("5. Keluar\n");
+        printf("5. Bayar Transaksi\n");
+        printf("6. Keluar\n");
         printf("Masukkan pilihan: ");
         scanf("%d", &choice);
         switch (choice)
@@ -311,24 +321,39 @@ void userMenu(User *user, TreeManager *tm, List P)
             system("pause");
             break;
         case 2:
-            viewProduct(tm, user, P);
+            viewProduct(tm, user, P, C, T);
             system("pause");
             break;
         case 3:
             orderInformation(user);
+            system("pause");
             break;
         case 4:
-            printf("implement cart module here...\n");
+            clear_screen();
+            print_title("KERANJANG", WIDTH);
+            PrintCart(*C, user->id, &item);
+            if(item){
+                printf("Checkout Keranjang: [y/n]: ");
+                scanf(" %c", &pilihan);
+                if (pilihan == 'y')
+                {
+                    CheckOut(C, T, P, user->id);
+                }
+            }
             system("pause");
             break;
         case 5:
+            PayTransaction(user->id);
+            system("pause");
+            break;
+        case 6:
             printf("Keluar dari program!\n");
             break;
         default:
             printf("Pilihan tidak valid\n");
             break;
         }
-    } while (choice != 4);
+    } while (choice != 6);
 }
 
 

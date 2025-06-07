@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include "katalog.h"
 #include "tree.h"
+#include "keranjang.h"
+#include "transaksi.h"
 
 // Path file user
 #define USER_FILE "data/user.txt"
@@ -32,7 +34,7 @@ void registration();
  * FS : Data user baru ditambahkan ke file user.txt jika valid
  */
 
-void loginUser(TreeManager *tm, List P, User *user);
+void loginUser(TreeManager *tm, List *P, User *user, CartList *C, TQueue *T);
 /*
  * Login user
  * IS : User belum login
@@ -67,14 +69,14 @@ int getUserByUsername(const char *username, User *u);
  * FS : Data user diisi jika ditemukan, return 1 jika ada, 0 jika tidak
  */
 
-void userMenu(User *user, TreeManager *tm, List P);
+void userMenu(User *user, TreeManager *tm, List *P, CartList *C, TQueue *T);
 /*
  * Menu utama user
  * IS : User sudah login
  * FS : Menampilkan menu dan menjalankan fitur sesuai pilihan user
  */
 
-void viewProduct(TreeManager *tm, User *user, List P);
+void viewProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T);
 /*
  * Menampilkan produk
  * IS : Produk belum ditampilkan
@@ -88,7 +90,7 @@ void topUp(User *user);
  * FS : Saldo user bertambah sesuai input
  */
 
-void buyProduct(TreeManager *tm, User *user);
+void buyProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T);
 /*
  * Fitur beli produk
  * IS : User belum melakukan pembelian

@@ -2,7 +2,6 @@
 #define TRANSAKSI_H
 
 #include "environment.h"
-#include "user.h"
 #include "katalog.h"
 #include "printTemplate.h"
 
@@ -32,11 +31,11 @@ void SaveTransactionToFile(int user_id, int cart_id, int item_id, int quantity, 
 void Dequeue(TQueue *TList);
 boolean IsTrsEmpty(TQueue *TQueue);
 int CountTransactionByUser(TQueue Q, int user_id);
-void PayTransaction(User *userLogin);
+void PayTransaction(int user_id);
 void PrintTransaction(TQueue TList);
 
-void UpdateUserFile(User *userLogin);
 void GenerateTransactionList(TQueue *TList);
 int GetLastTransactionID(TQueue TQueue);
+void GenerateTransactionListByUser(TQueue *TList, int user_id, const char *statusFilter);
 
 #endif
