@@ -187,9 +187,7 @@ retry:
 void loginUser(TreeManager *tm, List P, User *user)
 {
     char inputUsername[50];
-    int pinlogin, UID;
-    User user;
-    
+    int pinlogin;
 
     print_title("LOGIN USER", WIDTH);
     printf("\nMasukkan username: ");
@@ -206,10 +204,10 @@ void loginUser(TreeManager *tm, List P, User *user)
         inputPin(&pinlogin);
         if (pinlogin == user->pin)
         {
-            UID = user.id;
             printf("Login berhasil! Selamat datang, %s.\n", user->username);
-            userMenu(user, tm, P);
-            break;
+            // userMenu(user, tm, P);
+            // break;
+            return;
         }
         else
         {
@@ -284,7 +282,7 @@ void buyProduct(TreeManager *tm, User *user)
         }
     }
 
-    //Modul mengurangi stok barang
+    printf("MODUL ADD CART DAN CHECKOUT");
 
     TreeNode *target = find_node_by_name(tm, tujuan);
     printf("Rute pengiriman:\n");

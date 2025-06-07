@@ -10,13 +10,6 @@ void inputPin(int *pin);
  * FS : Variabel pin berisi input PIN dari user
  */
 
-void inputPin(int *pin);
-/*
- * Meminta input PIN dari user dan menyimpannya ke variabel pin
- * IS : Variabel pin belum berisi input user
- * FS : Variabel pin berisi input PIN dari user
- */
-
 void clear_screen();
 /*
  * Membersihkan layar terminal/console
@@ -36,12 +29,6 @@ void print_title(const char *title, int width);
  * Menampilkan judul di tengah layar dengan lebar tertentu
  * IS : Judul belum ditampilkan
  * FS : Judul tampil di tengah layar sesuai width
- */
-
-/*
- * Menampilkan tabel dengan header dan data yang diberikan
- * IS : Data tabel belum ditampilkan
- * FS : Data tabel tampil di terminal dengan format tabel
  */
 
 #endif

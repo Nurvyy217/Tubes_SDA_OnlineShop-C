@@ -494,19 +494,17 @@ void printKatalog(List P){
 
     if(head != Nil){
         while(head != Nil){
-            i = 1;
             printf("\nJenis: %s\n", head->Jenis);
-            printf("=====================================\n");
-
+            printf("==========================================================\n");
+            
             produk = head->produkJenis;
-
+            
             if(produk != Nil){
-                printf("%-5s | %-20s | %-5s | %-10s\n", "No", "Barang", "Stok", "Harga");
+                printf("%-5s | %-20s | %-5s | %-10s\n", "ID", "Barang", "Stok", "Harga");
                 printf("----------------------------------------------------------\n");
 
                 while(produk != Nil){
-                    printf("%-5d | %-20s | %-5d | %-10d\n", i, produk->barang, produk->stok, produk->harga);
-                    i++;
+                    printf("%-5d | %-20s | %-5d | %-10d\n", produk->id, produk->barang, produk->stok, produk->harga);
                     produk = produk->next;
                 }
             }else{
