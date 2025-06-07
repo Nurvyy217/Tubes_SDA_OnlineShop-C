@@ -15,7 +15,7 @@ int main()
     clear_screen();
     InitTree(&tm);
 
-    loginAdmin(&tm); 
+    loginAdmin(); 
     for(;;){
         system("cls");
         print_title("MENU ADMIN", WIDTH);

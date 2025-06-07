@@ -7,7 +7,7 @@
 #include "../include/tree.h"
 #include "../include/katalog.h"
 
-void loginAdmin(TreeManager *tm) {
+void loginAdmin() {
     char adminUsername[50];
     char inputUsername[50];
     int adminPassword;

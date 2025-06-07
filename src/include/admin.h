@@ -10,7 +10,7 @@ void ProsesTransaksi(TreeManager *tm);
  * FS : Transaksi diproses sesuai prosedur admin
  */
 
-void loginAdmin(TreeManager *tm);
+void loginAdmin();
 /*
  * Melakukan proses login untuk admin
  * IS : Admin belum login

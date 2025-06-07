@@ -244,9 +244,6 @@ void orderInformation(User *user)
     print_title("INFO PESANAN", WIDTH);
     GenerateTransactionListByUser(&TList, user->id, NULL);
     PrintTransaction(TList);
-    printf("Pengiriman barang Anda sedang dalam proses.\n");
-    printf("Status Transit: .\n");
-    printf("Estimasi sampai: 2 hari.\n");
 }
 
 // Lihat produk berdasarkan kategori
