@@ -1,4 +1,4 @@
-#include "transaksi.h"
+#include "../include/transaksi.h"
 
 void AllocateTransaction(Transaction **Trs) {
     *Trs = (Transaction*) malloc(sizeof(Transaction));
