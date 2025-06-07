@@ -7,18 +7,20 @@
 #include "../include/printTemplate.h"
 
 
+// Inisialisasi file user membuat file jika belum ada
 void initUserFile()
 {
-    FILE *file = fopen(USER_FILE, "a");
+    FILE *file = fopen(USER_FILE, "a"); //mode append untuk membuat file jika belum ada
     if (file)
     {
         fclose(file);
     }
 }
 
+// Simpan user baru ke file
 void saveUser(User *u)
 {
-    FILE *file = fopen(USER_FILE, "a");
+    FILE *file = fopen(USER_FILE, "a"); 
     if (!file)
     {
         printf("Error: Cannot open user file\n");
@@ -30,31 +32,32 @@ void saveUser(User *u)
 
 int getUserByUsername(const char *username, User *u)
 {
-    FILE *file = fopen(USER_FILE, "r");
+    FILE *file = fopen(USER_FILE, "r"); //mode read untuk membaca file
     if (!file)
-        return 0;
+        return 0; //return 0 jika file tidak ditemukan
 
     char line[256];
-    while (fgets(line, sizeof(line), file))
+    while (fgets(line, sizeof(line), file)) // membaca setiap baris dari file
     {
         int tempId, tempPin, tempSaldo;
         char tempUsername[50], tempDomisili[100];
-        if (sscanf(line, "%d,%49[^,],%d,%d,%99[^\n]", &tempId, tempUsername, &tempPin, &tempSaldo, tempDomisili) == 5)
+        if (sscanf(line, "%d,%49[^,],%d,%d,%99[^\n]", &tempId, tempUsername, &tempPin, &tempSaldo, tempDomisili) == 5) // parsing data dari baris
         {
-            if (strcmp(tempUsername, username) == 0)
+            if (strcmp(tempUsername, username) == 0) // jika username cocok
             {
+                // copy data ke struct user
                 u->id = tempId;
                 strcpy(u->username, tempUsername);
                 u->pin = tempPin;
                 u->saldo = tempSaldo;
                 strcpy(u->domisili, tempDomisili);
                 fclose(file);
-                return 1;
+                return 1; //return 1 jika user ditemukan
             }
         }
     }
     fclose(file);
-    return 0;
+    return 0; //return 0 jika user tidak ditemukan
 }
 
 void updateUserInFile(User *user)
