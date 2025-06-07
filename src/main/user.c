@@ -13,17 +13,16 @@ int main()
     List P;
     User user;
     TreeManager tm;
-    CartList Clist;
-    TQueue TList;
+    CartList C;
+    TQueue T;
     char choice;
     
     // Initialization Module ADT
     initUserFile();
     InitTree(&tm);
-    P.First = NULL;
     loadKatalogFromFile(&P);
-    GenerateCartList(&Clist);
-    GenerateTransactionList(&TList);
+    GenerateCartList(&C);
+    GenerateTransactionList(&T);
 
     // PROGRAM
     system("cls");
@@ -37,7 +36,7 @@ int main()
     if (choice == '1')
     {
         system("cls");
-        loginUser(&tm, P, &user);
+        loginUser(&tm, &P, &user, &C, &T);
     }
     else if (choice == '2')
     {
