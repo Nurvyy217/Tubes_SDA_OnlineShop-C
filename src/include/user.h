@@ -100,11 +100,12 @@ void buyProduct(TreeManager *tm, User *user);
  * FS : Proses pembelian produk berjalan sesuai input user
  */
 
-void orderInformation(User *user);
+ void orderInformation(User *user);
 /*
 * Menampilkan informasi pesanan user
 * IS : User sudah login
 * FS : Menampilkan detail pesanan yang telah dilakukan user
 */
+
 
 #endif

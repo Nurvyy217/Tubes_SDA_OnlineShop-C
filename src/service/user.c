@@ -204,10 +204,10 @@ void loginUser(TreeManager *tm, List P, User *user)
         inputPin(&pinlogin);
         if (pinlogin == user->pin)
         {
-            printf("Login berhasil! Selamat datang, %s.\n", user->username);
-            // userMenu(user, tm, P);
-            // break;
-            return;
+            printf("\n\nLogin berhasil! Selamat datang, %s.\n", user->username);
+            sleep(2);
+            userMenu(user, tm, P);
+            break;
         }
         else
         {
@@ -298,7 +298,7 @@ void userMenu(User *user, TreeManager *tm, List P)
         print_title("MENU USER", WIDTH);
         printf("\n1. Top Up Saldo\n");
         printf("2. Lihat/Beli Produk\n");
-        printf("3. Info Pemesanan\n");
+        printf("3. Info Pesanan\n");
         printf("4. Keranjang saya\n");
         printf("5. Keluar\n");
         printf("Masukkan pilihan: ");
