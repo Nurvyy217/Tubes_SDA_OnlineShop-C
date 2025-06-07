@@ -28,7 +28,7 @@ void loginAdmin(TreeManager *tm) {
 
     if (isAdminValid) {
         printf("\n\n\nLogin Admin berhasil. Selamat datang, Admin.\n");
-        Sleep(2000);
+        sleep(2);
         menuAdmin(tm);
     } else {
         printf("\nLogin Admin gagal! Username atau Password salah.\n");
