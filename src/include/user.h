@@ -69,13 +69,6 @@ int getUserByUsername(const char *username, User *u);
  * FS : Data user diisi jika ditemukan, return 1 jika ada, 0 jika tidak
  */
 
-void userMenu(User *user, TreeManager *tm, List *P, CartList *C, TQueue *T);
-/*
- * Menu utama user
- * IS : User sudah login
- * FS : Menampilkan menu dan menjalankan fitur sesuai pilihan user
- */
-
 void viewProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T);
 /*
  * Menampilkan produk

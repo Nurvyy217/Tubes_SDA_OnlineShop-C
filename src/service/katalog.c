@@ -232,8 +232,6 @@ void adminKatalog(){
         }else if(decision == 8){
             printf("Update disimpan....");
             sleep(2);
-            printf("\nSampai Jumpa Admin...");
-            sleep(2);
             break;
         }else{
             printf("Pilihan tidak valid....");
@@ -241,7 +239,6 @@ void adminKatalog(){
         saveKatalogToFile(katalog);
     }
     system("cls");
-    // userPrintKatalogByKategori(katalog); // modul ini digunakan untuk testing saja dan untuk penggunaannya bisa di lain hal...
 }
 
 // MODUL POV USER

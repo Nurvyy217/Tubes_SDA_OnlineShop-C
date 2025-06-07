@@ -189,15 +189,17 @@ void loginUser(TreeManager *tm, List *P, User *user, CartList *C, TQueue *T)
     int pinlogin;
 
     print_title("LOGIN USER", WIDTH);
+    while(1){
     printf("\nMasukkan username: ");
     scanf("%s", inputUsername);
-
     if (!getUserByUsername(inputUsername, user))
     {
         printf("Username tidak ditemukan.\n");
-        return;
+    }else{
+        break;
+        }
     }
-
+    
     while (1)
     {
         inputPin(&pinlogin);
@@ -205,7 +207,6 @@ void loginUser(TreeManager *tm, List *P, User *user, CartList *C, TQueue *T)
         {
             printf("\n\nLogin berhasil! Selamat datang, %s.\n", user->username);
             sleep(2);
-            userMenu(user, tm, P, C, T);
             break;
         }
         else
@@ -213,6 +214,7 @@ void loginUser(TreeManager *tm, List *P, User *user, CartList *C, TQueue *T)
             printf("PIN salah! Coba lagi.\n");
         }
     }
+    return;
 }
 
 
@@ -293,65 +295,3 @@ void buyProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T)
     print_route(target);
     system("pause");
 }
-
-void userMenu(User *user, TreeManager *tm, List *P, CartList *C, TQueue *T)
-{
-    int choice;
-    char pilihan;
-    boolean item;
-    item = false;
-
-    do
-    {
-        system("cls");
-        print_title("MENU USER", WIDTH);
-        printf("\n1. Top Up Saldo\n");
-        printf("2. Lihat/Beli Produk\n");
-        printf("3. Info Pesanan\n");
-        printf("4. Keranjang saya\n");
-        printf("5. Bayar Transaksi\n");
-        printf("6. Keluar\n");
-        printf("Masukkan pilihan: ");
-        scanf("%d", &choice);
-        switch (choice)
-        {
-        case 1:
-            topUp(user);
-            system("pause");
-            break;
-        case 2:
-            viewProduct(tm, user, P, C, T);
-            system("pause");
-            break;
-        case 3:
-            orderInformation(user);
-            system("pause");
-            break;
-        case 4:
-            clear_screen();
-            print_title("KERANJANG", WIDTH);
-            PrintCart(*C, user->id, &item);
-            if(item){
-                printf("Checkout Keranjang: [y/n]: ");
-                scanf(" %c", &pilihan);
-                if (pilihan == 'y')
-                {
-                    CheckOut(C, T, P, user->id);
-                }
-            }
-            system("pause");
-            break;
-        case 5:
-            PayTransaction(user->id);
-            system("pause");
-            break;
-        case 6:
-            printf("Keluar dari program!\n");
-            break;
-        default:
-            printf("Pilihan tidak valid\n");
-            break;
-        }
-    } while (choice != 6);
-}
-

@@ -18,44 +18,28 @@ void loginAdmin(TreeManager *tm) {
     adminPassword = 1234;
     system("cls");
     print_title("LOGIN ADMIN", WIDTH);
-    printf("\nMasukkan Username Admin: ");
-    scanf("%s", inputUsername);
-    inputPin(&inputPassword);
-
-    if (strcmp(inputUsername, adminUsername) == 0 && inputPassword == adminPassword) {
-        isAdminValid = 1;
+    while(1){
+        printf("\nMasukkan Username Admin: ");
+        scanf("%s", inputUsername);
+        if (strcmp(inputUsername, adminUsername) == 0) {
+            break;
+        }
+        else{
+            printf("login gagal! Username salah");
+        }
     }
-
-    if (isAdminValid) {
-        printf("\n\n\nLogin Admin berhasil. Selamat datang, Admin.\n");
-        sleep(2);
-        menuAdmin(tm);
-    } else {
-        printf("\nLogin Admin gagal! Username atau Password salah.\n");
+    while(1){
+        inputPin(&inputPassword);
+        if (inputPassword == adminPassword) {
+            break;
+        }
+        else{
+            printf("login gagal! pin salah");
+        }
     }
-}
-
-void menuAdmin(TreeManager *tm) {
-    int choice;
-    system("cls");
-    print_title("MENU ADMIN", WIDTH);
-    printf("\n1. Proses Transaksi\n");
-    printf("2. Kelola Katalog\n");
-    printf("Masukkan pilihan: ");
-    scanf(" %d", &choice);
-    switch (choice) {
-    case 1:
-        ProsesTransaksi(tm);
-        system("pause");
-        break;
-    case 2:
-        adminKatalog();
-        system("pause");
-        break;
-    default:
-        printf("Pilihan tidak valid.\n");
-        break;
-    }
+    printf("\n\n\nLogin berhasil, selamat datang admin...");
+    sleep(2);
+    return;
 }
 
 void ProsesTransaksi(TreeManager *tm){
