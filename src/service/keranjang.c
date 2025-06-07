@@ -70,7 +70,7 @@ void AddCart(CartList *CList, int user_id) {
         return;
     }
 
-    id = GetLastCartID(*CList, tempCartList); // <- Sudah membandingkan ID dari cart aktif & history
+    id = GetLastCartID(*CList, tempCartList);
 
     newCart->id = id + 1;
     newCart->user_id = user_id;
@@ -146,7 +146,7 @@ void CheckOut(CartList *CList, TQueue *TList, List *P, int id_user)
     bool found = false;
     boolean item;
 
-    if (CountTransactionByUser(*TList, id_user) >= 3) {
+    if (CountTransactionByUser(*TList, id_user) >= 5) {
         printf("Transaksi penuh! Mohon menunggu proses transaksi.\n");
         return;
     }

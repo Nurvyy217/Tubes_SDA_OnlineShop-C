@@ -232,7 +232,6 @@ void orderInformation(User *user)
     printf("Pengiriman barang Anda sedang dalam proses.\n");
     printf("Status Transit: .\n");
     printf("Estimasi sampai: 2 hari.\n");
-    system("pause");
 }
 
 void viewProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T){
@@ -355,7 +354,4 @@ void userMenu(User *user, TreeManager *tm, List *P, CartList *C, TQueue *T)
         }
     } while (choice != 6);
 }
-
-
-
 
