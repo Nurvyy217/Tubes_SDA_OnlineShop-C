@@ -6,14 +6,16 @@
 #define Top(S) (S).Top
 #include "tree.h"
 
-typedef struct StackNode *addressStack;
+typedef struct StackNode *addressStack; // Pointer ke StackNode
 
+// struct StackNode untuk menyimpan nama kota dan pointer ke node berikutnya
 typedef struct StackNode
 {
     char city[100];
     addressStack next;
 } StackNode;
 
+// struct Stack untuk menyimpan top node
 typedef struct Stack
 {
     addressStack Top;

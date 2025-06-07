@@ -9,39 +9,40 @@ void CreateEmpty(Stack *S)
 }
 
 void Push(Stack *S, TreeNode *tree) {
-    addressStack newNode = (addressStack)malloc(sizeof(StackNode));
-    if (newNode != NULL) {
-        strcpy(City(newNode), tree->name);
-        Next(newNode) = Top(*S);
-        Top(*S) = newNode;
+    addressStack newNode = (addressStack)malloc(sizeof(StackNode)); // alokasi memori untuk node baru
+    if (newNode != NULL) { // jika alokasi berhasil
+        strcpy(City(newNode), tree->name); // salin nama kota dari tree ke node baru
+        Next(newNode) = Top(*S); // set next node ke top stack saat ini
+        Top(*S) = newNode; // set top stack ke node baru
     }
 }
 
 void Pop(Stack *S) {
-    if (Top(*S) == NULL) return;
-    addressStack temp = Top(*S);
-    printf("%s", City(temp)); 
-    Top(*S) = Next(temp);
+    if (Top(*S) == NULL) return; // jika stack kosong, tidak ada yang bisa di-pop
+    addressStack temp = Top(*S); // simpan node paling atas
+    printf("%s", City(temp)); // pint nama kota dari node paling atas
+    Top(*S) = Next(temp); // set top stack ke node berikutnya
     free(temp);
 }
 
+// procedure untuk mencetak rute dari root ke node target
 void print_route(TreeNode *target)
 {
-     if (!target)
+     if (!target) // jika target tidak valid
     {
         printf("Node tidak ditemukan.\n");
         return;
     }
 
     Stack S;
-    CreateEmpty(&S);
+    CreateEmpty(&S); // buat stack kosong
 
-    TreeNode *temp = target;
+    TreeNode *temp = target; // temp untuk menyimpan node saat ini
     while (temp) {
-        Push(&S, temp);
-        temp = temp->parent;
+        Push(&S, temp); // push temp ke stack
+        temp = temp->parent; // pindah ke parent node
     }
-    int helper = 1;
+    int helper = 1; // untuk mengatur format output agar tidak print " -> " di awal
     while (Top(S)) {
         if (!helper) printf(" -> ");
         Pop(&S);

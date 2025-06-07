@@ -42,6 +42,7 @@ int getUserByUsername(const char *username, User *u)
         int tempId, tempPin, tempSaldo;
         char tempUsername[50], tempDomisili[100];
         if (sscanf(line, "%d,%49[^,],%d,%d,%99[^\n]", &tempId, tempUsername, &tempPin, &tempSaldo, tempDomisili) == 5) // parsing data dari baris
+        //kenapa pakai &? karena sscanf membutuhkan alamat dari variabel untuk menyimpan data yang dibaca
         {
             if (strcmp(tempUsername, username) == 0) // jika username cocok
             {
@@ -60,44 +61,50 @@ int getUserByUsername(const char *username, User *u)
     return 0; //return 0 jika user tidak ditemukan
 }
 
+// update user di file jika ada perubahan
 void updateUserInFile(User *user)
 {
     FILE *file = fopen(USER_FILE, "r");
-    FILE *tempFile = fopen("temp.txt", "w");
+    FILE *tempFile = fopen("temp.txt", "w"); // buat file sementara untuk menyimpan data yang sudah diupdate. Jika file sudah ada, isinya akan dihapus total.
     if (!file || !tempFile)
-        return;
+        return; // jika file tidak ditemukan, keluar dari fungsi
 
     char line[256];
-    while (fgets(line, sizeof(line), file))
+    while (fgets(line, sizeof(line), file)) // membaca setiap baris dari file dan menyimpannya ke dalam array of char line
     {
         int tempId, tempPin, tempSaldo;
         char tempUsername[50], tempDomisili[100];
         if (sscanf(line, "%d,%49[^,],%d,%d,%99[^\n]", &tempId, tempUsername, &tempPin, &tempSaldo, tempDomisili) == 5)
         {
-            if (strcmp(tempUsername, user->username) == 0)
+            if (strcmp(tempUsername, user->username) == 0) // jika username cocok dengan user yang ingin diupdate
             {
                 fprintf(tempFile, "%d,%s,%d,%d,%s\n", user->id, user->username, user->pin, user->saldo, user->domisili);
+                // update data user di file sementara
             }
             else
             {
                 fprintf(tempFile, "%s", line);
+                // jika tidak cocok, tulis baris tersebut (di user.txt) ke file sementara
             }
         }
         else
         {
             fprintf(tempFile, "%s", line);
+            // jika format baris tidak sesuai, tetap tulis baris tersebut ke file sementara
+            // ini untuk menghindari error jika ada baris yang tidak sesuai format
         }
     }
 
     fclose(file);
     fclose(tempFile);
-    remove(USER_FILE);
-    rename("temp.txt", USER_FILE);
+    remove(USER_FILE); // hapus file asli (user.txt)
+    rename("temp.txt", USER_FILE); // ganti nama file sementara (temp.txt) menjadi user.txt
 }
 
+// Mendapatkan ID user terakhir dari file
 int getLastUserId()
 {
-    FILE *file = fopen(USER_FILE, "r");
+    FILE *file = fopen(USER_FILE, "r"); // mode read untuk membaca file
     if (!file) return 0;
     int lastId = 0, tempId, tempPin, tempSaldo;
     char tempUsername[50], tempDomisili[100];
@@ -107,12 +114,14 @@ int getLastUserId()
         if (sscanf(line, "%d,%49[^,],%d,%d,%99[^\n]", &tempId, tempUsername, &tempPin, &tempSaldo, tempDomisili) == 5)
         {
             lastId = tempId;
+            // ambil ID terakhir dari file
         }
     }
     fclose(file);
     return lastId;
 }
 
+// isi Saldo user
 void topUp(User *user)
 {
     int jumlahIsiSaldo;
@@ -133,6 +142,7 @@ void topUp(User *user)
     }
 }
 
+// registrasi user baru (daftarkan di file user.txt)
 void registration()
 {
     User userBaru;
@@ -147,6 +157,7 @@ retry:
     print_title("BUAT AKUN", WIDTH);
     printf("\nMasukkan username: ");
     scanf("%s", username);
+    // Cek apakah username sudah ada
     if (isUsernameExists(username))
     {
         printf("Username sudah digunakan.\n");
@@ -163,7 +174,7 @@ retry:
         printf("Masukkan domisili (kota asal, harus berada di Jawa Barat atau Jabodetabek): ");
         scanf("%s", domisili);
         if (find_node_by_name(&tm, domisili)) {
-            break;
+            break; // Jika kota ditemukan di tree, keluar dari loop
         } else {
             printf("Kota yang diinputkan tidak ditemukan.\n");
             printf("Kota harus berada di daerah Jawa Barat dan Jabodetabek.\n");
@@ -173,7 +184,7 @@ retry:
 
     if (pin == konfirmasiPin)
     {
-         userBaru.id = getLastUserId() + 1;
+        userBaru.id = getLastUserId() + 1;
         strcpy(userBaru.username, username); 
         userBaru.pin = pin;                  
         userBaru.saldo = 0;                  
@@ -187,6 +198,7 @@ retry:
     }
 }
 
+// login user
 void loginUser(TreeManager *tm, List P, User *user)
 {
     char inputUsername[50];
@@ -196,7 +208,7 @@ void loginUser(TreeManager *tm, List P, User *user)
     printf("\nMasukkan username: ");
     scanf("%s", inputUsername);
 
-    if (!getUserByUsername(inputUsername, user))
+    if (!getUserByUsername(inputUsername, user)) // Cek apakah username ada di file
     {
         printf("Username tidak ditemukan.\n");
         return;
@@ -211,6 +223,7 @@ void loginUser(TreeManager *tm, List P, User *user)
             sleep(2);
             userMenu(user, tm, P);
             break;
+            // Keluar dari loop jika login berhasil dan masuk ke menu user
         }
         else
         {
@@ -219,13 +232,14 @@ void loginUser(TreeManager *tm, List P, User *user)
     }
 }
 
-
+// Cek apakah username sudah ada, jika ada, return 1, jika tidak ada, return 0
 int isUsernameExists(const char *username)
 {
     User temp;
     return getUserByUsername(username, &temp);
 }
 
+// Tabel informasi/riwayat pesanan
 void orderInformation(User *user)
 {
     system("cls");
@@ -236,6 +250,7 @@ void orderInformation(User *user)
     printf("Estimasi sampai: 2 hari.\n");
 }
 
+// Lihat produk berdasarkan kategori
 void viewProduct(TreeManager *tm, User *user, List P){
     int choice;
     start:
@@ -256,7 +271,7 @@ void viewProduct(TreeManager *tm, User *user, List P){
         }
 }
 
-
+// Beli Produk
 void buyProduct(TreeManager *tm, User *user)
 {
     char tujuan[100];
@@ -288,11 +303,13 @@ void buyProduct(TreeManager *tm, User *user)
     // AddCart(C, P, user->id);
     // CheckOut(C, T, P, *user);
 
-    TreeNode *target = find_node_by_name(tm, tujuan);
+    TreeNode *target = find_node_by_name(tm, tujuan); // Menyimpan alamat node kota tujuan ke dalam TreeNode target
     printf("Rute pengiriman:\n");
     print_route(target);
 }
 
+
+// Menu utama untuk user
 void userMenu(User *user, TreeManager *tm, List P)
 {
     int choice;
