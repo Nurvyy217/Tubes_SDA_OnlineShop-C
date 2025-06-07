@@ -38,12 +38,8 @@ int getUserByUsername(const char *username, User *u)
     {
         int tempId, tempPin, tempSaldo;
         char tempUsername[50], tempDomisili[100];
-<<<<<<< HEAD
         if (sscanf(line, "%d,%49[^,],%d,%d,%99[^\n]", &tempId, tempUsername, &tempPin, &tempSaldo, tempDomisili) == 5) // parsing data dari baris
         //kenapa pakai &? karena sscanf membutuhkan alamat dari variabel untuk menyimpan data yang dibaca
-=======
-        if (sscanf(line, "%d,%49[^,],%d,%d,%99[^\n]", &tempId, tempUsername, &tempPin, &tempSaldo, tempDomisili) == 5)
->>>>>>> 8fe4e7b64376c464ebae2aa0cc6e6b0246d876fb
         {
             if (strcmp(tempUsername, username) == 0)
             {
@@ -198,12 +194,7 @@ retry:
     }
 }
 
-<<<<<<< HEAD
-// login user
-void loginUser(TreeManager *tm, List P, User *user)
-=======
-void loginUser(TreeManager *tm, List *P, User *user, CartList *C, TQueue *T)
->>>>>>> 8fe4e7b64376c464ebae2aa0cc6e6b0246d876fb
+void loginUser(User *user)
 {
     char inputUsername[50];
     int pinlogin;
@@ -212,12 +203,7 @@ void loginUser(TreeManager *tm, List *P, User *user, CartList *C, TQueue *T)
     while(1){
     printf("\nMasukkan username: ");
     scanf("%s", inputUsername);
-<<<<<<< HEAD
-
-    if (!getUserByUsername(inputUsername, user)) // Cek apakah username ada di file
-=======
     if (!getUserByUsername(inputUsername, user))
->>>>>>> 8fe4e7b64376c464ebae2aa0cc6e6b0246d876fb
     {
         printf("Username tidak ditemukan.\n");
     }else{
@@ -263,37 +249,28 @@ void orderInformation(User *user)
     printf("Estimasi sampai: 2 hari.\n");
 }
 
-<<<<<<< HEAD
 // Lihat produk berdasarkan kategori
-void viewProduct(TreeManager *tm, User *user, List P){
-=======
 void viewProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T){
->>>>>>> 8fe4e7b64376c464ebae2aa0cc6e6b0246d876fb
     int choice;
     start:
     userPrintKatalogByKategori(*P);
     printf("\n1. Beli produk\n");
     printf("2. Masukkan ke keranjang\n");
-        printf("3. Kembali\n");
-        printf("Masukkan pilihan anda : ");
-        scanf(" %c", &choice);
-        if(choice == '1'){
-            buyProduct(tm, user, P, C, T);
-            system("cls");    
-        }else if(choice == '2'){
-            AddCart(C, user->id);
-        }
-        else{
-            goto start;
-        }
+    printf("3. Kembali\n");
+    printf("Masukkan pilihan anda : ");
+    scanf(" %c", &choice);
+    if(choice == '1'){
+        buyProduct(tm, user, P, C, T);
+        system("cls");    
+    }else if(choice == '2'){
+        AddCart(C, user->id);
+    }
+    else{
+        goto start;
+    }
 }
 
-<<<<<<< HEAD
-// Beli Produk
-void buyProduct(TreeManager *tm, User *user)
-=======
 void buyProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T)
->>>>>>> 8fe4e7b64376c464ebae2aa0cc6e6b0246d876fb
 {
     char tujuan[100];
     int useDomisili = 0;
@@ -326,64 +303,9 @@ void buyProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T)
     AddCart(C, user->id);
     CheckOut(C, T, P, user->id);
 
-<<<<<<< HEAD
-    TreeNode *target = find_node_by_name(tm, tujuan); // Menyimpan alamat node kota tujuan ke dalam TreeNode target
-    printf("Rute pengiriman:\n");
-=======
     TreeNode *target = find_node_by_name(tm, tujuan);
     clear_screen();
     print_title("RUTE PENGIRIMAN", WIDTH);
->>>>>>> 8fe4e7b64376c464ebae2aa0cc6e6b0246d876fb
     print_route(target);
     system("pause");
 }
-<<<<<<< HEAD
-
-
-// Menu utama untuk user
-void userMenu(User *user, TreeManager *tm, List P)
-{
-    int choice;
-    do
-    {
-        system("cls");
-        print_title("MENU USER", WIDTH);
-        printf("\n1. Top Up Saldo\n");
-        printf("2. Lihat/Beli Produk\n");
-        printf("3. Info Pesanan\n");
-        printf("4. Keranjang saya\n");
-        printf("5. Keluar\n");
-        printf("Masukkan pilihan: ");
-        scanf("%d", &choice);
-        switch (choice)
-        {
-        case 1:
-            topUp(user);
-            system("pause");
-            break;
-        case 2:
-            viewProduct(tm, user, P);
-            system("pause");
-            break;
-        case 3:
-            orderInformation(user);
-            break;
-        case 4:
-            printf("implement cart module here...\n");
-            system("pause");
-            break;
-        case 5:
-            printf("Keluar dari program!\n");
-            break;
-        default:
-            printf("Pilihan tidak valid\n");
-            break;
-        }
-    } while (choice != 4);
-}
-
-
-
-
-=======
->>>>>>> 8fe4e7b64376c464ebae2aa0cc6e6b0246d876fb

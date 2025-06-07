@@ -34,7 +34,7 @@ void registration();
  * FS : Data user baru ditambahkan ke file user.txt jika valid
  */
 
-void loginUser(TreeManager *tm, List *P, User *user, CartList *C, TQueue *T);
+void loginUser(User *user);
 /*
  * Login user
  * IS : User belum login

@@ -39,7 +39,7 @@ int main()
     if (choice == '1')
     {
         system("cls");
-        loginUser(&tm, &P, &user, &C, &T);
+        loginUser(&user);
                 do
                 {
                 system("cls");
