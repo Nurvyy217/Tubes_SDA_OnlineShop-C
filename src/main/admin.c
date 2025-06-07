@@ -7,7 +7,8 @@
 #include "../include/environment.h"
 
 int main()
-{
+{   
+    TQueue Q;
     TreeManager tm;
     int choice;
     print_center("SELAMAT DATANG ADMIN", WIDTH, HEIGHT);
@@ -25,7 +26,7 @@ int main()
         scanf(" %d", &choice);
         switch (choice) {
         case 1:
-            ProsesTransaksi(&tm);
+            ProsesTransaksi(&tm, &Q);
             system("pause");
             break;
         case 2:

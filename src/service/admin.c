@@ -42,8 +42,9 @@ void loginAdmin() {
     return;
 }
 
-void ProsesTransaksi(TreeManager *tm){
+void ProsesTransaksi(TreeManager *tm, TQueue *Q){
     print_title("PROSES TRANSAKSI", WIDTH);
     printf("\n\nTree:\n");
     print_tree_horizontal_centered(tm);
+    Dequeue(Q);
 }

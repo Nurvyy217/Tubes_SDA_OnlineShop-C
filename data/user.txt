@@ -1,2 +1,2 @@
-1,hasbi,1234,150000,majalengka
+1,hasbi,1234,250000,majalengka
 2,nabil,1234,100020,jakarta
