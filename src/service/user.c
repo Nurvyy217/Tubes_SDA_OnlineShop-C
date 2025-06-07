@@ -188,7 +188,6 @@ void loginUser(TreeManager *tm, List P, User *user)
 {
     char inputUsername[50];
     int pinlogin;
-    
 
     print_title("LOGIN USER", WIDTH);
     printf("\nMasukkan username: ");
@@ -238,7 +237,7 @@ void viewProduct(TreeManager *tm, User *user, List P){
     int choice;
     start:
     userPrintKatalogByKategori(P);
-    printf("\n\n\n1. Beli produk\n");
+    printf("\n1. Beli produk\n");
     printf("2. Masukkan ke keranjang\n");
         printf("3. Kembali\n");
         printf("Masukkan pilihan anda : ");
@@ -283,7 +282,8 @@ void buyProduct(TreeManager *tm, User *user)
         }
     }
 
-    //Modul mengurangi stok barang
+    // AddCart(C, P, user->id);
+    // CheckOut(C, T, P, *user);
 
     TreeNode *target = find_node_by_name(tm, tujuan);
     printf("Rute pengiriman:\n");

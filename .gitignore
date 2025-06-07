@@ -2,4 +2,4 @@
 src/main/test.c
 .vscode/
 src/include/environment.h
-src/include/global.h
+test.sh
