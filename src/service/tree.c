@@ -1,14 +1,14 @@
+// ...existing code...
 #include <stdio.h>
 #include "../include/tree.h"
 #include <string.h>
 #include <stdlib.h>
 #include "../include/stack.h"
 
-
 void InitTree(TreeManager *tm)
 {
     // Initialize the TreeManager
-    tm->node_count = 0;
+    NodeCount((*tm)) = 0;
 
     // Check if file exists
     FILE *file = fopen(TREE_FILE, "r");
@@ -48,12 +48,12 @@ void save_tree(TreeManager *tm)
         return;
     }
 
-    for (int i = 0; i < tm->node_count; i++)
+    for (int i = 0; i < NodeCount((*tm)); i++)
     {
         fprintf(file, "%d,%s,%d\n",
-                tm->nodes[i]->id,
-                tm->nodes[i]->name,
-                tm->nodes[i]->parent_id);
+                Id(Nodes((*tm))[i]),
+                Name(Nodes((*tm))[i]),
+                ParentId(Nodes((*tm))[i]));
     }
 
     fclose(file);
@@ -69,59 +69,59 @@ void load_tree(TreeManager *tm)
     }
 
     // Clear existing nodes
-    for (int i = 0; i < tm->node_count; i++)
+    for (int i = 0; i < NodeCount((*tm)); i++)
     {
-        free(tm->nodes[i]);
+        free(Nodes((*tm))[i]);
     }
-    tm->node_count = 0;
+    NodeCount((*tm)) = 0;
 
     char line[256];
     while (fgets(line, sizeof(line), file))
     {
-        TreeNode *node = malloc(sizeof(TreeNode));
+        addressTree node = malloc(sizeof(TreeNode));
         sscanf(line, "%d,%[^,],%d",
-               &node->id,
-               node->name,
-               &node->parent_id);
+               &Id(node),
+               Name(node),
+               &ParentId(node));
 
-        node->parent = NULL;
-        node->first_child = NULL;
-        node->next_sibling = NULL;
-        tm->nodes[tm->node_count++] = node;
+        Parent(node) = NULL;
+        FirstChild(node) = NULL;
+        NextSibling(node) = NULL;
+        Nodes((*tm))[NodeCount((*tm))++] = node;
     }
     fclose(file);
 
     // Build parent-child and sibling relationships
-    for (int i = 0; i < tm->node_count; i++)
+    for (int i = 0; i < NodeCount((*tm)); i++)
     {
-        TreeNode *child = tm->nodes[i];
-        if (child->parent_id == 0)
+        addressTree child = Nodes((*tm))[i];
+        if (ParentId(child) == 0)
             continue;
 
-        TreeNode *parent = NULL;
-        for (int j = 0; j < tm->node_count; j++)
+        addressTree parent = NULL;
+        for (int j = 0; j < NodeCount((*tm)); j++)
         {
-            if (tm->nodes[j]->id == child->parent_id)
+            if (Id(Nodes((*tm))[j]) == ParentId(child))
             {
-                parent = tm->nodes[j];
+                parent = Nodes((*tm))[j];
                 break;
             }
         }
         if (parent)
         {
-            child->parent = parent;
-            if (!parent->first_child)
+            Parent(child) = parent;
+            if (!FirstChild(parent))
             {
-                parent->first_child = child;
+                FirstChild(parent) = child;
             }
             else
             {
-                TreeNode *sibling = parent->first_child;
-                while (sibling->next_sibling)
+                addressTree sibling = FirstChild(parent);
+                while (NextSibling(sibling))
                 {
-                    sibling = sibling->next_sibling;
+                    sibling = NextSibling(sibling);
                 }
-                sibling->next_sibling = child;
+                NextSibling(sibling) = child;
             }
         }
     }
@@ -157,51 +157,49 @@ void insert_default_tree(TreeManager *tm)
 
     for (size_t i = 0; i < sizeof(entries) / sizeof(entries[0]); i++)
     {
-        TreeNode *node = malloc(sizeof(TreeNode));
-        node->id = entries[i].id;
-        strcpy(node->name, entries[i].name);
-        node->parent_id = entries[i].parent_id;
-        node->parent = NULL;
-        node->first_child = NULL;
-        node->next_sibling = NULL;
-        tm->nodes[tm->node_count++] = node;
+        addressTree node = malloc(sizeof(TreeNode));
+        Id(node) = entries[i].id;
+        strcpy(Name(node), entries[i].name);
+        ParentId(node) = entries[i].parent_id;
+        Parent(node) = NULL;
+        FirstChild(node) = NULL;
+        NextSibling(node) = NULL;
+        Nodes((*tm))[NodeCount((*tm))++] = node;
     }
 }
 
-TreeNode *find_node_by_name(TreeManager *tm, char *name)
+addressTree find_node_by_name(TreeManager *tm, char *name)
 {
-    for (int i = 0; i < tm->node_count; i++)
+    for (int i = 0; i < NodeCount((*tm)); i++)
     {
-        if (strcasecmp(tm->nodes[i]->name, name) == 0)
-            return tm->nodes[i];
+        if (strcasecmp(Name(Nodes((*tm))[i]), name) == 0)
+            return Nodes((*tm))[i];
     }
     return NULL;
 }
 
+// ...existing code...
 
-// Helper untuk mendapatkan lebar subtree
-int subtree_width(TreeNode *node) {
+int subtree_width(addressTree node) {
     if (!node) return 0;
-    if (!node->first_child) return (int)strlen(node->name);
+    if (!FirstChild(node)) return (int)strlen(Name(node));
     int width = 0;
-    TreeNode *child = node->first_child;
+    addressTree child = FirstChild(node);
     while (child) {
         width += subtree_width(child) + 4; // 4 spasi antar anak
-        child = child->next_sibling;
+        child = NextSibling(child);
     }
     return width;
 }
 
-// Print node pada posisi tertentu
 void print_tree_at(char canvas[][MAX_WIDTH], int row, int col, const char *text) {
     for (int i = 0; text[i] && col + i < MAX_WIDTH; i++)
         canvas[row][col + i] = text[i];
 }
 
-// Recursive print
-int print_tree_centered(TreeNode *node, char canvas[][MAX_WIDTH], int row, int col) {
+int print_tree_centered(addressTree node, char canvas[][MAX_WIDTH], int row, int col) {
     if (!node) return 0;
-    int name_len = (int)strlen(node->name);
+    int name_len = (int)strlen(Name(node));
 
     // Hitung total width subtree
     int total_width = subtree_width(node);
@@ -209,14 +207,14 @@ int print_tree_centered(TreeNode *node, char canvas[][MAX_WIDTH], int row, int c
 
     // Posisi node di tengah subtree
     int node_col = col + total_width / 2 - name_len / 2;
-    print_tree_at(canvas, row, node_col, node->name);
+    print_tree_at(canvas, row, node_col, Name(node));
 
     // Print garis ke anak-anak
-    TreeNode *child = node->first_child;
+    addressTree child = FirstChild(node);
     int child_col = col;
     while (child) {
         int child_width = subtree_width(child);
-        int child_name_len = (int)strlen(child->name);
+        int child_name_len = (int)strlen(Name(child));
         int child_node_col = child_col + child_width / 2 - child_name_len / 2;
 
         // Garis vertikal dari parent ke child
@@ -239,23 +237,21 @@ int print_tree_centered(TreeNode *node, char canvas[][MAX_WIDTH], int row, int c
         // Rekursif ke anak
         print_tree_centered(child, canvas, row + 2, child_col);
         child_col += child_width + 4;
-        child = child->next_sibling;
+        child = NextSibling(child);
     }
     return total_width;
 }
 
 void print_tree_horizontal_centered(TreeManager *tm) {
-    // Cari root
-    TreeNode *root = NULL;
-    for (int i = 0; i < tm->node_count; i++) {
-        if (tm->nodes[i]->parent_id == 0) {
-            root = tm->nodes[i];
+    addressTree root = NULL;
+    for (int i = 0; i < NodeCount((*tm)); i++) {
+        if (ParentId(Nodes((*tm))[i]) == 0) {
+            root = Nodes((*tm))[i];
             break;
         }
     }
     if (!root) return;
 
-    // Siapkan canvas kosong
     char canvas[40][MAX_WIDTH];
     for (int i = 0; i < 40; i++)
         for (int j = 0; j < MAX_WIDTH; j++)
@@ -263,7 +259,6 @@ void print_tree_horizontal_centered(TreeManager *tm) {
 
     print_tree_centered(root, canvas, 0, 0);
 
-    // Print canvas
     for (int i = 0; i < 40; i++) {
         int last = MAX_WIDTH - 1;
         while (last >= 0 && canvas[i][last] == ' ') last--;
@@ -274,9 +269,9 @@ void print_tree_horizontal_centered(TreeManager *tm) {
 
 void showCityList(TreeManager *tm) {
     printf("Daftar kota yang tersedia:\n");
-    for (int i = 0; i < tm->node_count; i++) {
-        printf("%s", tm->nodes[i]->name);
-        if (i < tm->node_count - 1) printf(", ");
+    for (int i = 0; i < NodeCount((*tm)); i++) {
+        printf("%s", Name(Nodes((*tm))[i]));
+        if (i < NodeCount((*tm)) - 1) printf(", ");
     }
     printf("\n");
 }

@@ -28,7 +28,7 @@ void CreateEmpty(Stack *S);
  * FS : Stack dijamin kosong (Top = NULL)
  */
 
-void Push(Stack *S, TreeNode *tree);
+void Push(Stack *S, addressTree tree);
 /*
  * Menambahkan nama kota dari node tree ke stack 
  * IS : Stack bisa kosong atau berisi data
@@ -42,7 +42,7 @@ void Pop(Stack *S);
  * FS : Node paling atas dihapus, nama kota dicetak, memori node dibebaskan
  */
 
-void print_route(TreeNode *target);
+void print_route(addressTree target);
 /*
  * Menampilkan rute dari root ke node target menggunakan stack
  * IS : Stack kosong, node target valid

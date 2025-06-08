@@ -300,7 +300,7 @@ void buyProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T)
     AddCart(C, user->id);
     CheckOut(C, T, P, user->id);
 
-    TreeNode *target = find_node_by_name(tm, tujuan);
+    addressTree target = find_node_by_name(tm, tujuan);
     clear_screen();
     print_title("RUTE PENGIRIMAN", WIDTH);
     print_route(target);
