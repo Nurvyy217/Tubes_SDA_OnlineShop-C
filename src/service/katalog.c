@@ -41,8 +41,7 @@ void adminKatalog(){
     // Begin
     for(;;){
         system("cls");
-        printf("KATALOG");
-        printf("\n========================");
+        print_center("KATALOG", 58, 5);
         printKatalog(katalog);
         printf("========================\n");
         printf("Selamat Datang admin");
@@ -489,23 +488,20 @@ void printKatalog(List P){
     addressProduk produk = Nil;
 
     if (head != Nil){
-        while (head != Nil){
-            printf("\nKategori: %s\n", head->Jenis);
+        while (head != Nil){            
+            printf("KATEGORI : %s \n", head->Jenis);
             printf("===========================================================\n");
-            
             produk = head->produkJenis;
             
             if (produk != Nil){
                 printf("%-5s | %-20s | %-5s | %-10s\n", "ID", "Barang", "Stok", "Harga");
-                printf("===========================================================\n");
-
+                
+                printf("-----------------------------------------------------------\n");
                 while (produk != Nil){
                     if (produk->stok == 0){
-                        printf("%-5s | %-20s | %-5d | %-10d\n",
-                               "X", produk->barang, 0, produk->harga);
+                        printf("%-5s | %-20s | %-5d | %-10d\n","X", produk->barang, 0, produk->harga);
                     } else {
-                        printf("%-5d | %-20s | %-5d | %-10d\n",
-                               produk->id, produk->barang, produk->stok, produk->harga);
+                        printf("%-5d | %-20s | %-5d | %-10d\n",produk->id, produk->barang, produk->stok, produk->harga);
                     }
                     produk = produk->next;
                 }
@@ -514,6 +510,7 @@ void printKatalog(List P){
             }
 
             head = head->next_jenis;
+            printf("\n");
         }
     } else {
         printf("\nMohon maaf, tidak ada barang di toko...\n");
@@ -687,7 +684,7 @@ int getMaxIdOfProduk(List P){
         }
     }else{
         printf("tidak ada data jenis di toko");
-        return -1;
+        return 0;
     }
     return tempId;
 }
