@@ -3,42 +3,46 @@
 #include "../include/tree.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "../include/stack.h"
 
+// Inisialisasi Tree
 void InitTree(TreeManager *tm)
 {
-    // Initialize the TreeManager
     NodeCount((*tm)) = 0;
 
-    // Check if file exists
+    // Check file ada atau tidak
     FILE *file = fopen(TREE_FILE, "r");
     if (!file)
     {
-        // File doesn't exist, create default tree and save it
+        // Jika file tidak ada, buat file baru dan isi dengan data default
         insert_default_tree(tm);
         save_tree(tm);
+        load_tree(tm);
     }
     else
     {
-        // Check if file is empty
+        // Jika file ada, cek apakah kosong atau tidak
         fseek(file, 0, SEEK_END);
         long fileSize = ftell(file);
         fclose(file);
 
         if (fileSize == 0)
         {
-            // File exists but is empty, create default tree
+            // Jika file kosong, isi dengan data default
             insert_default_tree(tm);
             save_tree(tm);
+            load_tree(tm);
         }
         else
         {
-            // File exists and has content, load the tree
+            // Jika file tidak kosong, muat tree dari file
             load_tree(tm);
         }
     }
 }
 
+// Menyimpan tree dari TreeManager ke file
 void save_tree(TreeManager *tm)
 {
     FILE *file = fopen(TREE_FILE, "w");
@@ -48,6 +52,7 @@ void save_tree(TreeManager *tm)
         return;
     }
 
+    // Memasukkan data node dari TreeManager ke file
     for (int i = 0; i < NodeCount((*tm)); i++)
     {
         fprintf(file, "%d,%s,%d\n",
@@ -68,13 +73,14 @@ void load_tree(TreeManager *tm)
         return;
     }
 
-    // Clear existing nodes
+    // Kosongkan TreeManager sebelum memuat data baru
     for (int i = 0; i < NodeCount((*tm)); i++)
     {
         free(Nodes((*tm))[i]);
     }
     NodeCount((*tm)) = 0;
 
+    // Mengisi TreeManager dengan data dari file
     char line[256];
     while (fgets(line, sizeof(line), file))
     {
@@ -91,7 +97,7 @@ void load_tree(TreeManager *tm)
     }
     fclose(file);
 
-    // Build parent-child and sibling relationships
+    // Membuat relasi parent-child dan brother-sibling
     for (int i = 0; i < NodeCount((*tm)); i++)
     {
         addressTree child = Nodes((*tm))[i];
@@ -107,26 +113,27 @@ void load_tree(TreeManager *tm)
                 break;
             }
         }
-        if (parent)
+        if (parent) //jika parent tidak NULL
         {
             Parent(child) = parent;
-            if (!FirstChild(parent))
+            if (!FirstChild(parent)) //Jika parent belum punya anak (NULL)
             {
                 FirstChild(parent) = child;
             }
-            else
+            else //Jika parent sudah punya anak
             {
                 addressTree sibling = FirstChild(parent);
-                while (NextSibling(sibling))
+                while (NextSibling(sibling)) //selama nextSibling tidak NULL
                 {
                     sibling = NextSibling(sibling);
                 }
-                NextSibling(sibling) = child;
+                NextSibling(sibling) = child; // Menambahkan child sebagai sibling terakhir
             }
         }
     }
 }
 
+// Memasukkan data default ke dalam TreeManager tapi belum ada relasi parent-child
 void insert_default_tree(TreeManager *tm)
 {
     struct
@@ -164,21 +171,44 @@ void insert_default_tree(TreeManager *tm)
         Parent(node) = NULL;
         FirstChild(node) = NULL;
         NextSibling(node) = NULL;
-        Nodes((*tm))[NodeCount((*tm))++] = node;
+        Nodes((*tm))[NodeCount((*tm))++] = node; // Menambahkan node ke dalam array nodes TreeManager
     }
 }
 
+
+// Mencari node berdasarkan nama kota menggunakan traversal pre order
 addressTree find_node_by_name(TreeManager *tm, char *name)
 {
-    for (int i = 0; i < NodeCount((*tm)); i++)
-    {
-        if (strcasecmp(Name(Nodes((*tm))[i]), name) == 0)
-            return Nodes((*tm))[i];
+    // Cari root (parent_id == 0)
+    addressTree root = NULL;
+    for (int i = 0; i < NodeCount((*tm)); i++) {
+        if (ParentId(Nodes((*tm))[i]) == 0) {
+            root = Nodes((*tm))[i];
+            break;
+        }
+    }
+    if (!root) return NULL;
+
+    addressTree temp = root;
+    bool flag = true; // boolean: 0 = resmi (masuk child), 1 = kembali ke parent
+    while (temp) { 
+    //selama temp tidak null
+        if (strcasecmp(Name(temp), name) == 0) //jika nama ditemukan, langsung return node
+            return temp;
+
+        
+        if (FirstChild(temp) && flag) { // jika ada anak dan belum kembali
+            temp = FirstChild(temp);
+        } else if (NextSibling(temp)) {
+            temp = NextSibling(temp);
+            flag = true;
+        } else {
+            temp = Parent(temp);
+            flag = false;
+        }
     }
     return NULL;
 }
-
-// ...existing code...
 
 int subtree_width(addressTree node) {
     if (!node) return 0;
