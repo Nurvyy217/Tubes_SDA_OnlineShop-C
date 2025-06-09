@@ -42,6 +42,28 @@ void AddCart(CartList *CList, int user_id) {
     printKatalog(P);
     printf("\nMasukkan ID Barang: ");
     scanf("%d", &item_id);
+
+    // Cek apakah item_id ada di dalam katalog
+    addressJenis jenisPtr = P.First;
+    bool found = false;
+
+    while (jenisPtr != NULL && !found) {
+        addressProduk produkPtr = jenisPtr->produkJenis;
+        while (produkPtr != NULL) {
+            if (produkPtr->id == item_id) {
+                found = true;
+                break;
+            }
+            produkPtr = produkPtr->next;
+        }
+        jenisPtr = jenisPtr->next_jenis;
+    }
+
+    if (!found) {
+        printf("Item tidak ada di dalam list.\n");
+        return;
+    }
+
     printf("Masukkan Jumlah Barang: ");
     scanf("%d", &quantity);
 

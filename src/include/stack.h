@@ -50,5 +50,10 @@ void print_route(addressTree target);
  */
 
 void get_route_string(addressTree target, char *buffer);
+/*
+ * Mengambil informasi rute dari simpul tree dan menyimpannya ke buffer string
+ * IS : addressTree target valid, buffer tersedia untuk menyimpan data
+ * FS : buffer berisi representasi string dari rute target node
+ */
 
 #endif
