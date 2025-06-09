@@ -6,14 +6,16 @@
 #define Top(S) (S).Top
 #include "tree.h"
 
-typedef struct StackNode *addressStack;
+typedef struct StackNode *addressStack; // Pointer ke StackNode
 
+// struct StackNode untuk menyimpan nama kota dan pointer ke node berikutnya
 typedef struct StackNode
 {
     char city[100];
     addressStack next;
 } StackNode;
 
+// struct Stack untuk menyimpan top node
 typedef struct Stack
 {
     addressStack Top;
@@ -26,7 +28,7 @@ void CreateEmpty(Stack *S);
  * FS : Stack dijamin kosong (Top = NULL)
  */
 
-void Push(Stack *S, TreeNode *tree);
+void Push(Stack *S, addressTree tree);
 /*
  * Menambahkan nama kota dari node tree ke stack 
  * IS : Stack bisa kosong atau berisi data
@@ -40,11 +42,18 @@ void Pop(Stack *S);
  * FS : Node paling atas dihapus, nama kota dicetak, memori node dibebaskan
  */
 
-void print_route(TreeNode *target);
+void print_route(addressTree target);
 /*
  * Menampilkan rute dari root ke node target menggunakan stack
  * IS : Stack kosong, node target valid
  * FS : Rute dari root ke target dicetak ke layar dengan urutan yang benar
+ */
+
+void get_route_string(addressTree target, char *buffer);
+/*
+ * Mengambil informasi rute dari simpul tree dan menyimpannya ke buffer string
+ * IS : addressTree target valid, buffer tersedia untuk menyimpan data
+ * FS : buffer berisi representasi string dari rute target node
  */
 
 #endif

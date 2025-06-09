@@ -6,21 +6,18 @@
 #include "../include/stack.h"
 #include "../include/printTemplate.h"
 
-
-// Inisialisasi file user membuat file jika belum ada
 void initUserFile()
 {
-    FILE *file = fopen(USER_FILE, "a"); //mode append untuk membuat file jika belum ada
+    FILE *file = fopen(USER_FILE, "a");
     if (file)
     {
         fclose(file);
     }
 }
 
-// Simpan user baru ke file
 void saveUser(User *u)
 {
-    FILE *file = fopen(USER_FILE, "a"); 
+    FILE *file = fopen(USER_FILE, "a");
     if (!file)
     {
         printf("Error: Cannot open user file\n");
@@ -32,72 +29,78 @@ void saveUser(User *u)
 
 int getUserByUsername(const char *username, User *u)
 {
-    FILE *file = fopen(USER_FILE, "r"); //mode read untuk membaca file
-    if (!file)
-        return 0; //return 0 jika file tidak ditemukan
-
-    char line[256];
-    while (fgets(line, sizeof(line), file)) // membaca setiap baris dari file
-    {
-        int tempId, tempPin, tempSaldo;
-        char tempUsername[50], tempDomisili[100];
-        if (sscanf(line, "%d,%49[^,],%d,%d,%99[^\n]", &tempId, tempUsername, &tempPin, &tempSaldo, tempDomisili) == 5) // parsing data dari baris
-        {
-            if (strcmp(tempUsername, username) == 0) // jika username cocok
-            {
-                // copy data ke struct user
-                u->id = tempId;
-                strcpy(u->username, tempUsername);
-                u->pin = tempPin;
-                u->saldo = tempSaldo;
-                strcpy(u->domisili, tempDomisili);
-                fclose(file);
-                return 1; //return 1 jika user ditemukan
-            }
-        }
-    }
-    fclose(file);
-    return 0; //return 0 jika user tidak ditemukan
-}
-
-void updateUserInFile(User *user)
-{
     FILE *file = fopen(USER_FILE, "r");
-    FILE *tempFile = fopen("temp.txt", "w");
-    if (!file || !tempFile)
-        return;
+    if (!file)
+        return 0;
 
     char line[256];
     while (fgets(line, sizeof(line), file))
     {
         int tempId, tempPin, tempSaldo;
         char tempUsername[50], tempDomisili[100];
+        if (sscanf(line, "%d,%49[^,],%d,%d,%99[^\n]", &tempId, tempUsername, &tempPin, &tempSaldo, tempDomisili) == 5) // parsing data dari baris
+        //kenapa pakai &? karena sscanf membutuhkan alamat dari variabel untuk menyimpan data yang dibaca
+        {
+            if (strcmp(tempUsername, username) == 0)
+            {
+                u->id = tempId;
+                strcpy(u->username, tempUsername);
+                u->pin = tempPin;
+                u->saldo = tempSaldo;
+                strcpy(u->domisili, tempDomisili);
+                fclose(file);
+                return 1;
+            }
+        }
+    }
+    fclose(file);
+    return 0;
+}
+
+// update user di file jika ada perubahan
+void updateUserInFile(User *user)
+{
+    FILE *file = fopen(USER_FILE, "r");
+    FILE *tempFile = fopen("temp.txt", "w"); // buat file sementara untuk menyimpan data yang sudah diupdate. Jika file sudah ada, isinya akan dihapus total.
+    if (!file || !tempFile)
+        return; // jika file tidak ditemukan, keluar dari fungsi
+
+    char line[256];
+    while (fgets(line, sizeof(line), file)) // membaca setiap baris dari file dan menyimpannya ke dalam array of char line
+    {
+        int tempId, tempPin, tempSaldo;
+        char tempUsername[50], tempDomisili[100];
         if (sscanf(line, "%d,%49[^,],%d,%d,%99[^\n]", &tempId, tempUsername, &tempPin, &tempSaldo, tempDomisili) == 5)
         {
-            if (strcmp(tempUsername, user->username) == 0)
+            if (strcmp(tempUsername, user->username) == 0) // jika username cocok dengan user yang ingin diupdate
             {
                 fprintf(tempFile, "%d,%s,%d,%d,%s\n", user->id, user->username, user->pin, user->saldo, user->domisili);
+                // update data user di file sementara
             }
             else
             {
                 fprintf(tempFile, "%s", line);
+                // jika tidak cocok, tulis baris tersebut (di user.txt) ke file sementara
             }
         }
         else
         {
             fprintf(tempFile, "%s", line);
+            // jika format baris tidak sesuai, tetap tulis baris tersebut ke file sementara
+            // ini untuk menghindari error jika ada baris yang tidak sesuai format
         }
     }
 
     fclose(file);
     fclose(tempFile);
-    remove(USER_FILE);
-    rename("temp.txt", USER_FILE);
+    remove(USER_FILE); // hapus file asli (user.txt)
+    rename("temp.txt", USER_FILE); // ganti nama file sementara (temp.txt) menjadi user.txt
 }
 
+// Mendapatkan ID user terakhir dari file
 int getLastUserId()
 {
-    FILE *file = fopen(USER_FILE, "r");
+    FILE *file = fopen(USER_FILE, "r"); // mode read untuk membaca file
     if (!file) return 0;
     int lastId = 0, tempId, tempPin, tempSaldo;
     char tempUsername[50], tempDomisili[100];
@@ -107,12 +110,14 @@ int getLastUserId()
         if (sscanf(line, "%d,%49[^,],%d,%d,%99[^\n]", &tempId, tempUsername, &tempPin, &tempSaldo, tempDomisili) == 5)
         {
             lastId = tempId;
+            // ambil ID terakhir dari file
         }
     }
     fclose(file);
     return lastId;
 }
 
+// isi Saldo user
 void topUp(User *user)
 {
     int jumlahIsiSaldo;
@@ -133,6 +138,7 @@ void topUp(User *user)
     }
 }
 
+// registrasi user baru (daftarkan di file user.txt)
 void registration()
 {
     User userBaru;
@@ -147,6 +153,7 @@ retry:
     print_title("BUAT AKUN", WIDTH);
     printf("\nMasukkan username: ");
     scanf("%s", username);
+    // Cek apakah username sudah ada
     if (isUsernameExists(username))
     {
         printf("Username sudah digunakan.\n");
@@ -163,7 +170,7 @@ retry:
         printf("Masukkan domisili (kota asal, harus berada di Jawa Barat atau Jabodetabek): ");
         scanf("%s", domisili);
         if (find_node_by_name(&tm, domisili)) {
-            break;
+            break; // Jika kota ditemukan di tree, keluar dari loop
         } else {
             printf("Kota yang diinputkan tidak ditemukan.\n");
             printf("Kota harus berada di daerah Jawa Barat dan Jabodetabek.\n");
@@ -173,7 +180,7 @@ retry:
 
     if (pin == konfirmasiPin)
     {
-         userBaru.id = getLastUserId() + 1;
+        userBaru.id = getLastUserId() + 1;
         strcpy(userBaru.username, username); 
         userBaru.pin = pin;                  
         userBaru.saldo = 0;                  
@@ -187,21 +194,23 @@ retry:
     }
 }
 
-void loginUser(TreeManager *tm, List P, User *user)
+void loginUser(User *user)
 {
     char inputUsername[50];
     int pinlogin;
 
     print_title("LOGIN USER", WIDTH);
+    while(1){
     printf("\nMasukkan username: ");
     scanf("%s", inputUsername);
-
     if (!getUserByUsername(inputUsername, user))
     {
         printf("Username tidak ditemukan.\n");
-        return;
+    }else{
+        break;
+        }
     }
-
+    
     while (1)
     {
         inputPin(&pinlogin);
@@ -209,131 +218,62 @@ void loginUser(TreeManager *tm, List P, User *user)
         {
             printf("\n\nLogin berhasil! Selamat datang, %s.\n", user->username);
             sleep(2);
-            userMenu(user, tm, P);
             break;
+            // Keluar dari loop jika login berhasil dan masuk ke menu user
         }
         else
         {
             printf("PIN salah! Coba lagi.\n");
         }
     }
+    return;
 }
 
-
+// Cek apakah username sudah ada, jika ada, return 1, jika tidak ada, return 0
 int isUsernameExists(const char *username)
 {
     User temp;
     return getUserByUsername(username, &temp);
 }
 
+// Tabel informasi/riwayat pesanan
 void orderInformation(User *user)
 {
+    TQueue TList;
     system("cls");
     print_title("INFO PESANAN", WIDTH);
-    printf("\n");
-    printf("Pengiriman barang Anda sedang dalam proses.\n");
-    printf("Status Transit: .\n");
-    printf("Estimasi sampai: 2 hari.\n");
+    GenerateTransactionListByUser(&TList, user->id, NULL);
+    PrintTransaction(TList);
 }
 
-void viewProduct(TreeManager *tm, User *user, List P){
+// Lihat produk berdasarkan kategori
+void viewProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T){
     int choice;
     start:
-    userPrintKatalogByKategori(P);
+    userPrintKatalogByKategori(*P);
     printf("\n1. Beli produk\n");
     printf("2. Masukkan ke keranjang\n");
-        printf("3. Kembali\n");
-        printf("Masukkan pilihan anda : ");
-        scanf(" %c", &choice);
-        if(choice == '1'){
-            buyProduct(tm, user);
-            system("cls");    
-        }else if(choice == '2'){
-            printf("modul keranjang...");
-        }
-        else{
-            goto start;
-        }
-}
-
-
-void buyProduct(TreeManager *tm, User *user)
-{
-    char tujuan[100];
-    int useDomisili = 0;
-    while (1) {
-        printf("Kota tujuan: %s\n", user->domisili);
-        printf("Kirim ke alamat ini? (y/n): ");
-        char yn[10];
-        scanf("%s", yn);
-        if (yn[0] == 'y' || yn[0] == 'Y') {
-            strcpy(tujuan, user->domisili);
-            break;
-        } else {
-            while (1) {
-                printf("Masukkan nama kota tujuan (harus berada di Jawa Barat atau Jabodetabek): ");
-                scanf("%s", tujuan);
-                if (find_node_by_name(tm, tujuan)) {
-                    break;
-                } else {
-                    printf("Kota yang diinputkan tidak ditemukan.\n");
-                    printf("Kota tujuan harus berada di daerah Jawa Barat dan Jabodetabek.\n");
-                    showCityList(tm);
-                }
-            }
-            break;
-        }
+    printf("3. Kembali\n");
+    printf("Masukkan pilihan anda : ");
+    scanf(" %c", &choice);
+    if(choice == '1'){
+        buyProduct(tm, user, P, C, T);
+        system("cls");    
+    }else if(choice == '2'){
+        AddCart(C, user->id);
     }
-
-    // AddCart(C, P, user->id);
-    // CheckOut(C, T, P, *user);
-
-    TreeNode *target = find_node_by_name(tm, tujuan);
-    printf("Rute pengiriman:\n");
-    print_route(target);
+    else{
+        goto start;
+    }
 }
 
-void userMenu(User *user, TreeManager *tm, List P)
+void buyProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T)
 {
-    int choice;
-    do
-    {
-        system("cls");
-        print_title("MENU USER", WIDTH);
-        printf("\n1. Top Up Saldo\n");
-        printf("2. Lihat/Beli Produk\n");
-        printf("3. Info Pesanan\n");
-        printf("4. Keranjang saya\n");
-        printf("5. Keluar\n");
-        printf("Masukkan pilihan: ");
-        scanf("%d", &choice);
-        switch (choice)
-        {
-        case 1:
-            topUp(user);
-            system("pause");
-            break;
-        case 2:
-            viewProduct(tm, user, P);
-            system("pause");
-            break;
-        case 3:
-            orderInformation(user);
-            break;
-        case 4:
-            printf("implement cart module here...\n");
-            system("pause");
-            break;
-        case 5:
-            printf("Keluar dari program!\n");
-            break;
-        default:
-            printf("Pilihan tidak valid\n");
-            break;
-        }
-    } while (choice != 4);
+    AddCart(C, user->id);
+    int trans_id = CheckOut(C, T, P, user->id);
+    if (trans_id == -1) {
+        printf("Checkout gagal. Tidak bisa lanjut ke pembayaran.\n");
+        return;
+    }
+    system("pause");
 }
-
-
-
-

@@ -1,20 +1,12 @@
 #include "../include/keranjang.h"
 #include "../include/printTemplate.h"
 #include "../include/transaksi.h"
-#include "../include/keranjang.h"
+#include "../include/tree.h"
+#include "../include/stack.h"
 
 // MAIN PROGRAM
 void CreateEmptyCart(CartList *CList){
     CList->First = NULL;
-}
-
-boolean IsEmpty(CartList CList) {
-    if (CList.First == NULL)
-    {
-        return true;
-    } else {
-        return false;
-    }
 }
 
 void AllocateCart(Cart **newCart){
@@ -38,16 +30,42 @@ void InsertLast(CartList *CList, cartAddress newCart) {
     }
 }
 
-void AddCart(CartList *CList, List P, int user_id) {
+void AddCart(CartList *CList, int user_id) {
+    List P;
     Cart *newCart, *cartExist;
     int id, item_id, quantity;
     CartList tempCartList;
-    
-    GenerateCartList(&tempCartList);
 
+    LoadTempCartList(&tempCartList);
+    loadKatalogFromFile(&P);
+
+    clear_screen();
+    print_title("TAMBAH KERANJANG", WIDTH);
     printKatalog(P);
-    printf("Masukkan ID Barang: ");
+    printf("\nMasukkan ID Barang: ");
     scanf("%d", &item_id);
+
+    // Cek apakah item_id ada di dalam katalog
+    addressJenis jenisPtr = P.First;
+    bool found = false;
+
+    while (jenisPtr != NULL && !found) {
+        addressProduk produkPtr = jenisPtr->produkJenis;
+        while (produkPtr != NULL) {
+            if (produkPtr->id == item_id) {
+                found = true;
+                break;
+            }
+            produkPtr = produkPtr->next;
+        }
+        jenisPtr = jenisPtr->next_jenis;
+    }
+
+    if (!found) {
+        printf("Item tidak ada di dalam list.\n");
+        return;
+    }
+
     printf("Masukkan Jumlah Barang: ");
     scanf("%d", &quantity);
 
@@ -55,7 +73,7 @@ void AddCart(CartList *CList, List P, int user_id) {
 
     if (cartExist != NULL) {
         cartExist->quantity += quantity;
-        printf("Berhasil mengupdate keranjang!\n");
+        printf("Berhasil mengupdate keranjang!\n\n");
         RewriteCartFile(*CList);
         return;
     }
@@ -66,7 +84,7 @@ void AddCart(CartList *CList, List P, int user_id) {
         return;
     }
 
-    id = GetLastCartID(*CList, tempCartList);  // ✅ Use generated tempCartList
+    id = GetLastCartID(*CList, tempCartList);
 
     newCart->id = id + 1;
     newCart->user_id = user_id;
@@ -80,68 +98,79 @@ void AddCart(CartList *CList, List P, int user_id) {
     printf("Berhasil menambahkan ke keranjang!\n");
 }
 
-void PrintCart(CartList CList, int user_id){
-    cartAddress TempNode;
+void PrintCart(CartList CList, int user_id, boolean *item)
+{
+    cartAddress TempNode = CList.First;
     char line[100];
     int id, price, stock;
     char name[50], type[20];
     boolean found;
 
-    TempNode = CList.First;
-
     printf("============================================================\n");
     printf("| ID  | Item Name      | Type           | Price      | Qty |\n");
     printf("============================================================\n");
 
+    *item = false;
     while (TempNode != NULL) {
         if (TempNode->user_id == user_id) {
+            *item = true;
             FILE *katalog = fopen("data/katalog.txt", "r");
-            if (katalog == NULL) {
+            if (!katalog) {
                 perror("Failed to open katalog.txt");
                 return;
             }
 
             found = false;
-
             while (fgets(line, sizeof(line), katalog)) {
-                if (strncmp(line, "Jenis:", 6) == 0) continue;  // Skip type headers
-                if (sscanf(line, "%d; %[^;]; %[^;]; %d; %d", &id, name, type, &price, &stock) == 5){
+                if (strncmp(line, "Jenis:", 6) == 0) continue;
+                if (sscanf(line, "%d; %[^;]; %[^;]; %d; %d",
+                           &id, name, type, &price, &stock) == 5)
+                {
                     if (id == TempNode->item_id) {
                         found = true;
                         printf("| %-3d | %-14s | %-14s | %-10d | %-4d|\n",
-                            TempNode->id, name, type, price, TempNode->quantity);
+                               TempNode->id, name, type, price, TempNode->quantity);
                         break;
                     }
                 }
             }
             if (!found) {
-                printf("| %-3d | %-14s | %-9s | %-11s | %-4d|\n",
-                    TempNode->id, "[UNKNOWN]", "-", "-", TempNode->quantity);
+                printf("| %-3d | %-14s | %-14s | %-10s | %-4d|\n",
+                       TempNode->id, "[UNKNOWN]", "-", "-", TempNode->quantity);
             }
-
             fclose(katalog);
         }
         TempNode = TempNode->next;
     }
 
+        if (!(*item)) {
+        printf("|                    Keranjang kosong                      |\n");
+    }
+
     printf("============================================================\n");
+    return;
 }
 
-void CheckOut(CartList *CList, TQueue *TList, List *P, User *user)
+int CheckOut(CartList *CList, TQueue *TList, List *P, int id_user)
 {
     cartAddress cartNode;
     int cart_id, total_price;
     char line[100], productName[100], name[50], type[50], payVar;
     int id, price, stock;
     bool found = false;
+    boolean item;
 
-    if (CountTransactionByUser(*TList, user->id) >= 3) {
+    GenerateTransactionList(TList);
+
+    if (CountTransactionByUser(*TList, id_user) >= 5) {
         printf("Transaksi penuh! Mohon menunggu proses transaksi.\n");
-        return;
+        system("pause");
+        return -1;
     }
 
+    clear_screen();
     print_title("CHECKOUT KERANJANG", WIDTH);
-    PrintCart(*CList, user->id);
+    PrintCart(*CList, id_user, &item);
     printf("\nMasukkan ID Keranjang: ");
     scanf("%d", &cart_id);
 
@@ -150,14 +179,13 @@ void CheckOut(CartList *CList, TQueue *TList, List *P, User *user)
 
     if (cartNode == NULL) {
         printf("Keranjang dengan ID %d tidak ditemukan.\n", cart_id);
-        return;
+        return -1;
     }
 
-    // Cari nama produk dari item_id (cartNode->item_id)
     FILE *katalog = fopen(FILE_KATALOG, "r");
     if (katalog == NULL) {
         perror("Gagal membuka file katalog");
-        return;
+        return -1;
     }
 
     while (fgets(line, sizeof(line), katalog)) {
@@ -174,7 +202,7 @@ void CheckOut(CartList *CList, TQueue *TList, List *P, User *user)
 
     if (!found) {
         printf("Produk tidak ditemukan di katalog.\n");
-        return;
+        return -1;
     }
 
     total_price = cartNode->quantity * GetPrice(cartNode->item_id);
@@ -182,21 +210,87 @@ void CheckOut(CartList *CList, TQueue *TList, List *P, User *user)
     minusStokProduk(P, cartNode->quantity, productName);
     saveKatalogToFile(*P);
 
-    SaveTransactionToFile(user->id, cart_id, cartNode->item_id, cartNode->quantity, total_price);
-    DeleteCartById(CList, cart_id);
+    int trans_id = SaveOrUpdateTransaction("baru", 0, id_user, cart_id, cartNode->item_id, cartNode->quantity, total_price, "PENDING", "RUTE KOSONG");
 
+    DeleteCartById(CList, cart_id);
     printf("Checkout berhasil!\n\n");
 
     printf("Ingin melakukan pembayaran? [y/n] ");
     scanf(" %c", &payVar);
     if (payVar == 'y') {
-        PayTransaction(user);  // ✅ Just pass the pointer
+        TreeManager tm;
+        InitTree(&tm);
+        char tujuan[100];
+
+        // Pilih alamat tujuan
+        while (1) {
+            clear_screen();
+            print_title("PILIH ALAMAT", WIDTH);
+            // Ambil domisili user dari file user.txt
+            FILE *fuser = fopen("data/user.txt", "r");
+            char uname[50], domisili[100];
+            int uid, upin, usaldo;
+            while (fgets(line, sizeof(line), fuser)) {
+                if (sscanf(line, "%d,%49[^,],%d,%d,%99[^\n]", &uid, uname, &upin, &usaldo, domisili) == 5) {
+                    if (uid == id_user) {
+                        break;
+                    }
+                }
+            }
+            fclose(fuser);
+
+            printf("Kota tujuan: %s\n", domisili);
+            printf("Kirim ke alamat ini? (y/n): ");
+            char yn[10];
+            scanf("%s", yn);
+            if (yn[0] == 'y' || yn[0] == 'Y') {
+                strcpy(tujuan, domisili);
+                break;
+            } else {
+                while (1) {
+                    printf("Masukkan nama kota tujuan (harus berada di Jawa Barat atau Jabodetabek): ");
+                    scanf("%s", tujuan);
+                    if (find_node_by_name(&tm, tujuan)) {
+                        break;
+                    } else {
+                        printf("Kota yang diinputkan tidak ditemukan.\n");
+                        printf("Kota tujuan harus berada di daerah Jawa Barat dan Jabodetabek.\n");
+                        showCityList(&tm);
+                    }
+                }
+                break;
+            }
+        }
+
+        // Proses pembayaran
+        int bayarSukses = PayTransaction(id_user);
+
+        // Update rute transaksi HANYA jika pembayaran sukses
+        if (bayarSukses) {
+            addressTree target = find_node_by_name(&tm, tujuan);
+            if (target) {
+                printf("Rute pengiriman: ");
+                print_route(target);
+
+                char routeStr[1000];
+                get_route_string(target, routeStr);
+
+                SaveOrUpdateTransaction("update", trans_id, id_user, cart_id, cartNode->item_id, cartNode->quantity, total_price, "PAID", routeStr);
+            } else {
+                printf("Kota tujuan tidak ditemukan di tree. Rute tetap KOSONG.\n");
+                SaveOrUpdateTransaction("update", trans_id, id_user, cart_id, cartNode->item_id, cartNode->quantity, total_price, "PAID", "RUTE KOSONG");
+            }
+        } else {
+            printf("Pembayaran gagal. Status transaksi tetap PENDING.\n");
+        }
     } else {
         printf("Kembali..\n");
         sleep(2);
-        return;
     }
+
+    return trans_id;
 }
+
 
 cartAddress GetCartById(CartList CList, int cart_id) {
     cartAddress temp = CList.First;
@@ -243,7 +337,6 @@ void GenerateCartList(CartList *CList) {
     char line[100];
     int id, user_id, item_id, quantity;
 
-    // clear existing list before loading
     CreateEmptyCart(CList);
 
     FILE *file = fopen("data/cart.txt", "r");
@@ -273,7 +366,6 @@ void LoadTempCartList(CartList *CList) {
     char line[100];
     int id, user_id, item_id, quantity;
 
-    // Clear existing list
     CreateEmptyCart(CList);
 
     FILE *file = fopen("data/cart_history.txt", "r");
@@ -283,7 +375,6 @@ void LoadTempCartList(CartList *CList) {
     }
 
     while (fgets(line, sizeof(line), file)) {
-        // Skip empty or malformed lines
         if (sscanf(line, "%d,%d,%d,%d", &id, &user_id, &item_id, &quantity) != 4) {
             continue;
         }
@@ -310,7 +401,6 @@ int GetLastCartID(CartList activeList, CartList tempList) {
     cartAddress temp = activeList.First;
     int lastID = 0;
 
-    // Check active carts
     while (temp != NULL) {
         if (temp->id > lastID) {
             lastID = temp->id;
@@ -318,7 +408,6 @@ int GetLastCartID(CartList activeList, CartList tempList) {
         temp = temp->next;
     }
 
-    // Check temp carts (e.g., checked-out carts)
     temp = tempList.First;
     while (temp != NULL) {
         if (temp->id > lastID) {
