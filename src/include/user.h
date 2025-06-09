@@ -34,7 +34,7 @@ void registration();
  * FS : Data user baru ditambahkan ke file user.txt jika valid
  */
 
-void loginUser(TreeManager *tm, List *P, User *user, CartList *C, TQueue *T);
+void loginUser(User *user);
 /*
  * Login user
  * IS : User belum login
@@ -67,13 +67,6 @@ int getUserByUsername(const char *username, User *u);
  * Ambil data user berdasarkan username
  * IS : Data user belum diketahui
  * FS : Data user diisi jika ditemukan, return 1 jika ada, 0 jika tidak
- */
-
-void userMenu(User *user, TreeManager *tm, List *P, CartList *C, TQueue *T);
-/*
- * Menu utama user
- * IS : User sudah login
- * FS : Menampilkan menu dan menjalankan fitur sesuai pilihan user
  */
 
 void viewProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T);
