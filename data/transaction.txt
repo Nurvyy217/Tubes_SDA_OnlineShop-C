@@ -5,3 +5,10 @@
 5,1,5,2,3,1500000,SHIPPING,RUTE KOSONG
 6,1,6,1,2,9000000,SHIPPING,Bandung->Sumedang->Majalengka
 7,2,7,1,2,9000000,SHIPPING,Bandung
+8,1,8,1,1,4500000,PAID,Bandung->Sumedang->Majalengka
+9,2,9,2,1,500000,PAID,RUTE KOSONG
+10,2,10,2,1,500000,PAID,Bandung->Cimahi->Cianjur->Bogor->Depok->Jakarta
+11,1,11,1,1,4500000,PAID,Bandung->Sumedang->Majalengka
+12,1,12,2,1,500000,PAID,Bandung->Sumedang->Majalengka
+13,2,14,1,1,4500000,PAID,Bandung->Cimahi->Cianjur->Bogor->Depok->Jakarta
+14,2,15,2,1,500000,PENDING,RUTE KOSONG
