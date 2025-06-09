@@ -49,4 +49,6 @@ void print_route(addressTree target);
  * FS : Rute dari root ke target dicetak ke layar dengan urutan yang benar
  */
 
+void get_route_string(addressTree target, char *buffer);
+
 #endif

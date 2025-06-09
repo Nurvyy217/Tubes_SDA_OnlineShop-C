@@ -270,7 +270,6 @@ void viewProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T){
 void buyProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T)
 {
     char tujuan[100];
-    int useDomisili = 0;
     while (1) {
         clear_screen();
         print_title("PILIH ALAMAT", WIDTH);
@@ -298,11 +297,26 @@ void buyProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T)
     }
 
     AddCart(C, user->id);
-    CheckOut(C, T, P, user->id);
+
+    int item_id = C->First->item_id;
+    int quantity = C->First->quantity;
+    int cart_id = C->First->id;
+    int total_price = GetPrice(item_id) * quantity;
+
+    int trans_id = CheckOut(C, T, P, user->id);
+    if (trans_id == -1) {
+        printf("Checkout gagal. Tidak bisa lanjut ke pembayaran.\n");
+        return;
+    }
 
     addressTree target = find_node_by_name(tm, tujuan);
     clear_screen();
+    char routeStr[1000];
+    get_route_string(target, routeStr);
     print_title("RUTE PENGIRIMAN", WIDTH);
     print_route(target);
+
+    SaveOrUpdateTransaction("update", trans_id, user->id, cart_id, item_id, quantity, total_price, "PAID", routeStr);
+
     system("pause");
 }

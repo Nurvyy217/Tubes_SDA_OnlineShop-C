@@ -63,7 +63,7 @@ cartAddress GetCartById(CartList CList, int cart_id);
 * FS : Mengembalikan alamat cart yang sesuai, NULL jika tidak ditemukan
 */
 
-void CheckOut(CartList *CList, TQueue *TList, List *P, int id_user);
+int CheckOut(CartList *CList, TQueue *TList, List *P, int id_user);
 /*
 * Melakukan proses checkout untuk keranjang tertentu.
 * IS : Semua struktur data dan file valid

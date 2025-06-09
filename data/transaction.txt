@@ -1,1 +1,1 @@
-
+1,2,1,2,1,500000,SHIPPING,Bandung->Cimahi->Cianjur->Bogor->Depok->Jakarta

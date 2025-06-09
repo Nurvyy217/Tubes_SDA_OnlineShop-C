@@ -16,7 +16,8 @@ typedef struct Transaction {
     int  item_id;                  /* ID item utama (hanya satu item)         */
     int  quantity;                 /* Banyaknya item                          */
     int  total_price;              /* Total harga (quantity × harga item)     */
-    char status[10];               /* Status: "PENDING", "PAID", "SHIPPING"   */
+    char status[20];               /* Status: "PENDING", "PAID", "SHIPPING"   */
+    char route[200];               /* Route: Rute dari shipping   */
     trsAddress next;               /* Pointer ke transaksi berikutnya (queue) */
 } Transaction;
 
@@ -56,7 +57,8 @@ void Dequeue(TQueue *TList);
 */
 
 // FILES
-void SaveTransactionToFile(int user_id, int cart_id,int item_id, int quantity, int total_price);
+
+int SaveOrUpdateTransaction(const char *mode, int id_to_update, int user_id, int cart_id, int item_id, int quantity, int total_price, const char *status, const char *route);
 /*
 * Menyimpan transaksi baru ke file “data/transaction.txt” dengan status PENDING.
 * IS : File mungkin sudah ada/berisi

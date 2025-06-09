@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# GCC="/c/gcc/bin/gcc"
-
 OUTPUT="user.exe"
 INCLUDE_DIR="./src/include"
 SRC_MAIN="./src/main/user.c"

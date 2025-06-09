@@ -1,5 +1,5 @@
 Jenis: RUNNING
-1; Alpen Run 22; RUNNING; 4500000; 20
+1; Alpen Run 22; RUNNING; 4500000; 17
 Jenis: CASUAL
-2; Alpen Chuck; CASUAL; 500000; 30
+2; Alpen Chuck; CASUAL; 500000; 26
 Jenis: FORMAL

@@ -25,6 +25,25 @@ void Pop(Stack *S) {
     free(temp);
 }
 
+void get_route_string(addressTree target, char *buffer) {
+    // contoh implementasi: traversal dari target ke root, lalu simpan ke buffer
+    // ini asumsi sederhana, sesuaikan sesuai struktur TreeManager kamu
+    char temp[1000] = "";
+    while (target != NULL) {
+        char nama[100];
+        strcpy(nama, target->name); // atau target->city_name, tergantung field-nya
+        if (strlen(temp) == 0)
+            strcpy(temp, nama);
+        else {
+            char newTemp[1000];
+            sprintf(newTemp, "%s->%s", nama, temp);
+            strcpy(temp, newTemp);
+        }
+        target = target->parent; // atau fungsi get_parent(target)
+    }
+    strcpy(buffer, temp);
+}
+
 // procedure untuk mencetak rute dari root ke node target
 void print_route(addressTree target)
 {

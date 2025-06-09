@@ -126,8 +126,7 @@ void PrintCart(CartList CList, int user_id, boolean *item)
     printf("============================================================\n");
     return;
 }
-
-void CheckOut(CartList *CList, TQueue *TList, List *P, int id_user)
+int CheckOut(CartList *CList, TQueue *TList, List *P, int id_user)
 {
     cartAddress cartNode;
     int cart_id, total_price;
@@ -138,29 +137,27 @@ void CheckOut(CartList *CList, TQueue *TList, List *P, int id_user)
 
     if (CountTransactionByUser(*TList, id_user) >= 5) {
         printf("Transaksi penuh! Mohon menunggu proses transaksi.\n");
-        return;
+        return -1;
     }
-    
+
     clear_screen();
     print_title("CHECKOUT KERANJANG", WIDTH);
     PrintCart(*CList, id_user, &item);
     printf("\nMasukkan ID Keranjang: ");
     scanf("%d", &cart_id);
-    
-    getStokProduk(P, "SEPATU KAYANG");
 
     total_price = 0;
     cartNode = GetCartById(*CList, cart_id);
 
     if (cartNode == NULL) {
         printf("Keranjang dengan ID %d tidak ditemukan.\n", cart_id);
-        return;
+        return -1;
     }
 
     FILE *katalog = fopen(FILE_KATALOG, "r");
     if (katalog == NULL) {
         perror("Gagal membuka file katalog");
-        return;
+        return -1;
     }
 
     while (fgets(line, sizeof(line), katalog)) {
@@ -177,7 +174,7 @@ void CheckOut(CartList *CList, TQueue *TList, List *P, int id_user)
 
     if (!found) {
         printf("Produk tidak ditemukan di katalog.\n");
-        return;
+        return -1;
     }
 
     total_price = cartNode->quantity * GetPrice(cartNode->item_id);
@@ -185,9 +182,9 @@ void CheckOut(CartList *CList, TQueue *TList, List *P, int id_user)
     minusStokProduk(P, cartNode->quantity, productName);
     saveKatalogToFile(*P);
 
-    SaveTransactionToFile(id_user, cart_id, cartNode->item_id, cartNode->quantity, total_price);
-    DeleteCartById(CList, cart_id);
+    int trans_id = SaveOrUpdateTransaction("baru", 0, id_user, cart_id, cartNode->item_id, cartNode->quantity, total_price, "PENDING", "RUTE KOSONG");
 
+    DeleteCartById(CList, cart_id);
     printf("Checkout berhasil!\n\n");
 
     printf("Ingin melakukan pembayaran? [y/n] ");
@@ -197,8 +194,9 @@ void CheckOut(CartList *CList, TQueue *TList, List *P, int id_user)
     } else {
         printf("Kembali..\n");
         sleep(2);
-        return;
     }
+
+    return trans_id;
 }
 
 cartAddress GetCartById(CartList CList, int cart_id) {
