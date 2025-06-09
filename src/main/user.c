@@ -6,6 +6,7 @@
 #include "../include/printTemplate.h"
 #include "../include/keranjang.h"
 #include "../include/transaksi.h"
+#include "../include/stack.h"
 
 int main()
 {
@@ -80,8 +81,65 @@ int main()
                     }
                     system("pause");
                     break;
-                case 5:
-                    PayTransaction(user.id);
+                case 5: 
+                    int payResult = PayTransaction(user.id);
+                    if (payResult == 1) {
+                        // Setelah pembayaran sukses, tawarkan update rute
+                        char updateRoute;
+                        printf("Ingin update rute pengiriman? [y/n]: ");
+                        scanf(" %c", &updateRoute);
+                        if (updateRoute == 'y' || updateRoute == 'Y') {
+                            int trans_id;
+                            char tujuan[100], new_route[200];
+                            TreeManager tmUpdate;
+                            InitTree(&tmUpdate);
+
+                            printf("Masukkan ID transaksi yang ingin diupdate rutenya: ");
+                            scanf("%d", &trans_id);
+                            printf("Masukkan kota tujuan baru: ");
+                            scanf("%s", tujuan);
+
+                            addressTree target = find_node_by_name(&tmUpdate, tujuan);
+                            if (target) {
+                                get_route_string(target, new_route);
+
+                                // Ambil data transaksi lama
+                                FILE *f = fopen("data/transaction.txt", "r");
+                                Transaction oldTrx = {0};
+                                char line[300];
+                                int found = 0;
+                                while (f && fgets(line, sizeof(line), f)) {
+                                    int n = sscanf(line, "%d,%d,%d,%d,%d,%d,%19[^,],%199[^\n]",
+                                        &oldTrx.id, &oldTrx.user_id, &oldTrx.cart_id, &oldTrx.item_id,
+                                        &oldTrx.quantity, &oldTrx.total_price, oldTrx.status, oldTrx.route);
+                                    if (n == 8 && oldTrx.id == trans_id && oldTrx.user_id == user.id) {
+                                        found = 1;
+                                        break;
+                                    }
+                                }
+                                if (f) fclose(f);
+
+                                if (found) {
+                                    SaveOrUpdateTransaction(
+                                        "update",
+                                        trans_id,
+                                        oldTrx.user_id,
+                                        oldTrx.cart_id,
+                                        oldTrx.item_id,
+                                        oldTrx.quantity,
+                                        oldTrx.total_price,
+                                        "PAID",
+                                        new_route
+                                    );
+                                    printf("Rute transaksi berhasil diupdate!\n");
+                                } else {
+                                    printf("Transaksi tidak ditemukan.\n");
+                                }
+                            } else {
+                                printf("Kota tujuan tidak ditemukan di tree. Rute tidak diupdate.\n");
+                            }
+                        }
+                    }
                     system("pause");
                     break;
                 case 6:

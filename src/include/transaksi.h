@@ -87,7 +87,7 @@ int CountTransactionByUser(TQueue Q, int user_id);
 * FS : Mengembalikan jumlah transaksi milik user_id
 */
 
-void PayTransaction(int user_id);
+int PayTransaction(int user_id);
 /*
 * Menampilkan transaksi PENDING milik user, meminta konfirmasi, memotong saldo user & mengubah status menjadi PAID.
 * IS : File “transaction.txt” dan “user.txt” ada, user_id valid

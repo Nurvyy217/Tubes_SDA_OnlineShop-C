@@ -263,21 +263,25 @@ int CheckOut(CartList *CList, TQueue *TList, List *P, int id_user)
         }
 
         // Proses pembayaran
-        PayTransaction(id_user);
+        int bayarSukses = PayTransaction(id_user);
 
-        // Update rute transaksi
-        addressTree target = find_node_by_name(&tm, tujuan);
-        if (target) {
-            printf("Rute pengiriman: ");
-            print_route(target);
+        // Update rute transaksi HANYA jika pembayaran sukses
+        if (bayarSukses) {
+            addressTree target = find_node_by_name(&tm, tujuan);
+            if (target) {
+                printf("Rute pengiriman: ");
+                print_route(target);
 
-            char routeStr[1000];
-            get_route_string(target, routeStr);
+                char routeStr[1000];
+                get_route_string(target, routeStr);
 
-            SaveOrUpdateTransaction("update", trans_id, id_user, cart_id, cartNode->item_id, cartNode->quantity, total_price, "PAID", routeStr);
+                SaveOrUpdateTransaction("update", trans_id, id_user, cart_id, cartNode->item_id, cartNode->quantity, total_price, "PAID", routeStr);
+            } else {
+                printf("Kota tujuan tidak ditemukan di tree. Rute tetap KOSONG.\n");
+                SaveOrUpdateTransaction("update", trans_id, id_user, cart_id, cartNode->item_id, cartNode->quantity, total_price, "PAID", "RUTE KOSONG");
+            }
         } else {
-            printf("Kota tujuan tidak ditemukan di tree. Rute tetap KOSONG.\n");
-            SaveOrUpdateTransaction("update", trans_id, id_user, cart_id, cartNode->item_id, cartNode->quantity, total_price, "PAID", "RUTE KOSONG");
+            printf("Pembayaran gagal. Status transaksi tetap PENDING.\n");
         }
     } else {
         printf("Kembali..\n");

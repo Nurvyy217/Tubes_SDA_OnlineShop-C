@@ -39,7 +39,7 @@ void PrintTransaction(TQueue TList) {
 
     printf("===============================================================================================\n");
 }
-void PayTransaction(int user_id)
+int PayTransaction(int user_id)
 {
     TQueue pendingTrx;
     GenerateTransactionListByUser(&pendingTrx, user_id, "PENDING");
@@ -65,7 +65,7 @@ void PayTransaction(int user_id)
 
     if (count == 0) {
         printf("Tidak ada transaksi PENDING.\n");
-        return;
+        return 0;
     }
 
     int pilihId;
@@ -79,7 +79,7 @@ void PayTransaction(int user_id)
 
     if (target == NULL) {
         printf("Transaksi tidak ditemukan atau tidak PENDING.\n");
-        return;
+        return 0;
     }
 
     // Proses pembayaran
@@ -87,7 +87,7 @@ void PayTransaction(int user_id)
 
     // Baca data user
     FILE *fusr = fopen("data/user.txt", "r");
-    if (!fusr) { perror("user.txt"); return; }
+    if (!fusr) { perror("user.txt"); return 0; }
 
     char users[200][256], uname[50], dom[50];
     int  uid, upin, usaldo, ucnt = 0, userIndex = -1;
@@ -105,7 +105,7 @@ void PayTransaction(int user_id)
 
     if (userIndex == -1) {
         printf("Data user tidak ditemukan!\n");
-        return;
+        return 0;
     }
 
     sscanf(users[userIndex], "%d,%[^,],%d,%d,%[^\n]",
@@ -113,7 +113,7 @@ void PayTransaction(int user_id)
 
     if (usaldo < hargaBayar) {
         printf("Saldo tidak cukup (saldo: %d, harga: %d).\n", usaldo, hargaBayar);
-        return;
+        return 0;
     }
 
     usaldo -= hargaBayar;
@@ -121,14 +121,14 @@ void PayTransaction(int user_id)
 
     // Update file user
     fusr = fopen("data/user.txt", "w");
-    if (!fusr) { perror("user.txt tulis"); return; }
+    if (!fusr) { perror("user.txt tulis"); return 0; }
     for (int i = 0; i < ucnt; ++i)
         fputs(users[i], fusr);
     fclose(fusr);
 
     // Update transaksi (ubah status jadi PAID dan route tetap sama)
     FILE *ftrs = fopen("data/transaction.txt", "r");
-    if (!ftrs) { perror("transaction.txt"); return; }
+    if (!ftrs) { perror("transaction.txt"); return 0; }
 
     Transaction allTrs[200];
     int trsCount = 0;
@@ -156,7 +156,7 @@ void PayTransaction(int user_id)
     fclose(ftrs);
 
     ftrs = fopen("data/transaction.txt", "w");
-    if (!ftrs) { perror("transaction.txt tulis"); return; }
+    if (!ftrs) { perror("transaction.txt tulis"); return 0; }
     for (int i = 0; i < trsCount; ++i) {
         fprintf(ftrs, "%d,%d,%d,%d,%d,%d,%s,%s\n",
                 allTrs[i].id, allTrs[i].user_id, allTrs[i].cart_id,
@@ -167,6 +167,7 @@ void PayTransaction(int user_id)
 
     printf("Pembayaran berhasil!\n");
     printf("Saldo Anda sekarang: %d\n", usaldo);
+    return 1;
 }
 
 boolean IsTrsEmpty(TQueue *TQueue){
