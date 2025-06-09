@@ -1,20 +1,10 @@
 #include "../include/keranjang.h"
 #include "../include/printTemplate.h"
 #include "../include/transaksi.h"
-#include "../include/keranjang.h"
 
 // MAIN PROGRAM
 void CreateEmptyCart(CartList *CList){
     CList->First = NULL;
-}
-
-boolean IsEmpty(CartList CList) {
-    if (CList.First == NULL)
-    {
-        return true;
-    } else {
-        return false;
-    }
 }
 
 void AllocateCart(Cart **newCart){

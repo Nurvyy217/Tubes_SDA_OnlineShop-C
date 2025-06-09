@@ -245,17 +245,6 @@ int CountTransactionByUser(TQueue Q, int user_id) {
 }
 
 // FILES
-trsAddress GetTransactionById(TQueue TQueue, int trs_id) {
-    trsAddress temp = TQueue.Front;
-    while (temp != NULL) {
-        if (temp->id == trs_id) {
-            return temp;
-        }
-        temp = temp->next;
-    }
-    return NULL;
-}
-
 void UpdateUserSaldoById(int user_id, int new_saldo) {
     FILE *file = fopen("data/user.txt", "r");
     if (!file) {
@@ -269,13 +258,11 @@ void UpdateUserSaldoById(int user_id, int new_saldo) {
     char username[50], domisili[50];
     int id, pin, saldo;
 
-    // Membaca file ke array
     while (fgets(lines[count], sizeof(lines[count]), file)) {
         if (sscanf(lines[count], "%d,%49[^,],%d,%d,%49[^\n]",
                    &id, username, &pin, &saldo, domisili) == 5) {
             ids[count] = id;
             if (id == user_id) {
-                // Update saldo di string baris
                 sprintf(lines[count], "%d,%s,%d,%d,%s\n",
                         id, username, pin, new_saldo, domisili);
             }
@@ -284,7 +271,6 @@ void UpdateUserSaldoById(int user_id, int new_saldo) {
     }
     fclose(file);
 
-    // Tulis ulang file
     file = fopen("data/user.txt", "w");
     if (!file) {
         perror("Gagal menulis file user");
@@ -297,7 +283,6 @@ void UpdateUserSaldoById(int user_id, int new_saldo) {
 
     fclose(file);
 }
-
 
 void SaveTransactionToFile(int user_id, int cart_id, int item_id, int quantity, int total_price) {
     FILE *trsFile;
@@ -369,25 +354,12 @@ void GenerateTransactionList(TQueue *TList) {
     fclose(file);
 }
 
-int GetLastTransactionID(TQueue TQueue) {
-    Transaction *temp = TQueue.Front;
-    int lastID = 0;
-    while (temp != NULL) {
-        if (temp->id > lastID) {
-            lastID = temp->id;
-        }
-        temp = temp->next;
-    }
-    return lastID;
-}
-
 void GenerateTransactionListByUser(TQueue *TList, int user_id, const char *statusFilter) {
     Transaction *newTrs;
     char line[200];
     int id, uid, cart_id, item_id, qty, total;
     char status[20];
 
-    /* kosongkan queue lebih dulu */
     CreateEmptyTransaction(TList);
 
     FILE *file = fopen("data/transaction.txt", "r");
@@ -401,7 +373,6 @@ void GenerateTransactionListByUser(TQueue *TList, int user_id, const char *statu
                    &id, &uid, &cart_id, &item_id, &qty, &total, status) != 7)
             continue;
 
-        /* pilih transaksi milik user & (opsional) status tertentu */
         if (uid == user_id &&
             (statusFilter == NULL || strcmp(status, statusFilter) == 0)) {
 
@@ -417,7 +388,6 @@ void GenerateTransactionListByUser(TQueue *TList, int user_id, const char *statu
             strcpy(newTrs->status, status);
             newTrs->next        = NULL;
 
-            /* enqueue */
             if (IsTrsEmpty(TList)) {
                 TList->Front = newTrs;
                 TList->Rear  = newTrs;
