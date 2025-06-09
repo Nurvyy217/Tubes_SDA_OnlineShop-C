@@ -1,1 +1,7 @@
 1,2,1,2,1,500000,SHIPPING,Bandung->Cimahi->Cianjur->Bogor->Depok->Jakarta
+2,1,2,2,1,500000,SHIPPING,RUTE KOSONG
+3,2,3,1,1,4500000,SHIPPING,Bandung->Cimahi->Cianjur->Bogor->Depok->Jakarta
+4,1,4,1,2,9000000,SHIPPING,Bandung->Cimahi->Purwakarta->Subang
+5,1,5,2,3,1500000,SHIPPING,RUTE KOSONG
+6,1,6,1,2,9000000,SHIPPING,Bandung->Sumedang->Majalengka
+7,2,7,1,2,9000000,SHIPPING,Bandung
