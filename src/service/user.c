@@ -269,54 +269,11 @@ void viewProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T){
 
 void buyProduct(TreeManager *tm, User *user, List *P, CartList *C, TQueue *T)
 {
-    char tujuan[100];
-    while (1) {
-        clear_screen();
-        print_title("PILIH ALAMAT", WIDTH);
-        printf("Kota tujuan: %s\n", user->domisili);
-        printf("Kirim ke alamat ini? (y/n): ");
-        char yn[10];
-        scanf("%s", yn);
-        if (yn[0] == 'y' || yn[0] == 'Y') {
-            strcpy(tujuan, user->domisili);
-            break;
-        } else {
-            while (1) {
-                printf("Masukkan nama kota tujuan (harus berada di Jawa Barat atau Jabodetabek): ");
-                scanf("%s", tujuan);
-                if (find_node_by_name(tm, tujuan)) {
-                    break;
-                } else {
-                    printf("Kota yang diinputkan tidak ditemukan.\n");
-                    printf("Kota tujuan harus berada di daerah Jawa Barat dan Jabodetabek.\n");
-                    showCityList(tm);
-                }
-            }
-            break;
-        }
-    }
-
     AddCart(C, user->id);
-
-    int item_id = C->First->item_id;
-    int quantity = C->First->quantity;
-    int cart_id = C->First->id;
-    int total_price = GetPrice(item_id) * quantity;
-
     int trans_id = CheckOut(C, T, P, user->id);
     if (trans_id == -1) {
         printf("Checkout gagal. Tidak bisa lanjut ke pembayaran.\n");
         return;
     }
-
-    addressTree target = find_node_by_name(tm, tujuan);
-    clear_screen();
-    char routeStr[1000];
-    get_route_string(target, routeStr);
-    print_title("RUTE PENGIRIMAN", WIDTH);
-    print_route(target);
-
-    SaveOrUpdateTransaction("update", trans_id, user->id, cart_id, item_id, quantity, total_price, "PAID", routeStr);
-
     system("pause");
 }

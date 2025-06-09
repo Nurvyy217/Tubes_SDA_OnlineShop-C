@@ -1,6 +1,8 @@
 #include "../include/keranjang.h"
 #include "../include/printTemplate.h"
 #include "../include/transaksi.h"
+#include "../include/tree.h"
+#include "../include/stack.h"
 
 // MAIN PROGRAM
 void CreateEmptyCart(CartList *CList){
@@ -148,6 +150,7 @@ void PrintCart(CartList CList, int user_id, boolean *item)
     printf("============================================================\n");
     return;
 }
+
 int CheckOut(CartList *CList, TQueue *TList, List *P, int id_user)
 {
     cartAddress cartNode;
@@ -157,8 +160,11 @@ int CheckOut(CartList *CList, TQueue *TList, List *P, int id_user)
     bool found = false;
     boolean item;
 
+    GenerateTransactionList(TList);
+
     if (CountTransactionByUser(*TList, id_user) >= 5) {
         printf("Transaksi penuh! Mohon menunggu proses transaksi.\n");
+        system("pause");
         return -1;
     }
 
@@ -212,7 +218,67 @@ int CheckOut(CartList *CList, TQueue *TList, List *P, int id_user)
     printf("Ingin melakukan pembayaran? [y/n] ");
     scanf(" %c", &payVar);
     if (payVar == 'y') {
+        TreeManager tm;
+        InitTree(&tm);
+        char tujuan[100];
+
+        // Pilih alamat tujuan
+        while (1) {
+            clear_screen();
+            print_title("PILIH ALAMAT", WIDTH);
+            // Ambil domisili user dari file user.txt
+            FILE *fuser = fopen("data/user.txt", "r");
+            char uname[50], domisili[100];
+            int uid, upin, usaldo;
+            while (fgets(line, sizeof(line), fuser)) {
+                if (sscanf(line, "%d,%49[^,],%d,%d,%99[^\n]", &uid, uname, &upin, &usaldo, domisili) == 5) {
+                    if (uid == id_user) {
+                        break;
+                    }
+                }
+            }
+            fclose(fuser);
+
+            printf("Kota tujuan: %s\n", domisili);
+            printf("Kirim ke alamat ini? (y/n): ");
+            char yn[10];
+            scanf("%s", yn);
+            if (yn[0] == 'y' || yn[0] == 'Y') {
+                strcpy(tujuan, domisili);
+                break;
+            } else {
+                while (1) {
+                    printf("Masukkan nama kota tujuan (harus berada di Jawa Barat atau Jabodetabek): ");
+                    scanf("%s", tujuan);
+                    if (find_node_by_name(&tm, tujuan)) {
+                        break;
+                    } else {
+                        printf("Kota yang diinputkan tidak ditemukan.\n");
+                        printf("Kota tujuan harus berada di daerah Jawa Barat dan Jabodetabek.\n");
+                        showCityList(&tm);
+                    }
+                }
+                break;
+            }
+        }
+
+        // Proses pembayaran
         PayTransaction(id_user);
+
+        // Update rute transaksi
+        addressTree target = find_node_by_name(&tm, tujuan);
+        if (target) {
+            printf("Rute pengiriman: ");
+            print_route(target);
+
+            char routeStr[1000];
+            get_route_string(target, routeStr);
+
+            SaveOrUpdateTransaction("update", trans_id, id_user, cart_id, cartNode->item_id, cartNode->quantity, total_price, "PAID", routeStr);
+        } else {
+            printf("Kota tujuan tidak ditemukan di tree. Rute tetap KOSONG.\n");
+            SaveOrUpdateTransaction("update", trans_id, id_user, cart_id, cartNode->item_id, cartNode->quantity, total_price, "PAID", "RUTE KOSONG");
+        }
     } else {
         printf("Kembali..\n");
         sleep(2);
@@ -220,6 +286,7 @@ int CheckOut(CartList *CList, TQueue *TList, List *P, int id_user)
 
     return trans_id;
 }
+
 
 cartAddress GetCartById(CartList CList, int cart_id) {
     cartAddress temp = CList.First;
